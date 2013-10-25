@@ -351,11 +351,68 @@ ffi.cdef[[
  long rk_logseries(rk_state *state, double p);
 ]]
 
--- Use metatable to pass all undefined indexing to randomkit.ffi
-local mt = {}
-setmetatable(randomkit, mt)
-mt.__index = function(table, key)
-    return rawget(randomkit, key) or randomkit.ffi[key]
+local list_of_functions = {
+    'rk_random',
+    'rk_long',
+    'rk_ulong',
+    'rk_interval',
+    'rk_double',
+    'rk_fill',
+    'rk_devfill',
+    'rk_altfill',
+    'rk_gauss',
+    'rk_normal',
+    'rk_standard_exponential',
+    'rk_exponential',
+    'rk_uniform',
+    'rk_standard_gamma',
+    'rk_gamma',
+    'rk_beta',
+    'rk_chisquare',
+    'rk_noncentral_chisquare',
+    'rk_f',
+    'rk_noncentral_f',
+    'rk_binomial',
+    'rk_binomial_btpe',
+    'rk_binomial_inversion',
+    'rk_negative_binomial',
+    'rk_poisson',
+    'rk_poisson_mult',
+    'rk_poisson_ptrs',
+    'rk_standard_cauchy',
+    'rk_standard_t',
+    'rk_vonmises',
+    'rk_pareto',
+    'rk_weibull',
+    'rk_power',
+    'rk_laplace',
+    'rk_gumbel',
+    'rk_logistic',
+    'rk_lognormal',
+    'rk_rayleigh',
+    'rk_wald',
+    'rk_zipf',
+    'rk_geometric',
+    'rk_geometric_search',
+    'rk_geometric_inversion',
+    'rk_hypergeometric',
+    'rk_hypergeometric_hyp',
+    'rk_hypergeometric_hrua',
+    'rk_triangular',
+    'rk_logseries'
+}
+
+--[[ Initialize the state structure (which is not really seeding,
+   since we have replaced randomkit's own Mersenne-Twister by
+   Torch's ]]
+local state = ffi.new('rk_state')
+randomkit.ffi.rk_seed(0, state)
+
+-- Wrap by passing the state as first argument
+for k, v in pairs(list_of_functions) do
+    randomkit[string.sub(v, 4)] =  function(...)
+        return tonumber(randomkit.ffi[v](state, ...))
+    end
 end
 
 return randomkit
