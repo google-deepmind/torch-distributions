@@ -207,6 +207,30 @@ local function mapNotInPlace(inputA, inputB, output, func)
     end
     return output
 end
+local function map2NotInPlace(inputA, inputB, inputC, output, func)
+    if not inputA:isContiguous() or not inputB:isContiguous() or not inputC:isContiguous() or not output:isContiguous() then
+        error("map2NotInPlace only supports contiguous tensors")
+    end
+
+    if inputA:nElement() ~= inputB:nElement()
+        or inputB:nElement() ~= output:nElement()
+        or inputC:nElement() ~= output:nElement() then
+        error("map2NotInPlace: tensor element counts are not consistent")
+    end
+
+    local inputAdata = getDataArray(inputA)
+    local inputBdata = getDataArray(inputB)
+    local inputCdata = getDataArray(inputC)
+    local outputdata = getDataArray(output)
+    local offset = inputA:storageOffset()
+    -- A zero-based index is used to access the data.
+    -- The end index is (startIndex + nElements - 1).
+    for i0 = offset - 1, offset - 1 + inputA:nElement() - 1 do
+        outputdata[i0] = tonumber(func(state, inputAdata[i0], inputBdata[i0], inputCdata[i0])) or outputdata[i0]
+    end
+    return output
+end
+
 
 
 --[[! Argument checking for vectorized calls
@@ -333,6 +357,11 @@ local function create_wrapper(name, parameters, returnType)
                 params[1] = params[1]:contiguous()
                 params[2] = params[2]:contiguous()
                 mapNotInPlace(params[1], params[2], result, randomkitFunction)
+            elseif #params == 3 then
+                params[1] = params[1]:contiguous()
+                params[2] = params[2]:contiguous()
+                params[3] = params[3]:contiguous()
+                map2NotInPlace(params[1], params[2], params[3], result, randomkitFunction)
             else
                 error('TODO: need to implement map for ' .. #params .. 'arguments')
             end

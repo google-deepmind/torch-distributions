@@ -234,37 +234,34 @@ function myTest.test_gumbel()
     { 1.10651090478803416, -0.69535848626236174}})
     tester:assertTensorEq(actual, desired, 1e-15, "Gumbel sampler doesn't produce desired values")
 end
---[[ TODO: need 3-argument map
 function myTest.test_hypergeometric()
     torch.manualSeed(seed)
-    local actual = torch.IntTensor(3, 2)
+    local actual = torch.Tensor(3, 2)
     randomkit.hypergeometric(actual, 10.1, 5.5, 14)
     local desired = torch.Tensor({{10, 10},
     {10, 10},
     { 9,  9}})
-    tester:assertTensorEq(actual, desired)
+    tester:assertTensorEq(actual, desired, 1e-15, "Hypergeometric sampler doesn't produce desired values")
 
     -- Test nbad = 0
-    actual = torch.IntTensor(4)
+    actual = torch.Tensor(4)
     randomkit.hypergeometric(actual, 5, 0, 3)
-    local desired = torch.Tensor({3, 3, 3, 3})
-    tester:assertTensorEq(actual, desired)
+    desired = torch.Tensor({3, 3, 3, 3})
+    tester:assertTensorEq(actual, desired, 1e-15, "Hypergeometric sampler doesn't produce desired values")
 
     randomkit.hypergeometric(actual, 15, 0, 12)
-    local desired = torch.Tensor({12, 12, 12, 12})
-    tester:assertTensorEq(actual, desired)
+    desired = torch.Tensor({12, 12, 12, 12})
+    tester:assertTensorEq(actual, desired, 1e-15, "Hypergeometric sampler doesn't produce desired values")
 
     -- Test ngood = 0
     randomkit.hypergeometric(actual, 0, 5, 3)
-    local desired = torch.Tensor({0, 0, 0, 0})
-    tester:assertTensorEq(actual, desired)
+    desired = torch.Tensor({0, 0, 0, 0})
+    tester:assertTensorEq(actual, desired, 1e-15, "Hypergeometric sampler doesn't produce desired values")
 
     randomkit.hypergeometric(actual, 0, 15, 12)
-    local desired = torch.Tensor({0, 0, 0, 0})
-    tester:assertTensorEq(actual, desired)
-
+    desired = torch.Tensor({0, 0, 0, 0})
+    tester:assertTensorEq(actual, desired, 1e-15, "Hypergeometric sampler doesn't produce desired values")
 end
---]]
 function myTest.test_laplace()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
@@ -353,7 +350,6 @@ function myTest.test_noncentral_chisquare()
     tester:assertTensorEq(actual, desired, 1e-14, "Non-central Chi-square sampler doesn't produce desired values")
 end
 
---[[ TODO: need 3-argument map
 function myTest.test_noncentral_f()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
@@ -361,9 +357,8 @@ function myTest.test_noncentral_f()
     local desired = torch.Tensor({{ 1.40598099674926669,  0.34207973179285761},
     { 3.57715069265772545,  7.92632662577829805},
     { 0.43741599463544162,  1.1774208752428319 }})
-    tester:assertTensorEq(actual, desired, 1e-14)
+    tester:assertTensorEq(actual, desired, 1e-14, "Non-central F sampler doesn't produce desired values")
 end
---]]
 function myTest.test_normal()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
@@ -471,7 +466,6 @@ function myTest.test_standard_t()
     tester:assertTensorEq(actual, desired, 1e-15, "Standard T sampler doesn't produce desired values")
 
 end
---[[ TODO need 3-argument map
 function myTest.test_triangular()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
@@ -479,9 +473,8 @@ function myTest.test_triangular()
     local desired = torch.Tensor({{ 12.68117178949215784,  12.4129206149193152 },
     { 16.20131377335158263,  16.25692138747600524},
     { 11.20400690911820263,  14.4978144835829923 }})
-    tester:assertTensorEq(actual, desired, 1e-14)
+    tester:assertTensorEq(actual, desired, 1e-14, "Triangular sampler doesn't produce desired values")
 end
---]]
 --[[ TODO work out why this fails
 function myTest.test_uniform()
     torch.manualSeed(seed)
