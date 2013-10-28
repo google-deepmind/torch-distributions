@@ -373,7 +373,6 @@ function myTest.test_standard_gamma()
     tester:assertTensorEq(actual, desired, 1e-14, "Standard Gamma sampler doesn't produce desired values")
 
 end
---[[ TODO find this!
 function myTest.test_standard_normal()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
@@ -383,7 +382,6 @@ function myTest.test_standard_normal()
     { 2.031033998682787,  2.17032494605655257}})
     tester:assertTensorEq(actual, desired, 1e-15)
 end
---]]
 function myTest.test_standard_t()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)

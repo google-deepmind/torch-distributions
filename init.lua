@@ -103,7 +103,8 @@ torch.include("randomkit", "nonC.lua")
 torch.include("randomkit", "wrapC.lua")
 
 local aliases = {
-    random_sample = 'double'
+    random_sample = 'double',
+    standard_normal = 'gauss'
 }
 
 for k, v in pairs(aliases) do
