@@ -154,7 +154,12 @@ funs['rk_interval'] = {
 }
 funs['rk_randint'] = {
     name = 'randint',
-    arguments = { { name = 'low', type = 'long' }, { name = 'high', type = 'long' } },
+    arguments = { { name = 'low', type = 'int' }, { name = 'high', type = 'int' } },
+    returnType = 'int'
+}
+funs['rk_uniform'] = {
+    name = 'uniform',
+    arguments = { { name = 'low', type = 'int' }, { name = 'high', type = 'int' } },
     returnType = 'int'
 }
 
@@ -304,6 +309,9 @@ customWrappers.interval = function(state, max)
 end
 customWrappers.randint = function(state, low, high)
     return low + tonumber(randomkit.ffi.rk_interval(high - low, state))
+end
+customWrappers.uniform = function(state, low, high)
+    return randomkit.ffi.rk_uniform(state, low, high - low)
 end
 
 -- Wrap by passing the state as first argument

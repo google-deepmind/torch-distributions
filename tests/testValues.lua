@@ -409,7 +409,6 @@ function myTest.test_triangular()
     { 11.20400690911820263,  14.4978144835829923 }})
     tester:assertTensorEq(actual, desired, 1e-14, "Triangular sampler doesn't produce desired values")
 end
---[[ TODO work out why this fails
 function myTest.test_uniform()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
@@ -417,10 +416,8 @@ function myTest.test_uniform()
     local desired = torch.Tensor({{ 6.99097932346268003,  6.73801597444323974},
     { 9.50364421400426274,  9.53130618907631089},
     { 5.48995325769805476,  8.47493103280052118}})
-    print(actual, desired)
     tester:assertTensorEq(actual, desired, 1e-15)
 end
---]]
 function myTest.test_vonmises()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
@@ -429,7 +426,6 @@ function myTest.test_vonmises()
     { 0.38198375564286025,  2.57638023113890746},
     { 1.19153771588353052,  1.83509849681825354}})
     tester:assertTensorEq(actual, desired, 1e-15, "Von Mises sampler doesn't produce desired values")
-
 end
 function myTest.test_wald()
     torch.manualSeed(seed)
