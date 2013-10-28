@@ -168,6 +168,20 @@ local function getDataArray(tensor)
     local pointerDef = torch.typename(tensor):gfind('torch%.(.*Tensor)')().."*"
     return ffi.cast(pointerDef, torch.pointer(tensor)).storage.data
 end
+local function generateIntoTensor(output, func)
+    if not output:isContiguous() then
+        error("generateIntoTensor only supports contiguous tensors")
+    end
+
+    local outputdata = getDataArray(output)
+    local offset = output:storageOffset()
+    -- A zero-based index is used to access the data.
+    -- The end index is (startIndex + nElements - 1).
+    for i0 = offset - 1, offset - 1 + output:nElement() - 1 do
+        outputdata[i0] = tonumber(func(state)) or outputdata[i0]
+    end
+    return output
+end
 local function applyNotInPlace(input, output, func)
     if not input:isContiguous() or not output:isContiguous() then
         error("applyNotInPlace only supports contiguous tensors")
@@ -350,7 +364,9 @@ local function create_wrapper(name, parameters, returnType)
 
         if result then
             local randomkitFunction = randomkit.ffi[name]
-            if #params == 1 then
+            if #params == 0 then
+                generateIntoTensor(result, randomkitFunction)
+            elseif #params == 1 then
                 params[1] = params[1]:contiguous()
                 applyNotInPlace(params[1], result, randomkitFunction)
             elseif #params == 2 then

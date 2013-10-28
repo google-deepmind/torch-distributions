@@ -414,8 +414,6 @@ function myTest.test_rayleigh()
     { 11.06066537006854311,  17.35468505778271009}})
     tester:assertTensorEq(actual, desired, 1e-14, "Rayleigh sampler doesn't produce desired values")
 end
---[[
--- TODO handle 0 arguments
 function myTest.test_standard_cauchy()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
@@ -434,7 +432,6 @@ function myTest.test_standard_exponential()
     { 0.6116915921431676,  1.50592546727413201}})
     tester:assertTensorEq(actual, desired, 1e-15)
 end
---]]
 function myTest.test_standard_gamma()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
