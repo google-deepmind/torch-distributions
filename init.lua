@@ -382,7 +382,7 @@ local function create_wrapper(name, parameters, returnType)
                 error('TODO: need to implement map for ' .. #params .. 'arguments')
             end
         else
-            result = randomkit.ffi[name](state, unpack(params))
+            result = tonumber(randomkitFunction(state, unpack(params)))
         end
 
         return result

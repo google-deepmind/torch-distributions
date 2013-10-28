@@ -522,5 +522,9 @@ function myTest.test_zipf()
     tester:assertTensorEq(actual, desired, 1e-15, "Zipf sampler doesn't produce desired values")
 end
 
+function myTest.test_returnType()
+    tester:asserteq(type(randomkit.binomial(10, 0.5)), 'number')
+end
+
 tester:add(myTest)
 tester:run()
