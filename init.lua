@@ -259,6 +259,12 @@ Process the optional return storage, the sizes of the parameter functions, etc
 @return p1 ... pk Tensor of parameters, all N rows
 --]]
 function randomkit._check1DParams(K, defaultResultType, ...)
+    local argCount = select("#", ...)
+    for index = 1,argCount do
+        if select(index, ...) == nil then
+            error("Bad randomkit call - argument " .. index .. " is nil when calling function bytes()!")
+        end
+    end
     local params = { ... }
     if #params ~= K and #params ~= K+1 then
         error('CHKPARAMS: need ' .. K .. ' arguments and optionally, one result tensor, instead got ' .. #params .. ' arguments')
@@ -354,16 +360,10 @@ local function create_wrapper(name, parameters, returnType)
     end
 
     local function wrapper(...)
-        local argCount = select("#", ...)
-        for index = 1,argCount do
-            if select(index, ...) == nil then
-                error("Bad randomkit call - argument " .. index .. " is nil when calling function " .. name .. "!")
-            end
-        end
         local result, params = randomkit._check1DParams(#parameters, tensorReturnType, ...)
 
+        local randomkitFunction = randomkit.ffi[name]
         if result then
-            local randomkitFunction = randomkit.ffi[name]
             if #params == 0 then
                 generateIntoTensor(result, randomkitFunction)
             elseif #params == 1 then
@@ -390,6 +390,15 @@ local function create_wrapper(name, parameters, returnType)
     return wrapper
 end
 
+function randomkit.bytes(...)
+    local result, params = randomkit._check1DParams(0, torch.ByteTensor, ...)
+    if torch.typename(result) ~= "torch.ByteTensor" then
+        error("randomkit.bytes() can only store into a ByteTensor!")
+    end
+    local dataPtr = torch.data(result)
+    randomkit.ffi.rk_fill(dataPtr, result:nElement(), state)
+    return result
+end
 
 -- Wrap by passing the state as first argument
 for k, v in pairs(funs) do

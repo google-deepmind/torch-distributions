@@ -136,14 +136,12 @@ function myTest.test_choice_return_shape()
     tester:assert(randomkit.choice(arange(6), s, true).shape, s)
 end
 --]]
---[[ TODO wrap bytes() or remove this
 function myTest.test_bytes()
     torch.manualSeed(seed)
-    local actual = randomkit.bytes(10)
-    local desired = asbytes('\x82Ui\x9e\xff\x97+Wf\xa5')
-    testing.assert_equal(actual, desired)
+    local actual = randomkit.bytes(torch.ByteTensor(10)):double()
+    local desired = torch.ByteTensor({130, 85, 105, 158, 255, 151, 43, 87, 102, 165}):double()
+    tester:assertTensorEq(actual, desired, 1e-15, "Bytes sampler doesn't produce desired values")
 end
---]]
 
 function myTest.test_beta()
     torch.manualSeed(seed)
