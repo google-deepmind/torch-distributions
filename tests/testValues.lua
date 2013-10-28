@@ -12,7 +12,7 @@ function myTest.test_binomial_n_zero()
     -- This test addresses issue --3480.
     local zeros = torch.IntTensor(2):zero()
     for _, p in ipairs({0, .5, 1}) do
-        tester:asserteq(randomkit.binomial(0, p), 0)
+        tester:asserteq(randomkit.binomial(0, p), 0, "Binomial sampler does not produce desired values for corner case")
     end
 end
 
@@ -360,7 +360,7 @@ function myTest.test_standard_cauchy()
     local desired = torch.Tensor({{ 0.77127660196445336, -6.55601161955910605},
     { 0.93582023391158309, -2.07479293013759447},
     {-4.74601644297011926,  0.18338989290760804}})
-    tester:assertTensorEq(actual, desired, 1e-15)
+    tester:assertTensorEq(actual, desired, 1e-15, "Standard Cauchy sampler doesn't produce desired values")
 end
 function myTest.test_standard_exponential()
     torch.manualSeed(seed)
@@ -369,7 +369,7 @@ function myTest.test_standard_exponential()
     local desired = torch.Tensor({{ 0.96441739162374596,  0.89556604882105506},
     { 2.1953785836319808,  2.22243285392490542},
     { 0.6116915921431676,  1.50592546727413201}})
-    tester:assertTensorEq(actual, desired, 1e-15)
+    tester:assertTensorEq(actual, desired, 1e-15, "Standard exponential sampler doesn't produce desired values")
 end
 function myTest.test_standard_gamma()
     torch.manualSeed(seed)
@@ -388,7 +388,7 @@ function myTest.test_standard_normal()
     local desired = torch.Tensor({{ 1.34016345771863121,  1.73759122771936081},
     { 1.498988344300628, -0.2286433324536169 },
     { 2.031033998682787,  2.17032494605655257}})
-    tester:assertTensorEq(actual, desired, 1e-15)
+    tester:assertTensorEq(actual, desired, 1e-15, "Standard normal sampler doesn't produce desired values")
 end
 function myTest.test_standard_t()
     torch.manualSeed(seed)
@@ -416,7 +416,7 @@ function myTest.test_uniform()
     local desired = torch.Tensor({{ 6.99097932346268003,  6.73801597444323974},
     { 9.50364421400426274,  9.53130618907631089},
     { 5.48995325769805476,  8.47493103280052118}})
-    tester:assertTensorEq(actual, desired, 1e-15)
+    tester:assertTensorEq(actual, desired, 1e-15, "Uniform sampler doesn't produce desired values")
 end
 function myTest.test_vonmises()
     torch.manualSeed(seed)
