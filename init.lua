@@ -396,5 +396,13 @@ for k, v in pairs(funs) do
     randomkit[string.sub(k, 4)] =  create_wrapper(v.name, v.arguments, v.returnType)
 end
 
+local aliases = {
+    random_sample = 'double'
+}
+
+for k, v in pairs(aliases) do
+    rawset(randomkit, k, randomkit[v])
+end
+
 return randomkit
 

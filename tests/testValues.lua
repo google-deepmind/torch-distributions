@@ -33,7 +33,7 @@ function myTest.test_multinomial_int_negative_interval()
 end
 --]]
 
---[[ TODO: determine why this fails
+--[[ TODO: wrap random_integers or remove this
 function myTest.test_randint()
     torch.manualSeed(seed)
     local actual = torch.IntTensor(3, 2):random(-99, 99)
@@ -41,21 +41,19 @@ function myTest.test_randint()
     {-52,  41},
     {-48, -66}})
     tester:asserteq(actual, desired)
-
 end
 --]]
---[[ TODO: determine why this fails
+
 function myTest.test_random_sample()
     torch.manualSeed(seed)
-    local actual = torch.rand(3, 2)
+    local actual = torch.Tensor(3, 2)
+    randomkit.random_sample(actual)
     local desired = torch.Tensor({{ 0.61879477158567997,  0.59162362775974664},
     { 0.88868358904449662,  0.89165480011560816},
     { 0.4575674820298663,  0.7781880808593471 }})
-    print("ACTUAL", actual)
-    print("DESIRED", desired)
     tester:assertTensorEq(actual, desired, 1e-5)
 end
---]]
+
 --[[ TODO: wrap choice functions or remove these tests
 function myTest.test_choice_uniform_replace()
     torch.manualSeed(seed)
