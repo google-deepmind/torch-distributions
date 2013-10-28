@@ -16,16 +16,24 @@ function myTest.test_binomial_n_zero()
     end
 end
 
---[[ TODO: wrap random_integers or remove this
+function myTest.test_interval()
+    torch.manualSeed(seed)
+    local actual = randomkit.interval(torch.Tensor(3, 2), 188)
+
+    local desired = torch.Tensor({{ 130, 102},
+    {47,  140},
+    {51, 33}})
+    tester:assertTensorEq(actual, desired, 1e-15, "Interval sampler does not produce desired values")
+end
+
 function myTest.test_randint()
     torch.manualSeed(seed)
-    local actual = torch.IntTensor(3, 2):random(-99, 99)
+    local actual = randomkit.randint(torch.Tensor(3, 2), -99, 99)
     local desired = torch.Tensor({{ 31,   3},
     {-52,  41},
     {-48, -66}})
-    tester:asserteq(actual, desired)
+    tester:assertTensorEq(actual, desired, 1e-15, "Randint sampler does not produce desired values")
 end
---]]
 
 function myTest.test_random_sample()
     torch.manualSeed(seed)
@@ -34,7 +42,7 @@ function myTest.test_random_sample()
     local desired = torch.Tensor({{ 0.61879477158567997,  0.59162362775974664},
     { 0.88868358904449662,  0.89165480011560816},
     { 0.4575674820298663,  0.7781880808593471 }})
-    tester:assertTensorEq(actual, desired, 1e-5)
+    tester:assertTensorEq(actual, desired, 1e-15, "random_sample sampler does not produce desired values")
 end
 
 --[[ TODO: wrap choice functions or remove these tests

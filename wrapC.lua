@@ -147,6 +147,17 @@ for k,v in pairs(doNotWrap) do
     funs[v] = nil
 end
 
+funs['rk_interval'] = {
+    name = 'interval',
+    arguments = { { name = 'max', type = 'long' } },
+    returnType = 'long'
+}
+funs['rk_randint'] = {
+    name = 'randint',
+    arguments = { { name = 'low', type = 'long' }, { name = 'high', type = 'long' } },
+    returnType = 'int'
+}
+
 --[[ Initialize the state structure (which is not really seeding,
    since we have replaced randomkit's own Mersenne-Twister by
    Torch's ]]
@@ -238,7 +249,7 @@ local function map2NotInPlace(inputA, inputB, inputC, output, func)
     return output
 end
 
-local function create_wrapper(name, parameters, returnType)
+local function create_wrapper(name, randomkitFunction, parameters, returnType)
 
     -- Note: default to DoubleTensor for arguments we don't know how to deal with
     local tensorReturnType = returnTypeMapping[returnType] or torch.DoubleTensor
@@ -260,7 +271,6 @@ local function create_wrapper(name, parameters, returnType)
     local function wrapper(...)
         local result, params = randomkit._check1DParams(#parameters, tensorReturnType, ...)
 
-        local randomkitFunction = randomkit.ffi[name]
         if result then
             if #params == 0 then
                 generateIntoTensor(result, randomkitFunction)
@@ -288,8 +298,22 @@ local function create_wrapper(name, parameters, returnType)
     return wrapper
 end
 
+local customWrappers = {}
+customWrappers.interval = function(state, max)
+    return randomkit.ffi.rk_interval(max, state)
+end
+customWrappers.randint = function(state, low, high)
+    return low + tonumber(randomkit.ffi.rk_interval(high - low, state))
+end
+
 -- Wrap by passing the state as first argument
 for k, v in pairs(funs) do
-    randomkit[string.sub(k, 4)] =  create_wrapper(v.name, v.arguments, v.returnType)
+    local randomkitFunction
+    if customWrappers[v.name] then
+        randomkitFunction = customWrappers[v.name]
+    else
+        randomkitFunction = randomkit.ffi[v.name]
+    end
+    randomkit[string.sub(k, 4)] =  create_wrapper(v.name, randomkitFunction, v.arguments, v.returnType)
 end
 
