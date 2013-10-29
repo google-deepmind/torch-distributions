@@ -26,5 +26,13 @@ Probability density function of a Gaussian distribution with mean `mu` and stand
 
 Cumulative distribution function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
+##Cauchy
 
+###randomkit.cauchyPDF(x, a, b)
+
+Probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
+
+###randomkit.cauchyCDF(x, a, b)
+
+Cumulative distribution function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
