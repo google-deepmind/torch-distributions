@@ -9,7 +9,11 @@ function randomkit.poissonLogPDF(x, lambda)
 end
 
 function randomkit.poissonCDF(x, lambda)
-    error("Not implemented")
+    if x >= 0 then
+        return cephes.igamc(math.floor(x + 1), lambda)
+    else
+        return 0
+    end
 end
 
 function randomkit.poissonQuantile(p, lambda)
