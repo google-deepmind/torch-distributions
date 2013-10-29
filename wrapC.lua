@@ -1,4 +1,5 @@
 local ffi = require("ffi")
+require 'torchffi'
 
 randomkit.ffi = ffi.load(package.searchpath('librandomkit', package.cpath))
 
