@@ -57,7 +57,7 @@ function randomkit._check1DParams(K, defaultResultType, ...)
     for paramIndex, param in ipairs(params) do
         local size
         if isTensor(param) then
-            size = param:size(1)
+            size = param:nElement()
         elseif type(param) == 'number' or type(param) == 'cdata' then
             size = 1
             -- Use torch's default Tensor for parameters

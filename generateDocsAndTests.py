@@ -15,20 +15,53 @@ def funcTest(name, sig, doc):
     numArgs = len(args)
 
     yield """function myTests.test_%s()""" % (name,)
+
+    # Call with scalar args, and no result tensor
     testArgs = ["0.5"] * (numArgs - 1)
     if name == 'zipf':
         testArgs = ["1.5"] * (numArgs - 1)
-
     yield """   tester:assert(%s(%s))""" % (func, ", ".join(testArgs))
+
+    # Call with scalar args and a result tensor
     testArgs = ["torch.Tensor(10)"] + testArgs
     yield """   tester:assert(%s(%s))""" % (func, ", ".join(testArgs))
+
+    # Call with 1D tensor args and no result tensor
     testArgs = ["torch.Tensor(10):fill(0.5)"] * (numArgs - 1)
     if name == 'zipf':
         testArgs = ["torch.Tensor(10):fill(1.5)"] * (numArgs - 1)
     yield """   tester:assert(%s(%s))""" % (func, ", ".join(testArgs))
+
+    # Call with 1D tensor args and a 1D result tensor
     testArgs = ["torch.Tensor(10)"] + testArgs
     yield """   tester:assert(%s(%s))""" % (func, ", ".join(testArgs))
-    testArgs = ["torch.Tensor(10)"] + testArgs
+
+    # Call with 2D tensor args and no result tensor
+    testArgs = ["torch.Tensor(3, 4):fill(0.5)"] * (numArgs - 1)
+    if name == 'zipf':
+        testArgs = ["torch.Tensor(3, 4):fill(1.5)"] * (numArgs - 1)
+    yield """   tester:assert(%s(%s))""" % (func, ", ".join(testArgs))
+
+    # Call with 2D tensor args and a 2D result tensor
+    testArgs = ["torch.Tensor(2, 6)"] + testArgs
+    yield """   tester:assert(%s(%s))""" % (func, ", ".join(testArgs))
+
+    # Call with one arg number and the rest 2D tensors, and no result tensor
+    # Call with 2D tensor args and no result tensor
+    testArgs = ["torch.Tensor(3, 4):fill(0.5)"] * (numArgs - 1)
+    if len(testArgs) > 1:
+        testArgs[0] = "0.5"
+        if name == 'zipf':
+            testArgs = ["torch.Tensor(3, 4):fill(1.5)"] * (numArgs - 1)
+            testArgs[0] = "1.5"
+        yield """   tester:assert(%s(%s))""" % (func, ", ".join(testArgs))
+
+        # Call with one arg number and the rest tensors, and a 2D result tensor
+        testArgs = ["torch.Tensor(2, 6)"] + testArgs
+        yield """   tester:assert(%s(%s))""" % (func, ", ".join(testArgs))
+
+    # Call with one too many params - should break
+    testArgs = ["0.5"] * numArgs
     yield """   tester:assertError(function() %s(%s) end)""" % (func, ", ".join(testArgs))
     yield """end"""
 
