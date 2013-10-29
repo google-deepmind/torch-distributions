@@ -3,7 +3,7 @@ function randomkit.cauchyPDF(x, a, b)
 end
 
 function randomkit.cauchyLogPDF(x, a, b)
-    error("Not implemented")
+    return -math.log(math.pi) + math.log(b) - math.log(math.pow(x - a, 2) + b*b)
 end
 
 function randomkit.cauchyCDF(x, a, b)

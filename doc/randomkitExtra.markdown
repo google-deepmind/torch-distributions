@@ -32,6 +32,10 @@ Cumulative distribution function of a Gaussian distribution with mean `mu` and s
 
 Probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
+###randomkit.cauchyLogPDF(x, a, b)
+
+Log of probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
+
 ###randomkit.cauchyCDF(x, a, b)
 
 Cumulative distribution function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
