@@ -16,3 +16,15 @@ Log of probability density function of a Poisson distribution with mean `lambda`
 
 Cumulative distribution function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
+##Gaussian
+
+###randomkit.gaussianPDF(x, mu, sigma)
+
+Probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
+
+###randomkit.gaussianCDF(x, mu, sigma)
+
+Cumulative distribution function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
+
+
+
