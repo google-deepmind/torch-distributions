@@ -11,7 +11,7 @@ description = {
   homepage = "https://github.com/jucor/torch-randomkit"
 }
 
-dependencies = { 'torch >= 7.0'}
+dependencies = { 'torch >= 7.0', 'cephes'}
 build = {
    type = "command",
    build_command = [[
