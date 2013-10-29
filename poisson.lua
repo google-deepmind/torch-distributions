@@ -5,7 +5,7 @@ function randomkit.poissonPDF(x, lambda)
 end
 
 function randomkit.poissonLogPDF(x, lambda)
-    error("Not implemented")
+    return x * cephes.log(lambda) - cephes.lgam(x+1) - lambda
 end
 
 function randomkit.poissonCDF(x, lambda)

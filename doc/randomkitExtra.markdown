@@ -8,6 +8,10 @@ These functions are provided in addition to the scipy randomkit functions.
 
 Probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
+###randomkit.poissonLogPDF(x, lambda)
+
+Log of probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
+
 ###randomkit.poissonCDF(x, lambda)
 
 Cumulative distribution function of a Poisson distribution with mean `lambda`, evaluated at `x`.
