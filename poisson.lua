@@ -10,7 +10,7 @@ end
 
 function randomkit.poissonCDF(x, lambda)
     if x >= 0 then
-        return cephes.igamc(math.floor(x + 1), lambda)
+        return cephes.pdtr(x, lambda)
     else
         return 0
     end
