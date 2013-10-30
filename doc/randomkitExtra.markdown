@@ -53,3 +53,17 @@ Log of probability density function of a Chi square distribution with `dof` degr
 ###randomkit.chi2CDF(x, dof)
 
 Cumulative distribution function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
+
+##Laplace
+
+###randomkit.laplacePDF(x, loc, scale)
+
+Probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
+
+###randomkit.laplaceLogPDF(x, loc, scale)
+
+Log of probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
+
+###randomkit.laplaceCDF(x, loc, scale)
+
+Cumulative distribution function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
