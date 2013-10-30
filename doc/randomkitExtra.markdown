@@ -40,3 +40,16 @@ Log of probability density function of a Cauchy distribution with location `a` a
 
 Cumulative distribution function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
+##Chi square
+
+###randomkit.chi2PDF(x, dof)
+
+Probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
+
+###randomkit.chi2LogPDF(x, dof)
+
+Log of probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
+
+###randomkit.chi2CDF(x, dof)
+
+Cumulative distribution function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
