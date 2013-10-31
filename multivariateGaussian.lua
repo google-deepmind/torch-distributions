@@ -1,4 +1,4 @@
-function randomkit.multivariateGaussianPDF(x, mu, sigma)
+function randomkit.multivariateGaussianLogPDF(x, mu, sigma)
     x = torch.Tensor(x)
     mu = torch.Tensor(mu)
 
@@ -26,10 +26,10 @@ function randomkit.multivariateGaussianPDF(x, mu, sigma)
 
     local decomposed = torch.potrf(sigma):triu() -- TODO remove triu as torch will be fixed
     local inverse = torch.inverse(decomposed)
-    local det = decomposed:diag():prod(1)[1]
+    local logdet = decomposed:diag():log():sum()
     local transformed = torch.mm(x:add(-1, mu), inverse)
-    transformed:apply(function(a) return randomkit.gaussianPDF(a, 0, 1) end)
-    local result = transformed:prod(2) / det -- by independence
+    transformed:apply(function(a) return randomkit.gaussianLogPDF(a, 0, 1) end)
+    local result = transformed:sum(2) - logdet -- by independence
 
     if scalarResult then
         return result[1][1]
@@ -38,8 +38,13 @@ function randomkit.multivariateGaussianPDF(x, mu, sigma)
     end
 end
 
-function randomkit.multivariateGaussianLogPDF(x, mu, sigma)
-    error("Not implemented")
+function randomkit.multivariateGaussianPDF(...)
+    local r = randomkit.multivariateGaussianLogPDF(...)
+    if type(r) == 'number' then
+        return math.exp(r)
+    else
+        return r:exp()
+    end
 end
 
 function randomkit.multivariateGaussianRand(...)
