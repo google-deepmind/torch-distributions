@@ -48,7 +48,7 @@ function myTests.multivariateGaussianPDF()
     for i = 1, N do
         for j = 1, N do
             local x = torch.Tensor({inputXs[i], inputXs[j]}) -- One point
-            r = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            local r = randomkit.multivariateGaussianPDF(x, mu, sigma)
             returnNumbers = returnNumbers and type(r) == 'number'
             result[i][j] = r
         end
@@ -76,7 +76,7 @@ function myTests.multivariateGaussianPDFNonStandard()
     for i = 1, N do
         for j = 1, N do
             local x = torch.Tensor({inputXs[i], inputXs[j]}) -- One point
-            r = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            local r = randomkit.multivariateGaussianPDF(x, mu, sigma)
             returnNumbers = returnNumbers and type(r) == 'number'
             result[i][j] = r
         end
@@ -94,18 +94,33 @@ function myTests.multivariateGaussianPDFMultiple()
 
     -- Points at which to evaluate the PDF
     local inputXs = torch.linspace(-1, 1, N)
-    local result = torch.Tensor(11, 11)
-    local mu = torch.Tensor(D):fill(0)
-    local sigma = torch.eye(D, D)
+    local mu = torch.Tensor({0.2, -0.2})
+    local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
 
-    local expected = standardGaussianPDFWindow
+    local x = torch.Tensor(N*N, D)
+    local expected = torch.Tensor(N*N, 1)
     for i = 1, N do
         for j = 1, N do
-            local x = torch.Tensor({inputXs[i], inputXs[j]}) -- One point
-            result[i][j] = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            x[(i-1)*N+j][1] = inputXs[i]
+            x[(i-1)*N+j][2] = inputXs[j]
+            expected[(i-1)*N+j] = nonStandardGaussianPDFWindow[i][j]
         end
     end
-    tester:assertTensorEq(result, expected, 1e-15, "standard 2D gaussian pdf should match expected value")
+
+
+    -- Try calling D , D, D-D
+    -- Try calling 1-D , D, D-D
+    -- Try calling N-D , D, D-D
+    tester:assertTensorEq(randomkit.multivariateGaussianPDF(x, mu, sigma), expected, 1e-14, "standard 2D gaussian pdf should match expected value")
+    -- Try calling D , 1-D, D-D
+    -- Try calling D , N-D, D-D
+    -- Try calling D, D, D
+    -- Try calling D , 1-D, D
+    -- Try calling D , N-D, D
+    -- Try calling 1-D , D, D
+    -- Try calling N-D , D, D
+ 
+    -- Same with result as first element
 end
 
 tester:add(myTests)

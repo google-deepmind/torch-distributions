@@ -10,7 +10,7 @@ function randomkit.multivariateGaussianPDF(x, mu, sigma)
     if mu:dim() == 1 then
         mu:resize(1, mu:nElement())
     end
-    local nResults = nil
+    local nResults
     if x:size(1) == 1 and mu:size(1) ~= 1 then
         nResults = mu:size(1)
         x = x:expand(nResults, x:size(2))
@@ -21,7 +21,7 @@ function randomkit.multivariateGaussianPDF(x, mu, sigma)
         if x:size(1) ~= mu:size(1) then
             error("x and mu should have the same number of rows")
         end
-        nResult = x:size(1)
+        nResults = x:size(1)
     end
 
     local decomposed = torch.potrf(sigma):triu() -- TODO remove triu as torch will be fixed
