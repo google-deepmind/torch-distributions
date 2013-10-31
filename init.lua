@@ -106,6 +106,7 @@ torch.include("randomkit", "gaussian.lua")
 torch.include("randomkit", "cauchy.lua")
 torch.include("randomkit", "chi2.lua")
 torch.include("randomkit", "laplace.lua")
+torch.include("randomkit", "multivariateGaussian.lua")
 
 local aliases = {
     random_sample = 'double',
