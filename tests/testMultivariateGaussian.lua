@@ -1,4 +1,5 @@
 require 'randomkit'
+require 'util.warn'
 local myTests = {}
 local tester = torch.Tester()
 
@@ -38,40 +39,49 @@ function myTests.multivariateGaussianPDF()
 
     -- Points at which to evaluate the PDF
     local inputXs = torch.linspace(-1, 1, N)
-    local result = torch.Tensor(11, 11)
+    local result = torch.Tensor(N, N)
     local mu = torch.Tensor(D):fill(0)
     local sigma = torch.eye(D, D)
 
+    local returnNumbers = true
     local expected = standardGaussianPDFWindow
     for i = 1, N do
         for j = 1, N do
             local x = torch.Tensor({inputXs[i], inputXs[j]}) -- One point
-            result[i][j] = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            r = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            returnNumbers = returnNumbers and type(r) == 'number'
+            result[i][j] = r
         end
     end
+    tester:assert(returnNumbers, "should return a number when called with vectors only")
     tester:assertTensorEq(result, expected, 1e-15, "standard 2D gaussian pdf should match expected value")
 end
 
 function myTests.multivariateGaussianPDFNonStandard()
 
+    -- Try calling D, D, D-D
     -- Non-standard 2-d gaussian, singleton samples, no result tensor
     local D = 2
     local N = 11
 
     -- Points at which to evaluate the PDF
     local inputXs = torch.linspace(-1, 1, N)
-    local result = torch.Tensor(11, 11)
+    local result = torch.Tensor(N, N)
     local mu = torch.Tensor({0.2, -0.2})
     local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
 
     local expected = nonStandardGaussianPDFWindow
 
+    local returnNumbers = true
     for i = 1, N do
         for j = 1, N do
             local x = torch.Tensor({inputXs[i], inputXs[j]}) -- One point
-            result[i][j] = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            r = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            returnNumbers = returnNumbers and type(r) == 'number'
+            result[i][j] = r
         end
     end
+    tester:assert(returnNumbers, "should return a number when called with vectors only")
     tester:assertTensorEq(result, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
