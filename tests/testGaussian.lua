@@ -13,6 +13,17 @@ function myTest.gaussianPDF()
     tester:assertalmosteq(randomkit.gaussianPDF(4,    2, 3), 0.106482668507451, 1e-15)
 end
 
+function myTest.gaussianLogPDF()
+    tester:assertalmosteq(randomkit.gaussianLogPDF(-0.5, 0, 1), math.log(0.352065326764300), 1e-12)
+    tester:assertalmosteq(randomkit.gaussianLogPDF(0,    0, 1), math.log(0.398942280401433), 1e-12)
+    tester:assertalmosteq(randomkit.gaussianLogPDF(1,    0, 1), math.log(0.241970724519143), 1e-12)
+    tester:assertalmosteq(randomkit.gaussianLogPDF(4,    0, 1), math.log(0.000133830225765), 1e-12)
+    tester:assertalmosteq(randomkit.gaussianLogPDF(-0.5, 2, 3), math.log(0.093970625136768), 1e-12)
+    tester:assertalmosteq(randomkit.gaussianLogPDF(0,    2, 3), math.log(0.106482668507451), 1e-12)
+    tester:assertalmosteq(randomkit.gaussianLogPDF(1,    2, 3), math.log(0.125794409230998), 1e-12)
+    tester:assertalmosteq(randomkit.gaussianLogPDF(4,    2, 3), math.log(0.106482668507451), 1e-12)
+end
+
 function myTest.gaussianCDF()
     tester:assertalmosteq(randomkit.gaussianCDF(-0.5, 0, 1), 0.308537538725987, 1e-15)
     tester:assertalmosteq(randomkit.gaussianCDF(0,    0, 1), 0.500000000000000, 1e-15)
