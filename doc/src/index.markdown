@@ -122,8 +122,9 @@ Log of probability density function of a Laplace distribution with location `loc
 ####randomkit.laplaceCDF(x, loc, scale)
 
 Cumulative distribution function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
+
 ##Direct access to FFI
 
-###cephes.ffi.&ast;
+###randomkit.ffi.&ast;
 
-Functions directly accessible at the top of the `cephes` table are Lua wrappers to the actual C functions from Cephes, with extra error checking. If, for any reason, you want to get rid of this error checking and of a possible overhead, the FFI-wrapper functions can be called directly via `cephes.ffi.myfunction()` instead of `cephes.myfunction()`.
+Functions directly accessible at the top of the `randomkit` table are Lua wrappers to the actual C functions from Randomkit, with extra error checking. If, for any reason, you want to get rid of this error checking and of a possible overhead, the FFI-wrapper functions can be called directly via `randomkit.ffi.myfunction()` instead of `randomkit.myfunction()`.
