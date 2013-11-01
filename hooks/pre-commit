@@ -40,11 +40,6 @@ else
     echo "HTML documentation unchanged, proceeding"
 fi
 
-# Detect modification to markdown documentation
-#if [ "`git diff-index HEAD --exit-code --cached -- $MARKDOWN/`" ]
-#then
-#    echo Markdown documentation modified, trying to run Jekyll
-
 # Apply Jekill to doc folder
 if [ -x "`which jekyll`" ] 
 then
@@ -52,8 +47,10 @@ then
     OLDPWD="`pwd`"
     cd doc/src
     bundle exec jekyll build --destination ../html
+    ERR=$?
     cd "$OLDPWD"
-    if [ $? -ne 0 ]
+
+    if [ ${ERR} -ne 0 ]
     then
         cat <<\EOF
 Jekyll generated an error, the HTML documentation

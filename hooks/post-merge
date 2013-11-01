@@ -1,6 +1,10 @@
 #!/bin/sh
-# Merge the doc from master to gh-pages
-
+#
+# An example hook script to verify if the doc has been changed
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
 
 MARKDOWN="doc/src"
 HTML="doc/html"
@@ -16,10 +20,55 @@ fi
 # Redirect output to stderr.
 exec 1>&2
 
-BRANCH=`git rev-parse --symbolic --abbrev-ref HEAD`
-if [ "$BRANCH" = "master" ]
+# Forbid modification to HTML documentation
+if [ "`git diff-index HEAD --exit-code --cached -- $HTML/`" ]
 then
-    echo "Update gh-pages with modified documentation"
-    git subtree split -q --prefix "$HTML" --branch gh-pages
+	cat <<\EOF
+Error: HTML documentation manually modified
+
+HTML documentation is generated automatically by Jekyll from
+the Markdown documentation in pre-commit hook, and should 
+not be modified manually.
+
+If that is really, really what you wanted to do nonetheless,
+you can by-pass the verification and Jekyll with:
+
+git commit --no-verify
+EOF
+	exit 1
+else
+    echo "HTML documentation unchanged, proceeding"
 fi
 
+# Detect modification to markdown documentation
+#if [ "`git diff-index HEAD --exit-code --cached -- $MARKDOWN/`" ]
+#then
+#    echo Markdown documentation modified, trying to run Jekyll
+
+# Apply Jekill to doc folder
+if [ -x "`which jekyll`" ] 
+then
+    echo Jekyll found, running it
+    OLDPWD="`pwd`"
+    cd doc/src
+    bundle exec jekyll build --destination ../html
+    ERR=$?
+    cd "$OLDPWD"
+
+    if [ ${ERR} -ne 0 ]
+    then
+        cat <<\EOF
+Jekyll generated an error, the HTML documentation
+cannot be updated, aborting commit. Use
+
+git commit --no-verify
+
+to bypass this verification.
+EOF
+        exit 1
+    else
+        # Add the new html folder, including removals
+        echo Adding generated site to commit
+        git add --all doc/html
+    fi
+fi
