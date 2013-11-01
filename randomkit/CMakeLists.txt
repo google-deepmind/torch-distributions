@@ -1,5 +1,3 @@
-FILE(GLOB src
-    "*.c"
-    )
-
-SET(src "${src}" PARENT_SCOPE)
+FILE(GLOB src "*.c")
+ADD_TORCH_PACKAGE(randomkit "${src}" "")
+TARGET_LINK_LIBRARIES(randomkit TH)
