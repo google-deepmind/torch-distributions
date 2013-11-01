@@ -151,7 +151,6 @@ end
 
 -- Try calling 1xD, D, DxD
 function myTests.multivariateGaussianPDFMultiple2()
-    local D = 2
     local x = torch.Tensor({{0, 0}})
     local mu = torch.Tensor({0.2, -0.2})
     local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
@@ -163,53 +162,73 @@ end
 
 -- Try calling D, 1xD, DxD
 function myTests.multivariateGaussianPDFMultiple3()
-    local D = 2
     local x = torch.Tensor({0, 0})
     local mu = torch.Tensor({{-0.2, 0.2}})
     local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
     local expected = torch.Tensor({{nonStandardGaussianPDFWindow[6][6]}})
     local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
-
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
 -- Try calling D, NxD, DxD
 function myTests.multivariateGaussianPDFMultiple4()
-    local D = 2
-    local N = 3
     local x = torch.Tensor({0, 0})
     local mu = torch.Tensor({{-0.2, 0.2}, {-0.4, 0.4}, {0.0, 0.0}})
     local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
     local expected = torch.Tensor({{nonStandardGaussianPDFWindow[6][6]}, {0.000000597017644}, {5.305164769729846}})
     local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
-
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
 -- Now with diagonal covariance only
 -- Try calling D, D, D
 function myTests.multivariateGaussianPDFMultiple5()
-    -- TODO
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({-0.2, 0.2})
+    local sigma = torch.Tensor({0.05, 0.4})
+    local expected = 0.717583785682725
+    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    tester:assertalmosteq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
 -- Try calling D, 1-D, D
 function myTests.multivariateGaussianPDFMultiple6()
-    -- TODO
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({{-0.2, 0.2}})
+    local sigma = torch.Tensor({0.05, 0.4})
+    local expected = torch.Tensor({0.717583785682725})
+    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
 -- Try calling D, NxD, D
 function myTests.multivariateGaussianPDFMultiple7()
-    -- TODO
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({{-0.2, 0.2}, {-0.4, 0.4}, {0.0, 0.0}})
+    local sigma = torch.Tensor({0.05, 0.4})
+    local expected = torch.Tensor({0.717583785682725, 0.186026607635655, 1.125395395196383})
+    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
 -- Try calling 1xD, D, D
 function myTests.multivariateGaussianPDFMultiple8()
-    -- TODO
+    local x = torch.Tensor({{0, 0}})
+    local mu = torch.Tensor({-0.2, 0.2})
+    local sigma = torch.Tensor({0.05, 0.4})
+    local expected = torch.Tensor({0.717583785682725})
+    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
 -- Try calling NxD, D, D
 function myTests.multivariateGaussianPDFMultiple9()
-    -- TODO
+    local x = torch.Tensor({{0, 0}, {0.1, 0.2}, {-0.3, -0.1}})
+    local mu = torch.Tensor({-0.2, 0.2})
+    local sigma = torch.Tensor({0.05, 0.4})
+    local expected = torch.Tensor({0.717583785682725, 0.457551622898630, 0.909950056726693})
+    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
 -- Same with result as first element

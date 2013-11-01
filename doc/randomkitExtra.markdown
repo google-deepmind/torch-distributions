@@ -22,9 +22,39 @@ Cumulative distribution function of a Poisson distribution with mean `lambda`, e
 
 Probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-###randomkit.gaussianCDF(x, mu, sigma)
+###randomkit.gaussianLogPDF(x, mu, sigma)
+
+Log probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
+
+###randomkit.gaussianCDF(x, mu, sigms)
 
 Cumulative distribution function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
+
+##Multivariate Gaussian
+
+###randomkit.multivariateGaussianPDF(x, mu, sigma)
+
+Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `sigma`, evaluated at `x`.
+
+For a Gaussian with D variables, the following forms are valid:
+
+`randomkit.multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
+`randomkit.multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
+`randomkit.multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
+`randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
+
+In the case of a diagonal covariance `sigma`, you may also opt to pass a vector containing only the diagonal elements:
+
+`randomkit.multivariateGaussianPDF([D], [D], [D])` - returns a number.
+`randomkit.multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
+`randomkit.multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
+`randomkit.multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
+
+###randomkit.multivariateGaussianLogPDF(x, mu, sigma)
+
+Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `sigma`, evaluated at `x`.
+
+See `randomkit.multivariateGaussianPDF()` for description of valid forms for x, mu and sigma.
 
 ##Cauchy
 

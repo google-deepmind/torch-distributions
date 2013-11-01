@@ -28,14 +28,24 @@ function randomkit.multivariateGaussianLogPDF(x, mu, sigma)
         nResults = x:size(1)
     end
 
-    local decomposed = torch.potrf(sigma):triu() -- TODO remove triu as torch will be fixed
-    local inverse = torch.inverse(decomposed)
     x = x:clone():add(-1, mu)
-    local transformed = torch.mm(x, inverse)
-    transformed:apply(function(a) return randomkit.gaussianLogPDF(a, 0, 1) end)
-    local logdet = decomposed:diag():log():sum()
-    local result = transformed:sum(2) - logdet -- by independence
 
+    local logdet
+    local transformed
+
+    -- For a diagonal covariance matrix, we allow passing a vector of the diagonal entries
+    if sigma:dim() == 1 then
+        local D = sigma:size(1)
+        local decomposed = sigma:sqrt()
+        logdet = decomposed:clone():log():sum()
+        transformed = torch.cdiv(x, decomposed:resize(1, D):expand(nResults, D))
+    else
+        local decomposed = torch.potrf(sigma):triu() -- TODO remove triu as torch will be fixed
+        transformed = torch.mm(x, torch.inverse(decomposed))
+        logdet = decomposed:diag():log():sum()
+    end
+    transformed:apply(function(a) return randomkit.gaussianLogPDF(a, 0, 1) end)
+    local result = transformed:sum(2) - logdet -- by independence
     if scalarResult then
         return result[1][1]
     else
