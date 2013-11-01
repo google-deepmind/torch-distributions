@@ -123,6 +123,18 @@ Log of probability density function of a Laplace distribution with location `loc
 
 Cumulative distribution function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
+##Unit Tests
+
+Last but not least, the unit tests are in the folder
+(`luasrc/tests`)[https://github.com/jucor/torch-randomkit/tree/master/luasrc/tests]. You can run them from your local clone of the repostiory with:
+
+{% highlight bash %}
+git clone https://www.github.com/jucor/torch-randomkit
+find torch-randomkit/luasrc/tests -name "test&ast;lua" -exec torch {} \;
+{% highlight bash %}
+
+Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.
+
 ##Direct access to FFI
 
 ###randomkit.ffi.&ast;
