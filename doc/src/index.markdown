@@ -131,7 +131,7 @@ Last but not least, the unit tests are in the folder
 {% highlight bash %}
 git clone https://www.github.com/jucor/torch-randomkit
 find torch-randomkit/luasrc/tests -name "test&ast;lua" -exec torch {} \;
-{% highlight bash %}
+{% endhighlight %}
 
 Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.
 
