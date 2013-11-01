@@ -8,7 +8,7 @@ source = {
 
 description = {
   summary = "Numpy's randomkit, wrapped for Torch",
-  homepage = "https://github.com/jucor/torch-randomkit"
+  homepage = "https://jucor.github.io/torch-randomkit"
 }
 
 dependencies = { 'torch >= 7.0', 'cephes'}
