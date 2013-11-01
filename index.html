@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="stylesheets/styles.css">
+        <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css">
+    </head>
+    <body>
+
+<h1 id='randomkit_random_number_generators_wrapped_for_torch'>Randomkit random number generators, wrapped for Torch</h1>
+<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#list_of_randomkit_generators'>List of Randomkit generators</a></li><li><a href='#added_functions'>Added functions</a><ul style='list-style: none;'><li><a href='#poisson'>Poisson</a><ul style='list-style: none;'><li><a href='#randomkitpoissonpdfx_lambda'>randomkit.poissonPDF(x, lambda)</a></li><li><a href='#randomkitpoissonlogpdfx_lambda'>randomkit.poissonLogPDF(x, lambda)</a></li><li><a href='#randomkitpoissoncdfx_lambda'>randomkit.poissonCDF(x, lambda)</a></li></ul></li><li><a href='#gaussian'>Gaussian</a><ul style='list-style: none;'><li><a href='#randomkitgaussianpdfx_mu_sigma'>randomkit.gaussianPDF(x, mu, sigma)</a></li><li><a href='#randomkitgaussianlogpdfx_mu_sigma'>randomkit.gaussianLogPDF(x, mu, sigma)</a></li><li><a href='#randomkitgaussiancdfx_mu_sigms'>randomkit.gaussianCDF(x, mu, sigms)</a></li></ul></li><li><a href='#multivariate_gaussian'>Multivariate Gaussian</a><ul style='list-style: none;'><li><a href='#randomkitmultivariategaussianpdfx_mu_sigma'>randomkit.multivariateGaussianPDF(x, mu, sigma)</a></li><li><a href='#randomkitmultivariategaussianlogpdfx_mu_sigma'>randomkit.multivariateGaussianLogPDF(x, mu, sigma)</a></li></ul></li><li><a href='#cauchy'>Cauchy</a><ul style='list-style: none;'><li><a href='#randomkitcauchypdfx_a_b'>randomkit.cauchyPDF(x, a, b)</a></li><li><a href='#randomkitcauchylogpdfx_a_b'>randomkit.cauchyLogPDF(x, a, b)</a></li><li><a href='#randomkitcauchycdfx_a_b'>randomkit.cauchyCDF(x, a, b)</a></li></ul></li><li><a href='#chi_square'>Chi square</a><ul style='list-style: none;'><li><a href='#randomkitchi2pdfx_dof'>randomkit.chi2PDF(x, dof)</a></li><li><a href='#randomkitchi2logpdfx_dof'>randomkit.chi2LogPDF(x, dof)</a></li><li><a href='#randomkitchi2cdfx_dof'>randomkit.chi2CDF(x, dof)</a></li></ul></li><li><a href='#laplace'>Laplace</a><ul style='list-style: none;'><li><a href='#randomkitlaplacepdfx_loc_scale'>randomkit.laplacePDF(x, loc, scale)</a></li><li><a href='#randomkitlaplacelogpdfx_loc_scale'>randomkit.laplaceLogPDF(x, loc, scale)</a></li><li><a href='#randomkitlaplacecdfx_loc_scale'>randomkit.laplaceCDF(x, loc, scale)</a></li></ul></li></ul></li><li><a href='#direct_access_to_ffi'>Direct access to FFI</a><ul style='list-style: none;'><li><a href='#cephesffi'>cephes.ffi.&ast;</a></li></ul></li></ul></div>
+<p>Provides and wraps the random nnumber generators the <a href=''>Randomkit library</a>, copied from <a href=''>Numpy</a></p>
+
+<h2 id='list_of_randomkit_generators'>List of Randomkit generators</h2>
+
+<p>See this <a href='randomkit.html'>extracted doc</a>.</p>
+
+<h2 id='added_functions'>Added functions</h2>
+
+<p>These functions are provided in addition to the scipy randomkit functions.</p>
+
+<h3 id='poisson'>Poisson</h3>
+
+<h4 id='randomkitpoissonpdfx_lambda'>randomkit.poissonPDF(x, lambda)</h4>
+
+<p>Probability density function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitpoissonlogpdfx_lambda'>randomkit.poissonLogPDF(x, lambda)</h4>
+
+<p>Log of probability density function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitpoissoncdfx_lambda'>randomkit.poissonCDF(x, lambda)</h4>
+
+<p>Cumulative distribution function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
+
+<h3 id='gaussian'>Gaussian</h3>
+
+<h4 id='randomkitgaussianpdfx_mu_sigma'>randomkit.gaussianPDF(x, mu, sigma)</h4>
+
+<p>Probability density function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitgaussianlogpdfx_mu_sigma'>randomkit.gaussianLogPDF(x, mu, sigma)</h4>
+
+<p>Log probability density function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitgaussiancdfx_mu_sigms'>randomkit.gaussianCDF(x, mu, sigms)</h4>
+
+<p>Cumulative distribution function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
+
+<h3 id='multivariate_gaussian'>Multivariate Gaussian</h3>
+
+<h4 id='randomkitmultivariategaussianpdfx_mu_sigma'>randomkit.multivariateGaussianPDF(x, mu, sigma)</h4>
+
+<p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>sigma</code>, evaluated at <code>x</code>.</p>
+
+<p>For a Gaussian with D variables, the following forms are valid:</p>
+
+<p><code>randomkit.multivariateGaussianPDF([D], [D], [D, D])</code> - returns a number. <code>randomkit.multivariateGaussianPDF([N, D], [D], [D, D])</code> - returns a Tensor. <code>randomkit.multivariateGaussianPDF([D], [N, D], [D, D])</code> - returns a Tensor. <code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - returns a Tensor.</p>
+
+<p>In the case of a diagonal covariance <code>sigma</code>, you may also opt to pass a vector containing only the diagonal elements:</p>
+
+<p><code>randomkit.multivariateGaussianPDF([D], [D], [D])</code> - returns a number. <code>randomkit.multivariateGaussianPDF([N, D], [D], [D])</code> - returns a Tensor. <code>randomkit.multivariateGaussianPDF([D], [N, D], [D])</code> - returns a Tensor. <code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D])</code> - returns a Tensor.</p>
+
+<h4 id='randomkitmultivariategaussianlogpdfx_mu_sigma'>randomkit.multivariateGaussianLogPDF(x, mu, sigma)</h4>
+
+<p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>sigma</code>, evaluated at <code>x</code>.</p>
+
+<p>See <code>randomkit.multivariateGaussianPDF()</code> for description of valid forms for x, mu and sigma.</p>
+
+<h3 id='cauchy'>Cauchy</h3>
+
+<h4 id='randomkitcauchypdfx_a_b'>randomkit.cauchyPDF(x, a, b)</h4>
+
+<p>Probability density function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitcauchylogpdfx_a_b'>randomkit.cauchyLogPDF(x, a, b)</h4>
+
+<p>Log of probability density function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitcauchycdfx_a_b'>randomkit.cauchyCDF(x, a, b)</h4>
+
+<p>Cumulative distribution function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
+
+<h3 id='chi_square'>Chi square</h3>
+
+<h4 id='randomkitchi2pdfx_dof'>randomkit.chi2PDF(x, dof)</h4>
+
+<p>Probability density function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitchi2logpdfx_dof'>randomkit.chi2LogPDF(x, dof)</h4>
+
+<p>Log of probability density function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitchi2cdfx_dof'>randomkit.chi2CDF(x, dof)</h4>
+
+<p>Cumulative distribution function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
+
+<h3 id='laplace'>Laplace</h3>
+
+<h4 id='randomkitlaplacepdfx_loc_scale'>randomkit.laplacePDF(x, loc, scale)</h4>
+
+<p>Probability density function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitlaplacelogpdfx_loc_scale'>randomkit.laplaceLogPDF(x, loc, scale)</h4>
+
+<p>Log of probability density function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
+
+<h4 id='randomkitlaplacecdfx_loc_scale'>randomkit.laplaceCDF(x, loc, scale)</h4>
+
+<p>Cumulative distribution function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
+
+<h2 id='direct_access_to_ffi'>Direct access to FFI</h2>
+
+<h3 id='cephesffi'>cephes.ffi.&ast;</h3>
+
+<p>Functions directly accessible at the top of the <code>cephes</code> table are Lua wrappers to the actual C functions from Cephes, with extra error checking. If, for any reason, you want to get rid of this error checking and of a possible overhead, the FFI-wrapper functions can be called directly via <code>cephes.ffi.myfunction()</code> instead of <code>cephes.myfunction()</code>.</p>
+
+    </body>
+</html>
