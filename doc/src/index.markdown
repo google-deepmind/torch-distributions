@@ -10,8 +10,18 @@ layout: doc
 
 Provides and wraps the random nnumber generators the [Randomkit library](), copied from [Numpy]()
 
+##Installation
+
+From a terminal:
+{% highlight bash %}
+torch-rocks install https://raw.github.com/jucor/torch-randomkit/master/randomkit-0-0.rockspec
+{% endhighlight %}
+
+This will be simplified once the rockspec will be merged into the list of official rocks.
+
 ##List of Randomkit generators
-See this [extracted doc](randomkit.html).
+
+See this [automatically extracted doc](randomkit.html), built from Numpy's docstrings.
 
 ##Added functions
 
