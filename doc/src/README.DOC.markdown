@@ -1,3 +1,8 @@
+---
+title: Instructions for documentation
+layout: doc
+---
+
 # Documentation for torch-cephes
 
 ## How to generate the doc
