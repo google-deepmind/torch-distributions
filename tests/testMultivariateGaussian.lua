@@ -319,7 +319,7 @@ end
 
 
 -- D, DxD
-function myTests.multivariateGaussianRand()
+function myTests.test_multivariateGaussianRand_D_DD()
     local mu = torch.Tensor({10, 0})
     local sigma = torch.eye(2)
     local N = 10000
@@ -339,6 +339,14 @@ function myTests.multivariateGaussianRand()
 
     statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
 end
+
+function myTests.test_multivariateGaussianRand_D_DD_errorSizes()
+    -- Check we get an error with inconsistent sizes
+    local mu = torch.zeros(3)
+    local sigma = torch.eye(2) * 2
+    tester:assertError(function() randomkit.multivariateGaussianRand(mu, sigma) end)
+end
+
 
 -- NxD, DxD
 -- D, NxDxD

@@ -66,23 +66,18 @@ function randomkit.multivariateGaussianRand(...)
     local nArgs = select("#", ...)
     local resultTensor
 
-    local singleResult -- whether to return single sample as a vector rather than 1xD tensor
-    -- TODO: singleResult may not be needed...
-
     local n -- number of samples
     local d -- number of dimensions for the Gaussian
     local mu -- mean
     local sigma -- covariance matrix
 
     if nArgs == 2 then -- mu, sigma only: return one sample
-        singleResult = true
         n = 1
         mu = torch.Tensor(select(1, ...))
         sigma = torch.Tensor(select(2, ...))
         d = sigma:size(2)
         resultTensor = torch.Tensor(d)
-    elseif nArgs == 3 then -- RESULT, mu, sigma - where result is either a number or a result tensor
-        singleResult = false
+    elseif nArgs == 3 then -- RESULT, mu, sigma - where result is either a number or an output tensor
         local resultInfo = select(1, ...)
         mu = torch.Tensor(select(2, ...))
         sigma = torch.Tensor(select(3, ...))
@@ -127,6 +122,9 @@ function randomkit.multivariateGaussianRand(...)
     end
     if sigma:dim() == 2 then
         sigma:resize(1, d, d)
+    end
+    if mu:size(2) ~= sigma:size(2) then
+        error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
     end
     if mu:size(1) == 1 then
         mu = mu:expand(n, d)
