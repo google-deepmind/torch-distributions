@@ -106,6 +106,9 @@ function myTests.multivariateGaussianPDFNonStandard()
 
     local expected = nonStandardGaussianPDFWindow
 
+    local oldMu = mu:clone()
+    local oldSigma = sigma:clone()
+
     local returnNumbers = true
     for i = 1, N do
         for j = 1, N do
@@ -115,12 +118,14 @@ function myTests.multivariateGaussianPDFNonStandard()
             result[i][j] = r
         end
     end
+    tester:assertTensorEq(mu, oldMu, 1e-14, "multivariateGaussianPDF should not modify sigma")
+    tester:assertTensorEq(sigma, oldSigma, 1e-14, "multivariateGaussianPDF should not modify sigma")
     tester:assert(returnNumbers, "should return a number when called with vectors only")
     tester:assertTensorEq(result, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
-
-function myTests.multivariateGaussianPDFMultiple()
+-- Try calling NxD, D, DxD
+function myTests.multivariateGaussianPDFMultiple1()
 
     -- Standard 2-d gaussian, multiple samples, no result tensor
     local D = 2
@@ -141,23 +146,74 @@ function myTests.multivariateGaussianPDFMultiple()
         end
     end
 
-
-    -- Try calling D , D, D-D
-    -- Try calling 1-D , D, D-D
-    -- Try calling N-D , D, D-D
-    tester:assertTensorEq(randomkit.multivariateGaussianPDF(x, mu, sigma), expected, 1e-14, "standard 2D gaussian pdf should match expected value")
-    -- Try calling D , 1-D, D-D
-    -- Try calling D , N-D, D-D
-
-    -- Now with diagonal covariance only
-    -- Try calling D, D, D
-    -- Try calling D , 1-D, D
-    -- Try calling D , N-D, D
-    -- Try calling 1-D , D, D
-    -- Try calling N-D , D, D
- 
-    -- Same with result as first element
+    tester:assertTensorEq(randomkit.multivariateGaussianPDF(x, mu, sigma), expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
+
+-- Try calling 1xD, D, DxD
+function myTests.multivariateGaussianPDFMultiple2()
+    local D = 2
+    local x = torch.Tensor({{0, 0}})
+    local mu = torch.Tensor({0.2, -0.2})
+    local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
+    local expected = torch.Tensor({{nonStandardGaussianPDFWindow[6][6]}})
+    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    tester:assertTensorEq(randomkit.multivariateGaussianPDF(x, mu, sigma), got, 1e-14, "multivariateGaussianPDF should not modify args")
+    tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
+end
+
+-- Try calling D, 1xD, DxD
+function myTests.multivariateGaussianPDFMultiple3()
+    local D = 2
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({{-0.2, 0.2}})
+    local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
+    local expected = torch.Tensor({{nonStandardGaussianPDFWindow[6][6]}})
+    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+
+    tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
+end
+
+-- Try calling D, NxD, DxD
+function myTests.multivariateGaussianPDFMultiple4()
+    local D = 2
+    local N = 3
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({{-0.2, 0.2}, {-0.4, 0.4}, {0.0, 0.0}})
+    local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
+    local expected = torch.Tensor({{nonStandardGaussianPDFWindow[6][6]}, {0.000000597017644}, {5.305164769729846}})
+    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+
+    tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
+end
+
+-- Now with diagonal covariance only
+-- Try calling D, D, D
+function myTests.multivariateGaussianPDFMultiple5()
+    -- TODO
+end
+
+-- Try calling D, 1-D, D
+function myTests.multivariateGaussianPDFMultiple6()
+    -- TODO
+end
+
+-- Try calling D, NxD, D
+function myTests.multivariateGaussianPDFMultiple7()
+    -- TODO
+end
+
+-- Try calling 1xD, D, D
+function myTests.multivariateGaussianPDFMultiple8()
+    -- TODO
+end
+
+-- Try calling NxD, D, D
+function myTests.multivariateGaussianPDFMultiple9()
+    -- TODO
+end
+
+-- Same with result as first element
+-- TODO
 
 function myTests.multivariateGaussianLogPDFNonStandard()
 
