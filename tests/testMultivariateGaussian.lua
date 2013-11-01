@@ -262,5 +262,153 @@ function myTests.multivariateGaussianLogPDFNonStandard()
     tester:assertTensorEq(result, expected, 1e-12, "non-standard 2D gaussian log-pdf should match expected value")
 end
 
+-- 1-D, one-sample T test
+local function tTest(samples, mu, sigma)
+    local sampleMean = samples:mean()
+    local sampleStdDev = math.sqrt(samples:var())
+    local n = samples:nElement()
+    print("n", n)
+    print("sampelMean, stddev", sampleMean, sampleStdDev)
+
+    local t = (sampleMean - mu) * math.sqrt(n) / sampleStdDev
+    local p = 1 - cephes.stdtr(n - 1, t)
+    return p, t
+end
+
+local function statisticalTestMultivariateGaussian(alpha, samples, mu, sigma, shouldAccept)
+
+    -- Part one: chi2 test projection onto each axis
+
+    assert(samples:dim() == 2)
+    local N = samples:size(1)
+    local D = samples:size(2)
+
+    assert(mu:dim() == 1)
+    assert(mu:size(1) == D)
+
+    assert(sigma:dim() == 2)
+    assert(sigma:size(1) == D)
+    assert(sigma:size(2) == D)
+
+    local rejectionCount = 0
+    for k = 1, D do
+        local projectedSamples = samples:select(2, k)
+
+        -- Now, we expect the distribution of the projected samples to be mu[k], math.sqrt(sigma[k][k])
+        local p, chi2 = randomkit.chi2Gaussian(projectedSamples, mu[k], math.sqrt(sigma[k][k]))
+
+        -- Bonferroni's correction
+        if p < (1 - alpha) / D then
+            -- we're rejecting the null hypothesis, that the sample is normally distributed with the above params
+            rejectionCount = rejectionCount + 1
+            tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters")
+        end
+    end
+
+    -- If we're not supposed to be accepting this sample, check that it was rejected by at least one of the tests
+    tester:assert(shouldAccept or rejectionCount > 0, "projected sample should be rejected as gaussian with given parameters")
+
+    -- Part two: transform and chi2 test against standard normal dist'n
+
+    -- TODO
+
+
+
+end
+
+
+
+-- D, DxD
+function myTests.multivariateGaussianRand()
+    local mu = torch.Tensor({10, 0})
+    local sigma = torch.eye(2)
+    local N = 10000
+    local D = 2
+
+    local dimOK = true
+    local sizeOK = true
+    local result = torch.Tensor(N, D):zero()
+    for k = 1, N do
+        local sample = randomkit.multivariateGaussianRand(mu, sigma)
+        dimOK = dimOK and sample:dim() == 1
+        sizeOK = sizeOK and sample:size(1) == D
+        result[k] = sample
+    end
+    tester:assert(dimOK, "single sample should return vector result")
+    tester:assert(sizeOK, "result should have size = 2")
+
+    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+end
+
+-- NxD, DxD
+-- D, NxDxD
+-- NxD, NxDxD
+--
+-- N, D, DxD
+function myTests.multivariateGaussianRand_N_D_DD()
+    local mu = torch.Tensor({10, 0})
+    local sigma = torch.eye(2)
+    local N = 10000
+    local D = 2
+
+    local result = randomkit.multivariateGaussianRand(N, mu, sigma)
+    tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
+    tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
+    tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
+    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+end
+function myTests.multivariateGaussianRand_N_D_DD2()
+    local mu = torch.Tensor({10, 0})
+    local sigma = torch.Tensor({{2.5, 0.1}, {0.1, 2.5}})
+    local N = 20000
+    local D = 2
+
+    local result = randomkit.multivariateGaussianRand(N, mu, sigma)
+    tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
+    tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
+    tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
+    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+end
+function myTests.multivariateGaussianRand_N_D_DD_fail_mean()
+    local mu = torch.Tensor({10, 0})
+    local sigma = torch.eye(2)
+    local N = 10000
+    local D = 2
+
+    local result = randomkit.multivariateGaussianRand(N, mu, sigma)
+
+    -- Check we reject a sample with wrong mean
+    result:select(2, 1):add(1)
+    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, false)
+end
+
+-- Check we reject a sample with wrong variance
+function myTests.multivariateGaussianRand_N_D_DD_fail_variance()
+    local mu = torch.Tensor({10, 0})
+    local sigma = torch.eye(2)
+    local N = 10000
+    local D = 2
+
+    local result = randomkit.multivariateGaussianRand(N, mu, sigma)
+    result:select(2, 1):mul(2)
+    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, false)
+end
+--
+-- ResultTensor, D, DxD
+-- ResultTensor, NxD, DxD
+-- ResultTensor, D, NxDxD
+-- ResultTensor, NxD, NxDxD
+--
+-- NxD, D
+-- D, NxD
+-- NxD, NxD
+--
+-- N, D, D
+--
+-- ResultTensor, D, D
+-- ResultTensor, NxD, D
+-- ResultTensor, D, NxD
+-- ResultTensor, NxD, NxD
+
 tester:add(myTests)
 tester:run()

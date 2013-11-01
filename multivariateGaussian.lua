@@ -63,5 +63,91 @@ function randomkit.multivariateGaussianPDF(...)
 end
 
 function randomkit.multivariateGaussianRand(...)
-    error("Not implemented")
+    local nArgs = select("#", ...)
+    local resultTensor
+
+    local singleResult -- whether to return single sample as a vector rather than 1xD tensor
+    -- TODO: singleResult may not be needed...
+
+    local n -- number of samples
+    local d -- number of dimensions for the Gaussian
+    local mu -- mean
+    local sigma -- covariance matrix
+
+    if nArgs == 2 then -- mu, sigma only: return one sample
+        singleResult = true
+        n = 1
+        mu = torch.Tensor(select(1, ...))
+        sigma = torch.Tensor(select(2, ...))
+        d = sigma:size(2)
+        resultTensor = torch.Tensor(d)
+    elseif nArgs == 3 then -- RESULT, mu, sigma - where result is either a number or a result tensor
+        singleResult = false
+        local resultInfo = select(1, ...)
+        mu = torch.Tensor(select(2, ...))
+        sigma = torch.Tensor(select(3, ...))
+        -- If we have non-constant parameters, get the number of results to return from there
+        local nParams
+        if mu:dim() ~= 1 then
+            nParams = mu:size(1)
+            if sigma:dim() == 3 and sigma:size(1) ~= nParams then
+                error("Incoherent parameter sizes for multivariateGaussianRand")
+            end
+        end
+        if not nParams and sigma:dim() == 3 then
+            nParams = sigma:size(1)
+        end
+        if type(resultInfo) == 'number' then
+            n = resultInfo
+            d = sigma:size(1)
+            resultTensor = torch.Tensor(n, d)
+            if nParams and nParams ~= n then
+                error("Parameter sizes do not match number of samples requested")
+            end
+        elseif isTensor(resultInfo) then
+            resultTensor = resultInfo
+            d = sigma:size(1)
+            if nParams then
+                n = nParams
+            else
+                n = resultTensor:nElements() / d
+            end
+        else
+            error("Unable to understand first argument for multivariateGaussianRand - should be an integer number of samples to be returned, or a result tensor")
+        end
+
+    else
+        error("Invalid arguments for multivariateGaussianRand().\
+        Should be (mu, sigma), or (N, mu, sigma), or (ResultTensor, mu, sigma).")
+    end
+
+    -- Now make our inputs all tensors, for simplicity
+    if mu:dim() == 1 then
+        mu:resize(1, mu:nElement())
+    end
+    if sigma:dim() == 2 then
+        sigma:resize(1, d, d)
+    end
+    if mu:size(1) == 1 then
+        mu = mu:expand(n, d)
+    end
+    if sigma:size(1) == 1 then
+
+        local decomposed = torch.potrf(sigma[1]):triu() -- TODO remove triu as torch will be fixed
+        local s = torch.mm(torch.randn(n, d), decomposed) + mu
+        resultTensor:copy(s)
+
+        return resultTensor
+
+    else
+        error("Multiple covariance matrices: not implemented")
+        --[[ TODO multiple sigmas
+        for k = 1, n do
+            local decomposed = torch.potrf(sigma[k]):triu() -- TODO remove triu as torch will be fixed
+            local r = torch.mm(torch.randn(n, d), decomposed) + mu
+        end
+        --]]
+
+    end
 end
+
