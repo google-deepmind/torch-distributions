@@ -14,10 +14,8 @@ Provides and wraps the random nnumber generators the [Randomkit library](), copi
 
 From a terminal:
 {% highlight bash %}
-torch-rocks install https://raw.github.com/jucor/torch-randomkit/master/randomkit-0-0.rockspec
+torch-rocks install randomkit
 {% endhighlight %}
-
-This will be simplified once the rockspec will be merged into the list of official rocks.
 
 ##List of Randomkit generators
 
