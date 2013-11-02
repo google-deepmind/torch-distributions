@@ -58,11 +58,27 @@
 
 <p>For a Gaussian with D variables, the following forms are valid:</p>
 
-<p><code>randomkit.multivariateGaussianPDF([D], [D], [D, D])</code> - returns a number. <code>randomkit.multivariateGaussianPDF([N, D], [D], [D, D])</code> - returns a Tensor. <code>randomkit.multivariateGaussianPDF([D], [N, D], [D, D])</code> - returns a Tensor. <code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - returns a Tensor.</p>
+<ul>
+<li><code>randomkit.multivariateGaussianPDF([D], [D], [D, D])</code> - returns a number.</li>
+
+<li><code>randomkit.multivariateGaussianPDF([N, D], [D], [D, D])</code> - returns a Tensor.</li>
+
+<li><code>randomkit.multivariateGaussianPDF([D], [N, D], [D, D])</code> - returns a Tensor.</li>
+
+<li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - returns a Tensor.</li>
+</ul>
 
 <p>In the case of a diagonal covariance <code>sigma</code>, you may also opt to pass a vector containing only the diagonal elements:</p>
 
-<p><code>randomkit.multivariateGaussianPDF([D], [D], [D])</code> - returns a number. <code>randomkit.multivariateGaussianPDF([N, D], [D], [D])</code> - returns a Tensor. <code>randomkit.multivariateGaussianPDF([D], [N, D], [D])</code> - returns a Tensor. <code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D])</code> - returns a Tensor.</p>
+<ul>
+<li><code>randomkit.multivariateGaussianPDF([D], [D], [D])</code> - returns a number.</li>
+
+<li><code>randomkit.multivariateGaussianPDF([N, D], [D], [D])</code> - returns a Tensor.</li>
+
+<li><code>randomkit.multivariateGaussianPDF([D], [N, D], [D])</code> - returns a Tensor.</li>
+
+<li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D])</code> - returns a Tensor.</li>
+</ul>
 
 <h4 id='randomkitmultivariategaussianlogpdfx_mu_sigma'>randomkit.multivariateGaussianLogPDF(x, mu, sigma)</h4>
 

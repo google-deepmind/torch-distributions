@@ -61,17 +61,17 @@ Probability density function of a multivariate Gaussian distribution with mean `
 
 For a Gaussian with D variables, the following forms are valid:
 
-`randomkit.multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
-`randomkit.multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
-`randomkit.multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
-`randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
+* `randomkit.multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
+* `randomkit.multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
+* `randomkit.multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
+* `randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
 
 In the case of a diagonal covariance `sigma`, you may also opt to pass a vector containing only the diagonal elements:
 
-`randomkit.multivariateGaussianPDF([D], [D], [D])` - returns a number.
-`randomkit.multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
-`randomkit.multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
-`randomkit.multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
+* `randomkit.multivariateGaussianPDF([D], [D], [D])` - returns a number.
+* `randomkit.multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
+* `randomkit.multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
+* `randomkit.multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
 
 ####randomkit.multivariateGaussianLogPDF(x, mu, sigma)
 
