@@ -1,4 +1,35 @@
-<html><h1>torch-randomkit</h1><ul><li><a href='#beta'>beta</a></li><li><a href='#binomial'>binomial</a></li><li><a href='#binomial_btpe'>binomial_btpe</a></li><li><a href='#binomial_inversion'>binomial_inversion</a></li><li><a href='#bytes'>bytes</a></li><li><a href='#chisquare'>chisquare</a></li><li><a href='#double'>double</a></li><li><a href='#exponential'>exponential</a></li><li><a href='#f'>f</a></li><li><a href='#gamma'>gamma</a></li><li><a href='#gauss'>gauss</a></li><li><a href='#geometric'>geometric</a></li><li><a href='#geometric_inversion'>geometric_inversion</a></li><li><a href='#geometric_search'>geometric_search</a></li><li><a href='#gumbel'>gumbel</a></li><li><a href='#hypergeometric'>hypergeometric</a></li><li><a href='#hypergeometric_hrua'>hypergeometric_hrua</a></li><li><a href='#hypergeometric_hyp'>hypergeometric_hyp</a></li><li><a href='#interval'>interval</a></li><li><a href='#laplace'>laplace</a></li><li><a href='#logistic'>logistic</a></li><li><a href='#lognormal'>lognormal</a></li><li><a href='#logseries'>logseries</a></li><li><a href='#long'>long</a></li><li><a href='#negative_binomial'>negative_binomial</a></li><li><a href='#noncentral_chisquare'>noncentral_chisquare</a></li><li><a href='#noncentral_f'>noncentral_f</a></li><li><a href='#normal'>normal</a></li><li><a href='#pareto'>pareto</a></li><li><a href='#poisson'>poisson</a></li><li><a href='#poisson_mult'>poisson_mult</a></li><li><a href='#poisson_ptrs'>poisson_ptrs</a></li><li><a href='#power'>power</a></li><li><a href='#randint'>randint</a></li><li><a href='#random'>random</a></li><li><a href='#random_sample'>random_sample</a></li><li><a href='#rayleigh'>rayleigh</a></li><li><a href='#standard_cauchy'>standard_cauchy</a></li><li><a href='#standard_exponential'>standard_exponential</a></li><li><a href='#standard_gamma'>standard_gamma</a></li><li><a href='#standard_normal'>standard_normal</a></li><li><a href='#standard_t'>standard_t</a></li><li><a href='#triangular'>triangular</a></li><li><a href='#ulong'>ulong</a></li><li><a href='#uniform'>uniform</a></li><li><a href='#vonmises'>vonmises</a></li><li><a href='#wald'>wald</a></li><li><a href='#weibull'>weibull</a></li><li><a href='#zipf'>zipf</a></li></ul><hr /><a id='beta'><h2>randomkit.beta([output], a, b)</h2><pre>
+<html>
+    
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>{{ page.title }}</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+
+      <div class="wrapper">
+          <header>
+          <div id="navcontainer">
+    
+              <ul><li><a href='#beta'>beta</a></li><li><a href='#binomial'>binomial</a></li><li><a href='#binomial_btpe'>binomial_btpe</a></li><li><a href='#binomial_inversion'>binomial_inversion</a></li><li><a href='#bytes'>bytes</a></li><li><a href='#chisquare'>chisquare</a></li><li><a href='#double'>double</a></li><li><a href='#exponential'>exponential</a></li><li><a href='#f'>f</a></li><li><a href='#gamma'>gamma</a></li><li><a href='#gauss'>gauss</a></li><li><a href='#geometric'>geometric</a></li><li><a href='#geometric_inversion'>geometric_inversion</a></li><li><a href='#geometric_search'>geometric_search</a></li><li><a href='#gumbel'>gumbel</a></li><li><a href='#hypergeometric'>hypergeometric</a></li><li><a href='#hypergeometric_hrua'>hypergeometric_hrua</a></li><li><a href='#hypergeometric_hyp'>hypergeometric_hyp</a></li><li><a href='#interval'>interval</a></li><li><a href='#laplace'>laplace</a></li><li><a href='#logistic'>logistic</a></li><li><a href='#lognormal'>lognormal</a></li><li><a href='#logseries'>logseries</a></li><li><a href='#long'>long</a></li><li><a href='#negative_binomial'>negative_binomial</a></li><li><a href='#noncentral_chisquare'>noncentral_chisquare</a></li><li><a href='#noncentral_f'>noncentral_f</a></li><li><a href='#normal'>normal</a></li><li><a href='#pareto'>pareto</a></li><li><a href='#poisson'>poisson</a></li><li><a href='#poisson_mult'>poisson_mult</a></li><li><a href='#poisson_ptrs'>poisson_ptrs</a></li><li><a href='#power'>power</a></li><li><a href='#randint'>randint</a></li><li><a href='#random'>random</a></li><li><a href='#random_sample'>random_sample</a></li><li><a href='#rayleigh'>rayleigh</a></li><li><a href='#standard_cauchy'>standard_cauchy</a></li><li><a href='#standard_exponential'>standard_exponential</a></li><li><a href='#standard_gamma'>standard_gamma</a></li><li><a href='#standard_normal'>standard_normal</a></li><li><a href='#standard_t'>standard_t</a></li><li><a href='#triangular'>triangular</a></li><li><a href='#ulong'>ulong</a></li><li><a href='#uniform'>uniform</a></li><li><a href='#vonmises'>vonmises</a></li><li><a href='#wald'>wald</a></li><li><a href='#weibull'>weibull</a></li><li><a href='#zipf'>zipf</a></li></ul>
+              
+          </div>
+          </header>
+          <section>
+<h1>Randomkit C library</h1>
+<p>
+This documentation has been extracted automatically from Numpy's Python docstrings, hence the rather crude look. This also why all examples are still in Python,
+until we can find a better way to document this for Torch.
+</p>
+<a id='beta'><h2>randomkit.beta([output], a, b)</h2><pre>
 The Beta distribution over ``[0, 1]``.
 
 The Beta distribution is a special case of the Dirichlet distribution,
@@ -2117,4 +2148,11 @@ Truncate s values at 50 so plot is interesting
 >>> x = np.arange(1., 50.)
 >>> y = x**(-a)/sps.zetac(a)
 >>> plt.plot(x, y/max(y), linewidth=2, color='r')
->>> plt.show()</pre></html>
+>>> plt.show()</pre>
+
+          </section>
+      </div>
+      <script src="javascripts/scale.fix.js"></script>
+  </body>
+</html>
+              
