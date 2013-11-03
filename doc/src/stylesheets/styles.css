@@ -136,15 +136,10 @@ display: block;
 padding: 3px 3px 3px 17px;
 }
 
-
 #navcontainer li li li a
 {
 display: block;
-width: 20em;
 padding: 3px 3px 3px 26px;
-text-decoration: none;
-border-bottom: 1px solid #fff;
-font-weight: normal;
 }
 
 #navcontainer li li li li a

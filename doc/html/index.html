@@ -20,7 +20,7 @@
           <ul>
 <li>
 <a href="#toc_0">Randomkit random number generators, wrapped for Torch</a>
-</li>
+<ul>
 <li>
 <a href="#toc_1">Installation</a>
 </li>
@@ -28,7 +28,7 @@
 <a href="#toc_2">List of Randomkit generators</a>
 </li>
 <li>
-<a href="#toc_3">Added functions</a>
+<a href="#toc_3">List of Torch-only generators</a>
 <ul>
 <li>
 <a href="#toc_4">Poisson</a>
@@ -125,6 +125,8 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 
           </div>
           </header>
@@ -133,50 +135,50 @@
 
 <p>Provides and wraps the random nnumber generators the <a href="">Randomkit library</a>, copied from <a href="">Numpy</a></p>
 
-<h1 id="toc_1">Installation</h1>
+<h2 id="toc_1">Installation</h2>
 
 <p>From a terminal:</p>
 <div class="highlight"><pre><code class="bash language-bash" data-lang="bash">torch-rocks install randomkit
 </code></pre></div>
-<h1 id="toc_2">List of Randomkit generators</h1>
+<h2 id="toc_2">List of Randomkit generators</h2>
 
 <p>See this <a href="randomkit.html">automatically extracted doc</a>, built from Numpy&#39;s docstrings.</p>
 
-<h1 id="toc_3">Added functions</h1>
+<h2 id="toc_3">List of Torch-only generators</h2>
 
 <p>These functions are provided in addition to the scipy randomkit functions.</p>
 
-<h2 id="toc_4">Poisson</h2>
+<h3 id="toc_4">Poisson</h3>
 
-<h3 id="toc_5">randomkit.poissonPDF(x, lambda)</h3>
+<h4 id="toc_5">randomkit.poissonPDF(x, lambda)</h4>
 
 <p>Probability density function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_6">randomkit.poissonLogPDF(x, lambda)</h3>
+<h4 id="toc_6">randomkit.poissonLogPDF(x, lambda)</h4>
 
 <p>Log of probability density function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_7">randomkit.poissonCDF(x, lambda)</h3>
+<h4 id="toc_7">randomkit.poissonCDF(x, lambda)</h4>
 
 <p>Cumulative distribution function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
 
-<h2 id="toc_8">Gaussian</h2>
+<h3 id="toc_8">Gaussian</h3>
 
-<h3 id="toc_9">randomkit.gaussianPDF(x, mu, sigma)</h3>
+<h4 id="toc_9">randomkit.gaussianPDF(x, mu, sigma)</h4>
 
 <p>Probability density function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_10">randomkit.gaussianLogPDF(x, mu, sigma)</h3>
+<h4 id="toc_10">randomkit.gaussianLogPDF(x, mu, sigma)</h4>
 
 <p>Log probability density function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_11">randomkit.gaussianCDF(x, mu, sigms)</h3>
+<h4 id="toc_11">randomkit.gaussianCDF(x, mu, sigms)</h4>
 
 <p>Cumulative distribution function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
 
-<h2 id="toc_12">Multivariate Gaussian</h2>
+<h3 id="toc_12">Multivariate Gaussian</h3>
 
-<h3 id="toc_13">randomkit.multivariateGaussianPDF(x, mu, sigma)</h3>
+<h4 id="toc_13">randomkit.multivariateGaussianPDF(x, mu, sigma)</h4>
 
 <p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>sigma</code>, evaluated at <code>x</code>.</p>
 
@@ -198,55 +200,55 @@
 <li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D])</code> - returns a Tensor.</li>
 </ul>
 
-<h3 id="toc_14">randomkit.multivariateGaussianLogPDF(x, mu, sigma)</h3>
+<h4 id="toc_14">randomkit.multivariateGaussianLogPDF(x, mu, sigma)</h4>
 
 <p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>sigma</code>, evaluated at <code>x</code>.</p>
 
 <p>See <code>randomkit.multivariateGaussianPDF()</code> for description of valid forms for x, mu and sigma.</p>
 
-<h2 id="toc_15">Cauchy</h2>
+<h3 id="toc_15">Cauchy</h3>
 
-<h3 id="toc_16">randomkit.cauchyPDF(x, a, b)</h3>
+<h4 id="toc_16">randomkit.cauchyPDF(x, a, b)</h4>
 
 <p>Probability density function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_17">randomkit.cauchyLogPDF(x, a, b)</h3>
+<h4 id="toc_17">randomkit.cauchyLogPDF(x, a, b)</h4>
 
 <p>Log of probability density function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_18">randomkit.cauchyCDF(x, a, b)</h3>
+<h4 id="toc_18">randomkit.cauchyCDF(x, a, b)</h4>
 
 <p>Cumulative distribution function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h2 id="toc_19">Chi square</h2>
+<h3 id="toc_19">Chi square</h3>
 
-<h3 id="toc_20">randomkit.chi2PDF(x, dof)</h3>
+<h4 id="toc_20">randomkit.chi2PDF(x, dof)</h4>
 
 <p>Probability density function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_21">randomkit.chi2LogPDF(x, dof)</h3>
+<h4 id="toc_21">randomkit.chi2LogPDF(x, dof)</h4>
 
 <p>Log of probability density function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_22">randomkit.chi2CDF(x, dof)</h3>
+<h4 id="toc_22">randomkit.chi2CDF(x, dof)</h4>
 
 <p>Cumulative distribution function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h2 id="toc_23">Laplace</h2>
+<h3 id="toc_23">Laplace</h3>
 
-<h3 id="toc_24">randomkit.laplacePDF(x, loc, scale)</h3>
+<h4 id="toc_24">randomkit.laplacePDF(x, loc, scale)</h4>
 
 <p>Probability density function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_25">randomkit.laplaceLogPDF(x, loc, scale)</h3>
+<h4 id="toc_25">randomkit.laplaceLogPDF(x, loc, scale)</h4>
 
 <p>Log of probability density function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_26">randomkit.laplaceCDF(x, loc, scale)</h3>
+<h4 id="toc_26">randomkit.laplaceCDF(x, loc, scale)</h4>
 
 <p>Cumulative distribution function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h1 id="toc_27">Unit Tests</h1>
+<h2 id="toc_27">Unit Tests</h2>
 
 <p>Last but not least, the unit tests are in the folder
 (<code>luasrc/tests</code>)[<a href="https://github.com/jucor/torch-randomkit/tree/master/luasrc/tests">https://github.com/jucor/torch-randomkit/tree/master/luasrc/tests</a>]. You can run them from your local clone of the repostiory with:</p>
@@ -255,9 +257,9 @@ find torch-randomkit/luasrc/tests -name <span class="s2">&quot;test*lua&quot;</s
 </code></pre></div>
 <p>Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.</p>
 
-<h1 id="toc_28">Direct access to FFI</h1>
+<h2 id="toc_28">Direct access to FFI</h2>
 
-<h2 id="toc_29">randomkit.ffi.*</h2>
+<h3 id="toc_29">randomkit.ffi.*</h3>
 
 <p>Functions directly accessible at the top of the <code>randomkit</code> table are Lua wrappers to the actual C functions from Randomkit, with extra error checking. If, for any reason, you want to get rid of this error checking and of a possible overhead, the FFI-wrapper functions can be called directly via <code>randomkit.ffi.myfunction()</code> instead of <code>randomkit.myfunction()</code>.</p>
 
