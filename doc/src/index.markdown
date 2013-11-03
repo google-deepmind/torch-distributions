@@ -168,7 +168,7 @@ Cumulative distribution function of a Laplace distribution with location `loc` a
 ##Unit Tests
 
 Last but not least, the unit tests are in the folder
-(`luasrc/tests`)[https://github.com/jucor/torch-randomkit/tree/master/luasrc/tests]. You can run them from your local clone of the repostiory with:
+[`luasrc/tests`](https://github.com/jucor/torch-randomkit/tree/master/luasrc/tests). You can run them from your local clone of the repostiory with:
 
 ```bash
 git clone https://www.github.com/jucor/torch-randomkit
