@@ -17,7 +17,7 @@ torch-rocks install randomkit
 
 ##List of Randomkit generators
 
-See this [automatically extracted doc](randomkit.html), built from Numpy's docstrings.
+See this **[extensive automatically extracted doc](randomkit.html)**, built from Numpy's docstrings.
 
 ##List of Torch-only generators
 
