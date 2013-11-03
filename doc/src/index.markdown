@@ -7,6 +7,52 @@ layout: doc
 
 Provides and wraps the random nnumber generators the [Randomkit library](), copied from [Numpy]()
 
+##Example
+
+###Single sample
+
+You can call any of the wrapped functions with just the distribution's parameters to generate a single sample and return a number:
+
+```lua
+require 'randomkit'
+randomkit.poisson(5)
+```
+
+###Multiple samples from one distribution
+
+Often, you might want to generate many samples identically distributed. Simply pass as a first argument a tensor of the proper dimension, into which the samples will be stored:
+
+```lua
+x = torch.Tensor(10000)
+randomkit.poisson(x, 5)
+```
+
+The sampler returns the tensor, so you can shorten the above in:
+
+```lua
+x = randomkit.poisson(torch.Tensor(10000), 5)
+```
+
+###Multiple samples from multiple distributions
+
+Finally, you might want to generate many samples, each from a distribution with different parameters. This is achieved by passing a Tensor as the parameter of the distribution:
+
+```lua
+many_lambda = torch.Tensor{5, 3, 40, 60}
+x = randomkit.poisson(many_lambda)
+```
+
+Of course, this can be combined with passing a result Tensor as an optional first element, to re-use memory and avoid creaating a new Tensor at each call:
+
+```lua
+many_lambda = torch.Tensor{5, 3, 40, 60}
+x = torch.Tensor(many_lambda:size())
+randomkit.poisson(x, many_lambda)
+```
+
+**Note:** in the latter case, the size of the result Tensor must correspond to the size of the parameter tensor -- we do not resize the result tensor automatically, yet:
+
+
 ##Installation
 
 From a terminal:
