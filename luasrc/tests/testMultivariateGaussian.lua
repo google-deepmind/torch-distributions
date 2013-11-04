@@ -1,7 +1,9 @@
 require 'randomkit'
 require 'util.warn'
 local myTests = {}
+local notRun = {}
 local tester = torch.Tester()
+local seed = 1234567890
 
 local standardGaussianPDFWindow = torch.Tensor({
     {0.058549831524319, 0.070096874908772, 0.080630598589333, 0.089110592667962, 0.094620883979159, 0.096532352630054, 0.094620883979159, 0.089110592667962, 0.080630598589333, 0.070096874908772, 0.058549831524319},
@@ -353,7 +355,7 @@ end
 -- NxD, NxDxD
 --
 -- N, D, DxD
-function myTests.multivariateGaussianRand_N_D_DD()
+function myTests.multivariateGaussianRand_N_D_DD_Standard()
     local mu = torch.Tensor({10, 0})
     local sigma = torch.eye(2)
     local N = 10000
@@ -365,7 +367,7 @@ function myTests.multivariateGaussianRand_N_D_DD()
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
     statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
 end
-function myTests.multivariateGaussianRand_N_D_DD2()
+function myTests.multivariateGaussianRand_N_D_DD()
     local mu = torch.Tensor({10, 0})
     local sigma = torch.Tensor({{2.5, 0.1}, {0.1, 2.5}})
     local N = 20000
