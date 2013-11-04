@@ -99,29 +99,47 @@ Cumulative distribution function of a Gaussian distribution with mean `mu` and s
 
 ###Multivariate Gaussian
 
-####randomkit.multivariateGaussianPDF(x, mu, sigma)
+The covariance matrix passed to multivariate gaussian functions **must** be definite positive: we do not deal with the degenerate case
+where some of the variance elements are null.
 
-Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `sigma`, evaluated at `x`.
 
-For a Gaussian with D variables, the following forms are valid:
+####randomkit.multivariateGaussianPDF(x, mu, cov)
+
+Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `cov`, evaluated at `x`.
+
+For a D-dimensional Gaussian, the following forms are valid:
 
 * `randomkit.multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
 * `randomkit.multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
 * `randomkit.multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
 * `randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
 
-In the case of a diagonal covariance `sigma`, you may also opt to pass a vector containing only the diagonal elements:
+In the case of a diagonal covariance `cov`, you may also opt to pass a vector containing only the diagonal elements:
 
 * `randomkit.multivariateGaussianPDF([D], [D], [D])` - returns a number.
 * `randomkit.multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
 * `randomkit.multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
 * `randomkit.multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
 
-####randomkit.multivariateGaussianLogPDF(x, mu, sigma)
+####randomkit.multivariateGaussianLogPDF(x, mu, cov)
 
-Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `sigma`, evaluated at `x`.
+Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
-See `randomkit.multivariateGaussianPDF()` for description of valid forms for x, mu and sigma.
+
+See `randomkit.multivariateGaussianPDF()` for description of valid forms for x, mu and cov.
+
+####randomkit.multivariateGaussianRand([res,] mu, cov)
+
+Sample from a multivariate Gaussian distribution with mean `mu` and covariance `cov`.
+
+For a D-dimensional Gaussian, the following forms are valid:
+
+* `randomkit.multivariateGaussianPDF([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
+* `randomkit.multivariateGaussianPDF([N, D], [D, D])` - returns N samples in a N-by-D Tensor
+* `randomkit.multivariateGaussianPDF([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+
+In the case of a diagonal covariance `cov`, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.
 
 ###Cauchy
 

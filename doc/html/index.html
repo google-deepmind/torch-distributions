@@ -76,65 +76,68 @@
 <a href="#toc_16">Multivariate Gaussian</a>
 <ul>
 <li>
-<a href="#toc_17">randomkit.multivariateGaussianPDF(x, mu, sigma)</a>
+<a href="#toc_17">randomkit.multivariateGaussianPDF(x, mu, cov)</a>
 </li>
 <li>
-<a href="#toc_18">randomkit.multivariateGaussianLogPDF(x, mu, sigma)</a>
+<a href="#toc_18">randomkit.multivariateGaussianLogPDF(x, mu, cov)</a>
+</li>
+<li>
+<a href="#toc_19">randomkit.multivariateGaussianRand([res,] mu, cov)</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_19">Cauchy</a>
+<a href="#toc_20">Cauchy</a>
 <ul>
 <li>
-<a href="#toc_20">randomkit.cauchyPDF(x, a, b)</a>
+<a href="#toc_21">randomkit.cauchyPDF(x, a, b)</a>
 </li>
 <li>
-<a href="#toc_21">randomkit.cauchyLogPDF(x, a, b)</a>
+<a href="#toc_22">randomkit.cauchyLogPDF(x, a, b)</a>
 </li>
 <li>
-<a href="#toc_22">randomkit.cauchyCDF(x, a, b)</a>
+<a href="#toc_23">randomkit.cauchyCDF(x, a, b)</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_23">Chi square</a>
+<a href="#toc_24">Chi square</a>
 <ul>
 <li>
-<a href="#toc_24">randomkit.chi2PDF(x, dof)</a>
+<a href="#toc_25">randomkit.chi2PDF(x, dof)</a>
 </li>
 <li>
-<a href="#toc_25">randomkit.chi2LogPDF(x, dof)</a>
+<a href="#toc_26">randomkit.chi2LogPDF(x, dof)</a>
 </li>
 <li>
-<a href="#toc_26">randomkit.chi2CDF(x, dof)</a>
+<a href="#toc_27">randomkit.chi2CDF(x, dof)</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_27">Laplace</a>
+<a href="#toc_28">Laplace</a>
 <ul>
 <li>
-<a href="#toc_28">randomkit.laplacePDF(x, loc, scale)</a>
+<a href="#toc_29">randomkit.laplacePDF(x, loc, scale)</a>
 </li>
 <li>
-<a href="#toc_29">randomkit.laplaceLogPDF(x, loc, scale)</a>
+<a href="#toc_30">randomkit.laplaceLogPDF(x, loc, scale)</a>
 </li>
 <li>
-<a href="#toc_30">randomkit.laplaceCDF(x, loc, scale)</a>
+<a href="#toc_31">randomkit.laplaceCDF(x, loc, scale)</a>
 </li>
 </ul>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_31">Unit Tests</a>
+<a href="#toc_32">Unit Tests</a>
 </li>
 <li>
-<a href="#toc_32">Direct access to FFI</a>
+<a href="#toc_33">Direct access to FFI</a>
 <ul>
 <li>
-<a href="#toc_33">randomkit.ffi.*</a>
+<a href="#toc_34">randomkit.ffi.*</a>
 </li>
 </ul>
 </li>
@@ -222,11 +225,14 @@
 
 <h3 id="toc_16">Multivariate Gaussian</h3>
 
-<h4 id="toc_17">randomkit.multivariateGaussianPDF(x, mu, sigma)</h4>
+<p>The covariance matrix passed to multivariate gaussian functions <strong>must</strong> be definite positive: we do not deal with the degenerate case
+where some of the variance elements are null.</p>
 
-<p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>sigma</code>, evaluated at <code>x</code>.</p>
+<h4 id="toc_17">randomkit.multivariateGaussianPDF(x, mu, cov)</h4>
 
-<p>For a Gaussian with D variables, the following forms are valid:</p>
+<p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>cov</code>, evaluated at <code>x</code>.</p>
+
+<p>For a D-dimensional Gaussian, the following forms are valid:</p>
 
 <ul>
 <li><code>randomkit.multivariateGaussianPDF([D], [D], [D, D])</code> - returns a number.</li>
@@ -235,7 +241,7 @@
 <li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - returns a Tensor.</li>
 </ul>
 
-<p>In the case of a diagonal covariance <code>sigma</code>, you may also opt to pass a vector containing only the diagonal elements:</p>
+<p>In the case of a diagonal covariance <code>cov</code>, you may also opt to pass a vector containing only the diagonal elements:</p>
 
 <ul>
 <li><code>randomkit.multivariateGaussianPDF([D], [D], [D])</code> - returns a number.</li>
@@ -244,55 +250,70 @@
 <li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D])</code> - returns a Tensor.</li>
 </ul>
 
-<h4 id="toc_18">randomkit.multivariateGaussianLogPDF(x, mu, sigma)</h4>
+<h4 id="toc_18">randomkit.multivariateGaussianLogPDF(x, mu, cov)</h4>
 
-<p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>sigma</code>, evaluated at <code>x</code>.</p>
+<p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>cov</code>, evaluated at <code>x</code>.</p>
 
-<p>See <code>randomkit.multivariateGaussianPDF()</code> for description of valid forms for x, mu and sigma.</p>
+<p>See <code>randomkit.multivariateGaussianPDF()</code> for description of valid forms for x, mu and cov.</p>
 
-<h3 id="toc_19">Cauchy</h3>
+<h4 id="toc_19">randomkit.multivariateGaussianRand([res,] mu, cov)</h4>
 
-<h4 id="toc_20">randomkit.cauchyPDF(x, a, b)</h4>
+<p>Sample from a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>cov</code>.</p>
+
+<p>For a D-dimensional Gaussian, the following forms are valid:</p>
+
+<ul>
+<li><code>randomkit.multivariateGaussianPDF([D], [D, D])</code> - returns 1 sample in a 1-by-D Tensor</li>
+<li><code>randomkit.multivariateGaussianPDF([N, D], [D, D])</code> - returns N samples in a N-by-D Tensor</li>
+<li><code>randomkit.multivariateGaussianPDF([N, D], [D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
+<li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
+</ul>
+
+<p>In the case of a diagonal covariance <code>cov</code>, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.</p>
+
+<h3 id="toc_20">Cauchy</h3>
+
+<h4 id="toc_21">randomkit.cauchyPDF(x, a, b)</h4>
 
 <p>Probability density function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_21">randomkit.cauchyLogPDF(x, a, b)</h4>
+<h4 id="toc_22">randomkit.cauchyLogPDF(x, a, b)</h4>
 
 <p>Log of probability density function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_22">randomkit.cauchyCDF(x, a, b)</h4>
+<h4 id="toc_23">randomkit.cauchyCDF(x, a, b)</h4>
 
 <p>Cumulative distribution function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_23">Chi square</h3>
+<h3 id="toc_24">Chi square</h3>
 
-<h4 id="toc_24">randomkit.chi2PDF(x, dof)</h4>
+<h4 id="toc_25">randomkit.chi2PDF(x, dof)</h4>
 
 <p>Probability density function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_25">randomkit.chi2LogPDF(x, dof)</h4>
+<h4 id="toc_26">randomkit.chi2LogPDF(x, dof)</h4>
 
 <p>Log of probability density function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_26">randomkit.chi2CDF(x, dof)</h4>
+<h4 id="toc_27">randomkit.chi2CDF(x, dof)</h4>
 
 <p>Cumulative distribution function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_27">Laplace</h3>
+<h3 id="toc_28">Laplace</h3>
 
-<h4 id="toc_28">randomkit.laplacePDF(x, loc, scale)</h4>
+<h4 id="toc_29">randomkit.laplacePDF(x, loc, scale)</h4>
 
 <p>Probability density function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_29">randomkit.laplaceLogPDF(x, loc, scale)</h4>
+<h4 id="toc_30">randomkit.laplaceLogPDF(x, loc, scale)</h4>
 
 <p>Log of probability density function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_30">randomkit.laplaceCDF(x, loc, scale)</h4>
+<h4 id="toc_31">randomkit.laplaceCDF(x, loc, scale)</h4>
 
 <p>Cumulative distribution function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h2 id="toc_31">Unit Tests</h2>
+<h2 id="toc_32">Unit Tests</h2>
 
 <p>Last but not least, the unit tests are in the folder
 <a href="https://github.com/jucor/torch-randomkit/tree/master/luasrc/tests"><code>luasrc/tests</code></a>. You can run them from your local clone of the repostiory with:</p>
@@ -301,9 +322,9 @@ find torch-randomkit/luasrc/tests -name <span class="s2">&quot;test*lua&quot;</s
 </code></pre></div>
 <p>Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.</p>
 
-<h2 id="toc_32">Direct access to FFI</h2>
+<h2 id="toc_33">Direct access to FFI</h2>
 
-<h3 id="toc_33">randomkit.ffi.*</h3>
+<h3 id="toc_34">randomkit.ffi.*</h3>
 
 <p>Functions directly accessible at the top of the <code>randomkit</code> table are Lua wrappers to the actual C functions from Randomkit, with extra error checking. If, for any reason, you want to get rid of this error checking and of a possible overhead, the FFI-wrapper functions can be called directly via <code>randomkit.ffi.myfunction()</code> instead of <code>randomkit.myfunction()</code>.</p>
 

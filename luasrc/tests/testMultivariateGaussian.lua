@@ -418,5 +418,22 @@ end
 -- ResultTensor, D, NxD
 -- ResultTensor, NxD, NxD
 
+function myTests.testMultivariateDegenerate()
+    torch.manualSeed(seed)
+    local actual = torch.Tensor(6, 2)
+    local mean= torch.Tensor({ {.123456789,  10} }):expand(6,2)
+    local cov = torch.Tensor{{1, 0}, {1, 0}}
+    tester:assertErrorPattern(function() randomkit.multivariateGaussianRand(actual, mean, cov) end, '.*cannot be factorized.*')
+    --[[ 
+    -- Once we support it, we expect the following (taken from Numpy)
+    local desired = torch.Tensor({{ -1.47027513018564449,  10. },
+    { -1.65915081534845532,  10. },
+    { -2.29186329304599745,  10. },
+    { -1.77505606019580053,  10. },
+    { -0.54970369430044119,  10. },
+    {  0.29768848031692957,  10. }})
+    tester:assertTensorEq(actual, desired, 1e-15) --]]
+end
+
 tester:add(myTests)
 tester:run()
