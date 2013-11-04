@@ -1,5 +1,5 @@
 ---
-title: Document Center
+title: Randomkit RNG for Torch
 layout: doc
 ---
 
