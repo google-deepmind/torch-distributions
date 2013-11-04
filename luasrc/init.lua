@@ -1,6 +1,6 @@
 randomkit = {}
 
-local function isTensor(v)
+function randomkit._isTensor(v)
     if torch.typename(v) then
         return string.sub(torch.typename(v), -6, -1) == "Tensor"
     end
@@ -34,7 +34,7 @@ function randomkit._check1DParams(K, defaultResultType, ...)
     if #params == K then
         local numberOnly = true
         for paramIndex, param in ipairs(params) do
-            numberOnly = numberOnly and not isTensor(param)
+            numberOnly = numberOnly and not randomkit._isTensor(param)
         end
         if numberOnly then
             return nil, params
@@ -42,7 +42,7 @@ function randomkit._check1DParams(K, defaultResultType, ...)
             result = defaultResultType.new(1)
         end
     else
-        if isTensor(params[1]) then
+        if randomkit._isTensor(params[1]) then
             -- The tensor dictates the size of the result
             result = params[1]
             Nresult = result:nElement()
@@ -56,7 +56,7 @@ function randomkit._check1DParams(K, defaultResultType, ...)
     local Nparams = 1
     for paramIndex, param in ipairs(params) do
         local size
-        if isTensor(param) then
+        if randomkit._isTensor(param) then
             size = param:nElement()
         elseif type(param) == 'number' or type(param) == 'cdata' then
             size = 1

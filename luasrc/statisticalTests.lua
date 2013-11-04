@@ -1,11 +1,5 @@
 require 'cephes'
 
-local function isTensor(v)
-    if torch.typename(v) then
-        return string.sub(torch.typename(v), -6, -1) == "Tensor"
-    end
-end
-
 --[[! Chi-square test for uniformity, with known lower and upper bound
 
 One sample Chi-square test with uniform distribution with the specified support.
@@ -19,7 +13,7 @@ One sample Chi-square test with uniform distribution with the specified support.
 @return value of the test statistic
 ]]
 function randomkit.chi2Uniform(x, low, up, nBins)
-    if not isTensor(x) then
+    if not randomkit._isTensor(x) then
         error("chi2Uniform: expected tensor of samples as first argument")
     end
     if not x:nDimension() == 1 then
@@ -67,7 +61,7 @@ One sample Chi-square test with known CDF.
 @return same as chi2Uniform()
 --]]
 function randomkit.chi2TestCDF(x, cdf, cdfParams, ...)
-    if not isTensor(x) then
+    if not randomkit._isTensor(x) then
         error("chi2TestCDF requires a tensor of samples as its first argument")
     end
     if not (type(cdf) == 'function') then

@@ -99,7 +99,7 @@ function randomkit.multivariateGaussianRand(...)
             if nParams and nParams ~= n then
                 error("Parameter sizes do not match number of samples requested")
             end
-        elseif isTensor(resultInfo) then
+        elseif randomkit._isTensor(resultInfo) then
             resultTensor = resultInfo
             d = sigma:size(1)
             if nParams then

@@ -1,24 +1,18 @@
 require 'cephes'
 
-local function isTensor(v)
-    if torch.typename(v) then
-        return string.sub(torch.typename(v), -6, -1) == "Tensor"
-    end
-end
-
 local function vectorise1param(func)
     return function(x, param)
-        if not isTensor(x) and not isTensor(param) then
+        if not randomkit._isTensor(x) and not randomkit._isTensor(param) then
             return func(x, param)
         end
 
         x = torch.Tensor(x)
         param = torch.Tensor(param)
 
-        if isTensor(x) and (not isTensor(param) or param:size(1) == 1) then
+        if randomkit._isTensor(x) and (not randomkit._isTensor(param) or param:size(1) == 1) then
             param = param:expand(x:nElement())
         end
-        if (not isTensor(x) or x:size(1) == 1) and isTensor(param) then
+        if (not randomkit._isTensor(x) or x:size(1) == 1) and randomkit._isTensor(param) then
             x = x:expand(param:nElement())
         end
         assert(x:size(1) == param:size(1))
