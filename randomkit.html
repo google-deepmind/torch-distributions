@@ -21,8 +21,6 @@
     
               <ul><li><a href='#beta'>beta</a></li>
 <li><a href='#binomial'>binomial</a></li>
-<li><a href='#binomial_btpe'>binomial_btpe</a></li>
-<li><a href='#binomial_inversion'>binomial_inversion</a></li>
 <li><a href='#bytes'>bytes</a></li>
 <li><a href='#chisquare'>chisquare</a></li>
 <li><a href='#double'>double</a></li>
@@ -31,12 +29,8 @@
 <li><a href='#gamma'>gamma</a></li>
 <li><a href='#gauss'>gauss</a></li>
 <li><a href='#geometric'>geometric</a></li>
-<li><a href='#geometric_inversion'>geometric_inversion</a></li>
-<li><a href='#geometric_search'>geometric_search</a></li>
 <li><a href='#gumbel'>gumbel</a></li>
 <li><a href='#hypergeometric'>hypergeometric</a></li>
-<li><a href='#hypergeometric_hrua'>hypergeometric_hrua</a></li>
-<li><a href='#hypergeometric_hyp'>hypergeometric_hyp</a></li>
 <li><a href='#interval'>interval</a></li>
 <li><a href='#laplace'>laplace</a></li>
 <li><a href='#logistic'>logistic</a></li>
@@ -49,8 +43,6 @@
 <li><a href='#normal'>normal</a></li>
 <li><a href='#pareto'>pareto</a></li>
 <li><a href='#poisson'>poisson</a></li>
-<li><a href='#poisson_mult'>poisson_mult</a></li>
-<li><a href='#poisson_ptrs'>poisson_ptrs</a></li>
 <li><a href='#power'>power</a></li>
 <li><a href='#randint'>randint</a></li>
 <li><a href='#random'>random</a></li>
@@ -80,7 +72,7 @@ until we can find a better way to document this for Torch.
 
 <b>NOTE</b>: the <b>size</b> parameter mentioned in the Python docstring should be omitted. Instead, please refer to <a href="index.html">the torch-specific documentation</a> for generating multiple samples.
 </p>
-<a id='beta'><h2>randomkit.beta([output], a, b)</h2><pre>
+<a id='beta'><h2>randomkit.beta([result], a, b)</h2><pre>
 The Beta distribution over ``[0, 1]``.
 
 The Beta distribution is a special case of the Dirichlet distribution,
@@ -103,15 +95,13 @@ a : float
 Alpha, non-negative.
 b : float
 Beta, non-negative.
-size : tuple of ints, optional
-The number of samples to draw.  The ouput is packed according to
 the size given.
 
 Returns
 -------
 out : ndarray
 Array of the given shape, containing values drawn from a
-Beta distribution.</pre><hr /><a id='binomial'><h2>randomkit.binomial([output], n, p)</h2><pre>
+Beta distribution.</pre><hr /><a id='binomial'><h2>randomkit.binomial([result], n, p)</h2><pre>
 Draw samples from a binomial distribution.
 
 Samples are drawn from a Binomial distribution with specified
@@ -125,9 +115,6 @@ n : float (but truncated to an integer)
 parameter, > 0.
 p : float
 parameter, >= 0 and <=1.
-size : {tuple, int}
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -186,7 +173,7 @@ Let's do 20,000 trials of the model, and count the number that
 generate zero positive results.
 
 >>> sum(np.random.binomial(9,0.1,20000)==0)/20000.
-answer = 0.38885, or 38%.</pre><hr /><a id='bytes'><h2>randomkit.bytes([output], length)</h2><pre>
+answer = 0.38885, or 38%.</pre><hr /><a id='bytes'><h2>randomkit.bytes([result], length)</h2><pre>
 Return random bytes.
 
 Parameters
@@ -202,7 +189,7 @@ String of length `length`.
 Examples
 --------
 >>> np.random.bytes(10)
-' eh\x85\x022SZ\xbf\xa4' #random</pre><hr /><a id='chisquare'><h2>randomkit.chisquare([output], df)</h2><pre>
+' eh\x85\x022SZ\xbf\xa4' #random</pre><hr /><a id='chisquare'><h2>randomkit.chisquare([result], df)</h2><pre>
 Draw samples from a chi-square distribution.
 
 When `df` independent random variables, each with standard normal
@@ -214,9 +201,6 @@ Parameters
 ----------
 df : int
 Number of degrees of freedom.
-size : tuple of ints, int, optional
-Size of the returned array.  By default, a scalar is
-returned.
 
 Returns
 -------
@@ -258,7 +242,7 @@ References
 Examples
 --------
 >>> np.random.chisquare(2,4)
-array([ 1.89920014,  9.00867716,  3.13710533,  5.62318272])</pre><hr /><a id='exponential'><h2>randomkit.exponential([output], scale)</h2><pre>
+array([ 1.89920014,  9.00867716,  3.13710533,  5.62318272])</pre><hr /><a id='exponential'><h2>randomkit.exponential([result], scale)</h2><pre>
 Exponential distribution.
 
 Its probability density function is
@@ -279,9 +263,6 @@ Parameters
 ----------
 scale : float
 The scale parameter, :math:`\beta = 1/\lambda`.
-size : tuple of ints
-Number of samples to draw.  The output is shaped
-according to `size`.
 
 References
 ----------
@@ -290,7 +271,7 @@ Random Signal Principles", 4th ed, 2001, p. 57.
 .. [2] "Poisson Process", Wikipedia,
 http://en.wikipedia.org/wiki/Poisson_process
 .. [3] "Exponential Distribution, Wikipedia,
-http://en.wikipedia.org/wiki/Exponential_distribution</pre><hr /><a id='f'><h2>randomkit.f([output], dfnum, dfden)</h2><pre>
+http://en.wikipedia.org/wiki/Exponential_distribution</pre><hr /><a id='f'><h2>randomkit.f([result], dfnum, dfden)</h2><pre>
 Draw samples from a F distribution.
 
 Samples are drawn from an F distribution with specified parameters,
@@ -308,10 +289,6 @@ dfnum : float
 Degrees of freedom in numerator. Should be greater than zero.
 dfden : float
 Degrees of freedom in denominator. Should be greater than zero.
-size : {tuple, int}, optional
-Output shape.  If the given shape is, e.g., ``(m, n, k)``,
-then ``m * n * k`` samples are drawn. By default only one sample
-is returned.
 
 Returns
 -------
@@ -365,7 +342,7 @@ The lower bound for the top 1% of the samples is :
 
 So there is about a 1% chance that the F statistic will exceed 7.62,
 the measured value is 36, so the null hypothesis is rejected at the 1%
-level.</pre><hr /><a id='gamma'><h2>randomkit.gamma([output], shape, scale)</h2><pre>
+level.</pre><hr /><a id='gamma'><h2>randomkit.gamma([result], shape, scale)</h2><pre>
 Draw samples from a Gamma distribution.
 
 Samples are drawn from a Gamma distribution with specified parameters,
@@ -378,9 +355,6 @@ shape : scalar > 0
 The shape of the gamma distribution.
 scale : scalar > 0, optional
 The scale of the gamma distribution.  Default is equal to 1.
-size : shape_tuple, optional
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -429,7 +403,7 @@ the probability density function:
 >>> y = bins**(shape-1)*(np.exp(-bins/scale) /
 ...                      (sps.gamma(shape)*scale**shape))
 >>> plt.plot(bins, y, linewidth=2, color='r')
->>> plt.show()</pre><hr /><a id='geometric'><h2>randomkit.geometric([output], p)</h2><pre>
+>>> plt.show()</pre><hr /><a id='geometric'><h2>randomkit.geometric([result], p)</h2><pre>
 Draw samples from the geometric distribution.
 
 Bernoulli trials are experiments with one of two outcomes:
@@ -448,9 +422,6 @@ Parameters
 ----------
 p : float
 The probability of success of an individual trial.
-size : tuple of ints
-Number of values to draw from the distribution.  The output
-is shaped according to `size`.
 
 Returns
 -------
@@ -468,7 +439,7 @@ with the probability of an individual success equal to 0.35:
 How many trials succeeded after a single run?
 
 >>> (z == 1).sum() / 10000.
-0.34889999999999999 #random</pre><hr /><a id='gumbel'><h2>randomkit.gumbel([output], loc, scale)</h2><pre>
+0.34889999999999999 #random</pre><hr /><a id='gumbel'><h2>randomkit.gumbel([result], loc, scale)</h2><pre>
 Gumbel distribution.
 
 Draw samples from a Gumbel distribution with specified location and scale.
@@ -481,9 +452,6 @@ loc : float
 The location of the mode of the distribution.
 scale : float
 The scale parameter of the distribution.
-size : tuple of ints
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -576,7 +544,7 @@ and compare to a Gaussian:
 >>> plt.plot(bins, 1/(beta * np.sqrt(2 * np.pi))
 ...          * np.exp(-(bins - mu)**2 / (2 * beta**2)),
 ...          linewidth=2, color='g')
->>> plt.show()</pre><hr /><a id='hypergeometric'><h2>randomkit.hypergeometric([output], ngood, nbad, nsample)</h2><pre>
+>>> plt.show()</pre><hr /><a id='hypergeometric'><h2>randomkit.hypergeometric([result], ngood, nbad, nsample)</h2><pre>
 Draw samples from a Hypergeometric distribution.
 
 Samples are drawn from a Hypergeometric distribution with specified
@@ -592,9 +560,6 @@ nbad  : float
 parameter, >= 0.
 nsample  : float
 parameter, > 0 and <= ngood+nbad
-size : {tuple, int}
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -654,7 +619,7 @@ If you pull 15 marbles at random, how likely is it that
 
 >>> s = np.random.hypergeometric(15, 15, 15, 100000)
 >>> sum(s>=12)/100000. + sum(s<=3)/100000.
-#   answer = 0.003 ... pretty unlikely!</pre><hr /><a id='laplace'><h2>randomkit.laplace([output], loc, scale)</h2><pre>
+#   answer = 0.003 ... pretty unlikely!</pre><hr /><a id='laplace'><h2>randomkit.laplace([result], loc, scale)</h2><pre>
 Draw samples from the Laplace or double exponential distribution with
 specified location (or mean) and scale (decay).
 
@@ -721,7 +686,7 @@ Plot Gaussian for comparison:
 
 >>> g = (1/(scale * np.sqrt(2 * np.pi)) *
 ...      np.exp( - (x - loc)**2 / (2 * scale**2) ))
->>> plt.plot(x,g)</pre><hr /><a id='logistic'><h2>randomkit.logistic([output], loc, scale)</h2><pre>
+>>> plt.plot(x,g)</pre><hr /><a id='logistic'><h2>randomkit.logistic([result], loc, scale)</h2><pre>
 Draw samples from a Logistic distribution.
 
 Samples are drawn from a Logistic distribution with specified
@@ -733,9 +698,6 @@ loc : float
 
 scale : float > 0.
 
-size : {tuple, int}
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -786,7 +748,7 @@ Draw samples from the distribution:
 ...     return exp((loc-x)/scale)/(scale*(1+exp((loc-x)/scale))**2)
 >>> plt.plot(bins, logist(bins, loc, scale)*count.max()/\
 ... logist(bins, loc, scale).max())
->>> plt.show()</pre><hr /><a id='lognormal'><h2>randomkit.lognormal([output], mean, sigma)</h2><pre>
+>>> plt.show()</pre><hr /><a id='lognormal'><h2>randomkit.lognormal([result], mean, sigma)</h2><pre>
 Return samples drawn from a log-normal distribution.
 
 Draw samples from a log-normal distribution with specified mean,
@@ -800,9 +762,6 @@ mean : float
 Mean value of the underlying normal distribution
 sigma : float, > 0.
 Standard deviation of the underlying normal distribution
-size : tuple of ints
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -882,7 +841,7 @@ distribution can be fit well by a log-normal probability density function.
 ...        / (x * sigma * np.sqrt(2 * np.pi)))
 
 >>> plt.plot(x, pdf, color='r', linewidth=2)
->>> plt.show()</pre><hr /><a id='logseries'><h2>randomkit.logseries([output], p)</h2><pre>
+>>> plt.show()</pre><hr /><a id='logseries'><h2>randomkit.logseries([result], p)</h2><pre>
 Draw samples from a Logarithmic Series distribution.
 
 Samples are drawn from a Log Series distribution with specified
@@ -893,10 +852,6 @@ Parameters
 loc : float
 
 scale : float > 0.
-
-size : {tuple, int}
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -950,7 +905,7 @@ Draw samples from the distribution:
 ...     return -p**k/(k*log(1-p))
 >>> plt.plot(bins, logseries(bins, a)*count.max()/
 logseries(bins, a).max(), 'r')
->>> plt.show()</pre><hr /><a id='negative_binomial'><h2>randomkit.negative_binomial([output], n, p)</h2><pre>
+>>> plt.show()</pre><hr /><a id='negative_binomial'><h2>randomkit.negative_binomial([result], n, p)</h2><pre>
 Draw samples from a negative_binomial distribution.
 
 Samples are drawn from a negative_Binomial distribution with specified
@@ -963,9 +918,6 @@ n : int
 Parameter, > 0.
 p : float
 Parameter, >= 0 and <=1.
-size : int or tuple of ints
-Output shape. If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -1009,7 +961,7 @@ etc.?
 >>> s = np.random.negative_binomial(1, 0.1, 100000)
 >>> for i in range(1, 11):
 ...    probability = sum(s<i) / 100000.
-...    print i, "wells drilled, probability of one success =", probability</pre><hr /><a id='noncentral_chisquare'><h2>randomkit.noncentral_chisquare([output], df, nonc)</h2><pre>
+...    print i, "wells drilled, probability of one success =", probability</pre><hr /><a id='noncentral_chisquare'><h2>randomkit.noncentral_chisquare([result], df, nonc)</h2><pre>
 Draw samples from a noncentral chi-square distribution.
 
 The noncentral :math:`\chi^2` distribution is a generalisation of
@@ -1021,8 +973,6 @@ df : int
 Degrees of freedom, should be >= 1.
 nonc : float
 Non-centrality, should be > 0.
-size : int or tuple of ints
-Shape of the output.
 
 Notes
 -----
@@ -1072,7 +1022,7 @@ distribution.
 >>> plt.figure()
 >>> values = plt.hist(np.random.noncentral_chisquare(3, 20, 100000),
 ...                   bins=200, normed=True)
->>> plt.show()</pre><hr /><a id='noncentral_f'><h2>randomkit.noncentral_f([output], dfnum, dfden, nonc)</h2><pre>
+>>> plt.show()</pre><hr /><a id='noncentral_f'><h2>randomkit.noncentral_f([result], dfnum, dfden, nonc)</h2><pre>
 Draw samples from the noncentral F distribution.
 
 Samples are drawn from an F distribution with specified parameters,
@@ -1088,9 +1038,6 @@ dfden : int
 Parameter, should be > 1.
 nonc : float
 Parameter, should be >= 0.
-size : int or tuple of ints
-Output shape. If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -1130,7 +1077,7 @@ distributions for comparison.
 >>> F = np.histogram(c_vals, bins=50, normed=True)
 >>> plt.plot(F[1][1:], F[0])
 >>> plt.plot(NF[1][1:], NF[0])
->>> plt.show()</pre><hr /><a id='normal'><h2>randomkit.normal([output], loc, scale)</h2><pre>
+>>> plt.show()</pre><hr /><a id='normal'><h2>randomkit.normal([result], loc, scale)</h2><pre>
 Draw random samples from a normal (Gaussian) distribution.
 
 The probability density function of the normal distribution, first
@@ -1149,9 +1096,6 @@ loc : float
 Mean ("centre") of the distribution.
 scale : float
 Standard deviation (spread or "width") of the distribution.
-size : tuple of ints
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 See Also
 --------
@@ -1206,7 +1150,7 @@ the probability density function:
 >>> plt.plot(bins, 1/(sigma * np.sqrt(2 * np.pi)) *
 ...                np.exp( - (bins - mu)**2 / (2 * sigma**2) ),
 ...          linewidth=2, color='r')
->>> plt.show()</pre><hr /><a id='pareto'><h2>randomkit.pareto([output], a)</h2><pre>
+>>> plt.show()</pre><hr /><a id='pareto'><h2>randomkit.pareto([result], a)</h2><pre>
 Draw samples from a Pareto II or Lomax distribution with specified shape.
 
 The Lomax or Pareto II distribution is a shifted Pareto distribution. The
@@ -1227,9 +1171,6 @@ Parameters
 ----------
 shape : float, > 0.
 Shape of the distribution.
-size : tuple of ints
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 See Also
 --------
@@ -1280,7 +1221,7 @@ the probability density function:
 >>> count, bins, ignored = plt.hist(s, 100, normed=True, align='center')
 >>> fit = a*m**a/bins**(a+1)
 >>> plt.plot(bins, max(count)*fit/max(fit),linewidth=2, color='r')
->>> plt.show()</pre><hr /><a id='poisson'><h2>randomkit.poisson([output], lam)</h2><pre>
+>>> plt.show()</pre><hr /><a id='poisson'><h2>randomkit.poisson([result], lam)</h2><pre>
 Draw samples from a Poisson distribution.
 
 The Poisson distribution is the limit of the Binomial
@@ -1290,9 +1231,6 @@ Parameters
 ----------
 lam : float
 Expectation of interval, should be >= 0.
-size : int or tuple of ints, optional
-Output shape. If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Notes
 -----
@@ -1326,7 +1264,7 @@ Display histogram of the sample:
 
 >>> import matplotlib.pyplot as plt
 >>> count, bins, ignored = plt.hist(s, 14, normed=True)
->>> plt.show()</pre><hr /><a id='power'><h2>randomkit.power([output], a)</h2><pre>
+>>> plt.show()</pre><hr /><a id='power'><h2>randomkit.power([result], a)</h2><pre>
 Draws samples in [0, 1] from a power distribution with positive
 exponent a - 1.
 
@@ -1336,9 +1274,6 @@ Parameters
 ----------
 a : float
 parameter, > 0
-size : tuple of ints
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -1413,7 +1348,7 @@ Compare the power function distribution to the inverse of the Pareto.
 >>> plt.figure()
 >>> plt.hist(1./(1.+rvsp), bins=50, normed=True)
 >>> plt.plot(xx,powpdf,'r-')
->>> plt.title('inverse of stats.pareto(5)')</pre><hr /><a id='randint'><h2>randomkit.randint([output], low, high)</h2><pre>
+>>> plt.title('inverse of stats.pareto(5)')</pre><hr /><a id='randint'><h2>randomkit.randint([result], low, high)</h2><pre>
 Return random integers from `low` (inclusive) to `high` (exclusive).
 
 Return random integers from the "discrete uniform" distribution in the
@@ -1429,9 +1364,6 @@ integer).
 high : int, optional
 If provided, one above the largest (signed) integer to be drawn
 from the distribution (see above for behavior if ``high=None``).
-size : int or tuple of ints, optional
-Output shape. Default is None, in which case a single int is
-returned.
 
 Returns
 -------
@@ -1457,7 +1389,7 @@ Generate a 2 x 4 array of ints between 0 and 4, inclusive:
 
 >>> np.random.randint(5, size=(2, 4))
 array([[4, 0, 2, 1],
-[3, 2, 2, 0]])</pre><hr /><a id='random'><h2>randomkit.random_sample([output], )</h2><pre>
+[3, 2, 2, 0]])</pre><hr /><a id='random'><h2>randomkit.random_sample([result], )</h2><pre>
 Return random floats in the half-open interval [0.0, 1.0).
 
 Results are from the "continuous uniform" distribution over the
@@ -1468,9 +1400,6 @@ the output of `random_sample` by `(b-a)` and add `a`::
 
 Parameters
 ----------
-size : int or tuple of ints, optional
-Defines the shape of the returned array of random floats. If None
-(the default), returns a single float.
 
 Returns
 -------
@@ -1492,7 +1421,7 @@ Three-by-two array of random numbers from [-5, 0):
 >>> 5 * np.random.random_sample((3, 2)) - 5
 array([[-3.99149989, -0.52338984],
 [-2.99091858, -0.79479508],
-[-1.23204345, -1.75224494]])</pre><hr /><a id='random_sample'><h2>randomkit.random_sample([output], )</h2><pre>
+[-1.23204345, -1.75224494]])</pre><hr /><a id='random_sample'><h2>randomkit.random_sample([result], )</h2><pre>
 Return random floats in the half-open interval [0.0, 1.0).
 
 Results are from the "continuous uniform" distribution over the
@@ -1503,9 +1432,6 @@ the output of `random_sample` by `(b-a)` and add `a`::
 
 Parameters
 ----------
-size : int or tuple of ints, optional
-Defines the shape of the returned array of random floats. If None
-(the default), returns a single float.
 
 Returns
 -------
@@ -1527,7 +1453,7 @@ Three-by-two array of random numbers from [-5, 0):
 >>> 5 * np.random.random_sample((3, 2)) - 5
 array([[-3.99149989, -0.52338984],
 [-2.99091858, -0.79479508],
-[-1.23204345, -1.75224494]])</pre><hr /><a id='rayleigh'><h2>randomkit.rayleigh([output], scale)</h2><pre>
+[-1.23204345, -1.75224494]])</pre><hr /><a id='rayleigh'><h2>randomkit.rayleigh([result], scale)</h2><pre>
 Draw samples from a Rayleigh distribution.
 
 The :math:`\chi` and Weibull distributions are generalizations of the
@@ -1537,9 +1463,6 @@ Parameters
 ----------
 scale : scalar
 Scale, also equals the mode. Should be >= 0.
-size : int or tuple of ints, optional
-Shape of the output. Default is None, in which case a single
-value is returned.
 
 Notes
 -----
@@ -1576,15 +1499,13 @@ meters?
 The percentage of waves larger than 3 meters is:
 
 >>> 100.*sum(s>3)/1000000.
-0.087300000000000003</pre><hr /><a id='standard_cauchy'><h2>randomkit.standard_cauchy([output], )</h2><pre>
+0.087300000000000003</pre><hr /><a id='standard_cauchy'><h2>randomkit.standard_cauchy([result], )</h2><pre>
 Standard Cauchy distribution with mode = 0.
 
 Also known as the Lorentz distribution.
 
 Parameters
 ----------
-size : int or tuple of ints
-Shape of the output.
 
 Returns
 -------
@@ -1629,7 +1550,7 @@ Draw samples and plot the distribution:
 >>> s = np.random.standard_cauchy(1000000)
 >>> s = s[(s>-25) & (s<25)]  # truncate distribution so it plots well
 >>> plt.hist(s, bins=100)
->>> plt.show()</pre><hr /><a id='standard_exponential'><h2>randomkit.standard_exponential([output], )</h2><pre>
+>>> plt.show()</pre><hr /><a id='standard_exponential'><h2>randomkit.standard_exponential([result], )</h2><pre>
 Draw samples from the standard exponential distribution.
 
 `standard_exponential` is identical to the exponential distribution
@@ -1637,8 +1558,6 @@ with a scale parameter of 1.
 
 Parameters
 ----------
-size : int or tuple of ints
-Shape of the output.
 
 Returns
 -------
@@ -1649,7 +1568,7 @@ Examples
 --------
 Output a 3x8000 array:
 
->>> n = np.random.standard_exponential((3, 8000))</pre><hr /><a id='standard_gamma'><h2>randomkit.standard_gamma([output], shape)</h2><pre>
+>>> n = np.random.standard_exponential((3, 8000))</pre><hr /><a id='standard_gamma'><h2>randomkit.standard_gamma([result], shape)</h2><pre>
 Draw samples from a Standard Gamma distribution.
 
 Samples are drawn from a Gamma distribution with specified parameters,
@@ -1659,9 +1578,6 @@ Parameters
 ----------
 shape : float
 Parameter, should be > 0.
-size : int or tuple of ints
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -1710,14 +1626,11 @@ the probability density function:
 >>> y = bins**(shape-1) * ((np.exp(-bins/scale))/ \
 ...                       (sps.gamma(shape) * scale**shape))
 >>> plt.plot(bins, y, linewidth=2, color='r')
->>> plt.show()</pre><hr /><a id='standard_normal'><h2>randomkit.standard_normal([output], )</h2><pre>
+>>> plt.show()</pre><hr /><a id='standard_normal'><h2>randomkit.standard_normal([result], )</h2><pre>
 Returns samples from a Standard Normal distribution (mean=0, stdev=1).
 
 Parameters
 ----------
-size : int or tuple of ints, optional
-Output shape. Default is None, in which case a single value is
-returned.
 
 Returns
 -------
@@ -1734,7 +1647,7 @@ array([ 0.6888893 ,  0.78096262, -0.89086505, ...,  0.49876311, #random
 (8000,)
 >>> s = np.random.standard_normal(size=(3, 4, 2))
 >>> s.shape
-(3, 4, 2)</pre><hr /><a id='standard_t'><h2>randomkit.standard_t([output], df)</h2><pre>
+(3, 4, 2)</pre><hr /><a id='standard_t'><h2>randomkit.standard_t([result], df)</h2><pre>
 Standard Student's t distribution with df degrees of freedom.
 
 A special case of the hyperbolic distribution.
@@ -1745,9 +1658,6 @@ Parameters
 ----------
 df : int
 Degrees of freedom, should be > 0.
-size : int or tuple of ints, optional
-Output shape. Default is None, in which case a single value is
-returned.
 
 Returns
 -------
@@ -1813,7 +1723,7 @@ statistic appear?
 0.0090699999999999999  #random
 
 So the p-value is about 0.009, which says the null hypothesis has a
-probability of about 99% of being true.</pre><hr /><a id='triangular'><h2>randomkit.triangular([output], left, mode, right)</h2><pre>
+probability of about 99% of being true.</pre><hr /><a id='triangular'><h2>randomkit.triangular([result], left, mode, right)</h2><pre>
 Draw samples from the triangular distribution.
 
 The triangular distribution is a continuous probability distribution with
@@ -1829,9 +1739,6 @@ The value where the peak of the distribution occurs.
 The value should fulfill the condition ``left <= mode <= right``.
 right : scalar
 Upper limit, should be larger than `left`.
-size : int or tuple of ints, optional
-Output shape. Default is None, in which case a single value is
-returned.
 
 Returns
 -------
@@ -1864,7 +1771,7 @@ Draw values from the distribution and plot the histogram:
 >>> import matplotlib.pyplot as plt
 >>> h = plt.hist(np.random.triangular(-3, 0, 8, 100000), bins=200,
 ...              normed=True)
->>> plt.show()</pre><hr /><a id='uniform'><h2>randomkit.uniform([output], low, high)</h2><pre>
+>>> plt.show()</pre><hr /><a id='uniform'><h2>randomkit.uniform([result], low, high)</h2><pre>
 Draw samples from a uniform distribution.
 
 Samples are uniformly distributed over the half-open interval
@@ -1880,10 +1787,6 @@ greater than or equal to low.  The default value is 0.
 high : float
 Upper boundary of the output interval.  All values generated will be
 less than high.  The default value is 1.0.
-size : int or tuple of ints, optional
-Shape of output.  If the given size is, for example, (m,n,k),
-m*n*k samples are generated.  If no shape is specified, a single sample
-is returned.
 
 Returns
 -------
@@ -1928,7 +1831,7 @@ probability density function:
 >>> import matplotlib.pyplot as plt
 >>> count, bins, ignored = plt.hist(s, 15, normed=True)
 >>> plt.plot(bins, np.ones_like(bins), linewidth=2, color='r')
->>> plt.show()</pre><hr /><a id='vonmises'><h2>randomkit.vonmises([output], mu, kappa)</h2><pre>
+>>> plt.show()</pre><hr /><a id='vonmises'><h2>randomkit.vonmises([result], mu, kappa)</h2><pre>
 Draw samples from a von Mises distribution.
 
 Samples are drawn from a von Mises distribution with specified mode
@@ -1945,9 +1848,6 @@ mu : float
 Mode ("center") of the distribution.
 kappa : float
 Dispersion of the distribution, has to be >=0.
-size : int or tuple of int
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 Returns
 -------
@@ -1998,7 +1898,7 @@ the probability density function:
 >>> x = np.arange(-np.pi, np.pi, 2*np.pi/50.)
 >>> y = -np.exp(kappa*np.cos(x-mu))/(2*np.pi*sps.jn(0,kappa))
 >>> plt.plot(x, y/max(y), linewidth=2, color='r')
->>> plt.show()</pre><hr /><a id='wald'><h2>randomkit.wald([output], mean, scale)</h2><pre>
+>>> plt.show()</pre><hr /><a id='wald'><h2>randomkit.wald([result], mean, scale)</h2><pre>
 Draw samples from a Wald, or Inverse Gaussian, distribution.
 
 As the scale approaches infinity, the distribution becomes more like a
@@ -2018,9 +1918,6 @@ mean : scalar
 Distribution mean, should be > 0.
 scale : scalar
 Scale parameter, should be >= 0.
-size : int or tuple of ints, optional
-Output shape. Default is None, in which case a single value is
-returned.
 
 Returns
 -------
@@ -2055,7 +1952,7 @@ Draw values from the distribution and plot the histogram:
 
 >>> import matplotlib.pyplot as plt
 >>> h = plt.hist(np.random.wald(3, 2, 100000), bins=200, normed=True)
->>> plt.show()</pre><hr /><a id='weibull'><h2>randomkit.weibull([output], a)</h2><pre>
+>>> plt.show()</pre><hr /><a id='weibull'><h2>randomkit.weibull([result], a)</h2><pre>
 Weibull distribution.
 
 Draw samples from a 1-parameter Weibull distribution with the given
@@ -2072,9 +1969,6 @@ Parameters
 ----------
 a : float
 Shape of the distribution.
-size : tuple of ints
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn.
 
 See Also
 --------
@@ -2133,7 +2027,7 @@ the probability density function:
 >>> x = np.arange(1,100.)/50.
 >>> scale = count.max()/weib(x, 1., 5.).max()
 >>> plt.plot(x, weib(x, 1., 5.)*scale)
->>> plt.show()</pre><hr /><a id='zipf'><h2>randomkit.zipf([output], a)</h2><pre>
+>>> plt.show()</pre><hr /><a id='zipf'><h2>randomkit.zipf([result], a)</h2><pre>
 Draw samples from a Zipf distribution.
 
 Samples are drawn from a Zipf distribution with specified parameter
@@ -2148,12 +2042,6 @@ Parameters
 ----------
 a : float > 1
 Distribution parameter.
-size : int or tuple of int, optional
-Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-``m * n * k`` samples are drawn; a single integer is equivalent in
-its result to providing a mono-tuple, i.e., a 1-D array of length
-*size* is returned.  The default is None, in which case a single
-scalar is returned.
 
 Returns
 -------
