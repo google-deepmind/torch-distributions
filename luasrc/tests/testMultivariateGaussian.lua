@@ -1,7 +1,6 @@
 require 'randomkit'
 require 'util.warn'
 
-dofile('multivariateGaussian.lua')
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
@@ -423,20 +422,31 @@ end
 -- ResultTensor, NxD, NxD
 
 function myTests.testMultivariateDegenerate()
+    local N = 6
+    local D = 3
+
+    local mu = torch.rand(1,  D)
+    local mean = mu:expand(N, D)
+    local cov = torch.eye(D)
+    cov[D][D] = 0
+
     torch.manualSeed(seed)
-    local actual = torch.Tensor(6, 2)
-    local mean= torch.Tensor({ {.123456789,  10} }):expand(6,2)
-    local cov = torch.Tensor{{1, 0}, {1, 0}}
-    tester:assertErrorPattern(function() randomkit.multivariateGaussianRand(actual, mean, cov) end, '.*cannot be factorized.*')
-    --[[ 
-    -- Once we support it, we expect the following (taken from Numpy)
-    local desired = torch.Tensor({{ -1.47027513018564449,  10. },
-    { -1.65915081534845532,  10. },
-    { -2.29186329304599745,  10. },
-    { -1.77505606019580053,  10. },
-    { -0.54970369430044119,  10. },
-    {  0.29768848031692957,  10. }})
-    tester:assertTensorEq(actual, desired, 1e-15) --]]
+    randomkit.ffi.rk_seed(seed, randomkit._state)
+    local expected = randomkit.gauss(torch.Tensor(N, D)):add(mean)
+    expected:select(2,D):fill(mu[1][D])
+
+    torch.manualSeed(seed)
+    randomkit.ffi.rk_seed(seed, randomkit._state)
+    local actual = torch.Tensor(N, D)
+    randomkit.multivariateGaussianRand(actual, mean, cov)
+    -- Check that the second column is constant
+    tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
+
+    -- Check that the first column is what we expected
+    -- NOTE: at the moment, multivariateGaussian generates more random variables than
+    -- needed when the covariance is rank defficient. If in the future this changes,
+    -- the expected will change accordingly.
+    tester:assertTensorEq(actual, expected, 1e-16, 'did not generate expected values')
 end
 
 tester:add(myTests)

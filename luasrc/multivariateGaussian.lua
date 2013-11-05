@@ -131,7 +131,8 @@ function randomkit.multivariateGaussianRand(...)
     end
     if sigma:size(1) == 1 then
         local resultSize = resultTensor:size()
-        local x = torch.randn(n, d)
+        local x = torch.Tensor(n,d)
+        randomkit.gauss(x)
         local y
         -- TODO: when Lapack's pstrf will be wrapped in Torch, use that instead of Cholesky with SVD failsafe
         local fullRank, decomposed = pcall(function() return torch.potrf(sigma[1]):triu() end)
@@ -139,10 +140,10 @@ function randomkit.multivariateGaussianRand(...)
             -- Definite positive matrix: use Cholesky
             y = torch.mm(x, decomposed)
         else
-            error('Covariance matrix needs to be definite positive')
             -- Rank-deficient matrix: fall back on SVD
             local u, s, v = torch.svd(sigma[1])
-
+            local tmp = torch.cmul(x, s:sqrt():resize(1, d):expand(n, d))
+            y = torch.mm(tmp, v)
         end
         torch.add(resultTensor, y, mu):resize(resultSize)
 
