@@ -130,7 +130,7 @@ function randomkit.multivariateGaussianRand(...)
         mu = mu:expand(n, d)
     end
     if sigma:size(1) == 1 then
-
+        local resultSize = resultTensor:size()
         local x = torch.randn(n, d)
         local y
         -- TODO: when Lapack's pstrf will be wrapped in Torch, use that instead of Cholesky with SVD failsafe
@@ -144,8 +144,7 @@ function randomkit.multivariateGaussianRand(...)
             local u, s, v = torch.svd(sigma[1])
 
         end
-        y = y + mu
-        resultTensor:copy(y)
+        torch.add(resultTensor, y, mu):resize(resultSize)
 
         return resultTensor
 
