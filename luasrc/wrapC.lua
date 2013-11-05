@@ -167,8 +167,8 @@ funs['rk_uniform'] = {
 --[[ Initialize the state structure (which is not really seeding,
    since we have replaced randomkit's own Mersenne-Twister by
    Torch's ]]
-local state = ffi.new('rk_state')
-randomkit.ffi.rk_seed(0, state)
+randomkit._state = ffi.new('rk_state')
+randomkit.ffi.rk_seed(0, randomkit._state)
 
 local returnTypeMapping = {
     int = torch.IntTensor,
@@ -188,7 +188,7 @@ local function generateIntoTensor(output, func)
     -- A zero-based index is used to access the data.
     -- The end index is (startIndex + nElements - 1).
     for i0 = offset - 1, offset - 1 + output:nElement() - 1 do
-        outputdata[i0] = tonumber(func(state)) or outputdata[i0]
+        outputdata[i0] = tonumber(func(randomkit._state)) or outputdata[i0]
     end
     return output
 end
@@ -207,7 +207,7 @@ local function applyNotInPlace(input, output, func)
     -- A zero-based index is used to access the data.
     -- The end index is (startIndex + nElements - 1).
     for i0 = offset - 1, offset - 1 + input:nElement() - 1 do
-        outputdata[i0] = tonumber(func(state, inputdata[i0])) or outputdata[i0]
+        outputdata[i0] = tonumber(func(randomkit._state, inputdata[i0])) or outputdata[i0]
     end
     return output
 end
@@ -227,7 +227,7 @@ local function mapNotInPlace(inputA, inputB, output, func)
     -- A zero-based index is used to access the data.
     -- The end index is (startIndex + nElements - 1).
     for i0 = offset - 1, offset - 1 + inputA:nElement() - 1 do
-        outputdata[i0] = tonumber(func(state, inputAdata[i0], inputBdata[i0])) or outputdata[i0]
+        outputdata[i0] = tonumber(func(randomkit._state, inputAdata[i0], inputBdata[i0])) or outputdata[i0]
     end
     return output
 end
@@ -250,7 +250,7 @@ local function map2NotInPlace(inputA, inputB, inputC, output, func)
     -- A zero-based index is used to access the data.
     -- The end index is (startIndex + nElements - 1).
     for i0 = offset - 1, offset - 1 + inputA:nElement() - 1 do
-        outputdata[i0] = tonumber(func(state, inputAdata[i0], inputBdata[i0], inputCdata[i0])) or outputdata[i0]
+        outputdata[i0] = tonumber(func(randomkit._state, inputAdata[i0], inputBdata[i0], inputCdata[i0])) or outputdata[i0]
     end
     return output
 end
@@ -296,7 +296,7 @@ local function create_wrapper(name, randomkitFunction, parameters, returnType)
                 error('TODO: need to implement map for ' .. #params .. 'arguments')
             end
         else
-            result = tonumber(randomkitFunction(state, unpack(params)))
+            result = tonumber(randomkitFunction(randomkit._state, unpack(params)))
         end
 
         return result
