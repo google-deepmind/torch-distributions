@@ -141,9 +141,7 @@ Cumulative distribution function of a Gaussian distribution with mean `mu` and s
 
 ###Multivariate Gaussian
 
-The covariance matrix passed to multivariate gaussian functions **must** be definite positive: we do not deal with the degenerate case
-where some of the variance elements are null.
-
+The covariance matrix passed to multivariate gaussian functions needs only be positive **semi**-definite: we deal gracefully with the degenerate case of rank-deficient covariance.
 
 ####randomkit.multivariateGaussianPDF(x, mu, cov)
 
