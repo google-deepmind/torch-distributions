@@ -1,5 +1,7 @@
 require 'randomkit'
 require 'util.warn'
+
+dofile('multivariateGaussian.lua')
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()

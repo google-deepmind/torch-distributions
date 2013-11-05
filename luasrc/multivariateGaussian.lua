@@ -131,9 +131,13 @@ function randomkit.multivariateGaussianRand(...)
     end
     if sigma:size(1) == 1 then
 
-        local decomposed = torch.potrf(sigma[1]):triu() -- TODO remove triu as torch will be fixed
-        local s = torch.mm(torch.randn(n, d), decomposed) + mu
-        resultTensor:copy(s)
+        local fullRank, decomposed = pcall(function() return torch.potrf(sigma[1]):triu() end)
+        if fullRank then
+            local s = torch.mm(torch.randn(n, d), decomposed) + mu
+            resultTensor:copy(s)
+        else
+            error('Covariance matrix needs to be definite positive')
+        end
 
         return resultTensor
 
@@ -148,4 +152,3 @@ function randomkit.multivariateGaussianRand(...)
 
     end
 end
-
