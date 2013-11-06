@@ -52,6 +52,10 @@ randomkit.poisson(x, many_lambda)
 
 **Note:** in the latter case, the size of the result Tensor must correspond to the size of the parameter tensor -- we do not resize the result tensor automatically, yet:
 
+###Getting/setting the seed and the state
+
+Randomkit is transparently integrated with Torch's random stream: just use `torch.manualSeed(seed)`, `torch.getRNGState()`, and `torch.setRNGState(state)` as usual.
+
 
 ##Installation
 
