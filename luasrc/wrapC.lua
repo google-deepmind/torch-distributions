@@ -170,6 +170,34 @@ funs['rk_uniform'] = {
 randomkit._state = ffi.new('rk_state')
 randomkit.ffi.rk_seed(0, randomkit._state)
 
+-- Extend torch state handling to handle randomkit's state too
+local _manualSeed = torch.manualSeed
+torch.manualSeed = function(seed)
+    randomkit.ffi.rk_seed(0, randomkit._state)
+    return _manualSeed(seed)
+end
+
+local _getRNGState = torch.getRNGState
+torch.getRNGState = function()
+    local clonedState = ffi.new('rk_state')
+    ffi.copy(clonedState, randomkit._state, ffi.sizeof(clonedState))
+    return {
+        torch = _getRNGState(),
+        randomkit = clonedState
+    }
+end
+
+local _setRNGState = torch.setRNGState
+torch.setRNGState = function(state)
+    if not type(state) == 'table' or not state.torch or not state.randomkit then
+        error('State was not saved with randomkit, cannot set it back')
+    end
+    _setRNGState(state.torch)
+    randomkit._state = state.randomkit
+end
+
+
+
 local returnTypeMapping = {
     int = torch.IntTensor,
     double = torch.DoubleTensor
