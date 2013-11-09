@@ -406,7 +406,21 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_variance()
 end
 --
 -- ResultTensor, D, DxD
+function myTests.multivariateGaussianRand_Result_D_DD_Standard()
+    local mu = torch.Tensor({10, 0})
+    local sigma = torch.eye(2)
+    local N = 10000
+    local D = 2
+    local result = torch.Tensor(N, D)
+
+    randomkit.multivariateGaussianRand(result, mu, sigma)
+    tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
+    tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
+    tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
+    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+end
 -- ResultTensor, NxD, DxD
+
 -- ResultTensor, D, NxDxD
 -- ResultTensor, NxD, NxDxD
 --

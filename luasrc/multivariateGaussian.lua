@@ -105,7 +105,7 @@ function randomkit.multivariateGaussianRand(...)
             if nParams then
                 n = nParams
             else
-                n = resultTensor:nElements() / d
+                n = resultTensor:nElement() / d
             end
         else
             error("Unable to understand first argument for multivariateGaussianRand - should be an integer number of samples to be returned, or a result tensor")
