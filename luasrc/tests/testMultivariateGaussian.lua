@@ -474,34 +474,37 @@ local function generateTests()
 
         local accumulated = torch.Tensor(M, N, D):zero()
 
+        local notNil = true
+        local correctDim = true
+        local correctSize = true
         for k = 1, N do
             local results = randomkit.multivariateGaussianRand(v1, v2, v3)
-            tester:assert(results, "got no result - expected samples from a gaussian!")
-            tester:asserteq(results:dim(), 2, "wrong dimensionality for result")
-            tester:asserteq(results:size(1), M, "expected " .. M .. " results")
+            notNil = notNil and results ~= nil
+            correctDim = correctDim and results:dim() == 2
+            correctSize = correctSize and results:size(1) == M
             if v2:dim() == 2 then
                 gaussDim = v2:size(2)
             else
                 gaussDim = v2:size(1)
             end
-            tester:asserteq(results:size(2), gaussDim, "expected results of size " .. gaussDim)
+            correctSize = correctSize and results:size(2) == gaussDim
             for j = 1, M do
                 accumulated[j][k] = results[j]
             end
         end
 
+        tester:assert(notNil, "got no result - expected samples from a gaussian!")
+        tester:assert(correctDim, "wrong dimensionality for result")
+        tester:assert(correctSize, "expected results of correct size")
+
         for j = 1, M do
-            local mu
+            local mu = v2
             if v2:dim() == 2 then
                 mu = v2[j]
-            else
-                mu = v2
             end
-            local sigma
+            local sigma = v3
             if v3:dim() == 3 then
                 sigma = v3[j]
-            else
-                sigma = v3
             end
             statisticalTestMultivariateGaussian(0.95, accumulated[j], mu, sigma, true)
         end
@@ -565,11 +568,11 @@ local function generateTests()
                 if not testFunc then
                     error("Missing expected result handler for " .. desc)
                 end
-                if i3 == "MxDxD" then
+--                if i3 == "MxDxD" then
                     myTests1["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
                         testFunc(i1, v1, i2, v2, i3, v3, desc)
                     end
-                end
+--                end
             end
         end
     end
@@ -604,6 +607,6 @@ function myTests.testMultivariateDegenerate()
     tester:assertTensorEq(actual, expected, 1e-16, 'did not generate expected values')
 end
 
---tester:add(myTests)
+tester:add(myTests)
 tester:add(myTests1)
 tester:run()
