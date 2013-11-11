@@ -584,6 +584,8 @@ local function generateSystematicTests()
     expectations["NxD, MxD, ExE"] = shouldError
     expectations["NxD, MxD, MxDxD"] = shouldBeFromMGaussians
 
+    local testTable = {}
+
     for i1, v1 in pairs(firstArgOptions) do
         for i2, v2 in pairs(secondArgOptions) do
             for i3, v3 in pairs(thirdArgOptions) do
@@ -593,7 +595,7 @@ local function generateSystematicTests()
                 if not testFunc then
                     error("Missing expected result handler for " .. desc)
                 end
-                myTests1["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
+                testTable["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
                     testFunc(i1, v1, i2, v2, i3, v3, desc)
                 end
             end
