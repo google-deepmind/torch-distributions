@@ -116,15 +116,11 @@ function randomkit.multivariateGaussianRand(...)
         Should be (mu, sigma), or (N, mu, sigma), or (ResultTensor, mu, sigma).")
     end
 
-    print("mu", mu)
-    print("sigma", sigma)
     -- Now make our inputs all tensors, for simplicity
     if mu:dim() == 1 then
         mu:resize(1, mu:nElement())
     end
     if sigma:dim() == 2 then
-        print("mu size", mu:size())
-        print("sigma size", sigma:size())
         if mu:size(2) ~= sigma:size(1) or mu:size(2) ~= sigma:size(2) then
             error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
         end
@@ -134,38 +130,37 @@ function randomkit.multivariateGaussianRand(...)
         error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
     end
     if mu:size(1) == 1 then
-        print("trying to expand mu to " .. n .. "x" .. d)
-        print("mu is ", mu)
         mu = mu:expand(n, d)
     end
-    if sigma:size(1) == 1 then
+
+    local function sampleFromDistribution(resultTensor, x, mu, sigma)
         local resultSize = resultTensor:size()
-        local x = torch.Tensor(n,d)
-        randomkit.gauss(x)
         local y
         -- TODO: when Lapack's pstrf will be wrapped in Torch, use that instead of Cholesky with SVD failsafe
-        local fullRank, decomposed = pcall(function() return torch.potrf(sigma[1]):triu() end)
+        local fullRank, decomposed = pcall(function() return torch.potrf(sigma):triu() end)
         if fullRank then
             -- Definite positive matrix: use Cholesky
             y = torch.mm(x, decomposed)
         else
             -- Rank-deficient matrix: fall back on SVD
-            local u, s, v = torch.svd(sigma[1])
+            local u, s, v = torch.svd(sigma)
             local tmp = torch.cmul(x, s:sqrt():resize(1, d):expand(n, d))
             y = torch.mm(tmp, v)
         end
         torch.add(resultTensor, y, mu):resize(resultSize)
 
+    end
+
+    local x = torch.Tensor(n,d)
+    randomkit.gauss(x)
+    if sigma:size(1) == 1 then
+        sampleFromDistribution(resultTensor, x, mu, sigma[1])
         return resultTensor
 
     else
-        error("Multiple covariance matrices: not implemented")
-        --[[ TODO multiple sigmas
         for k = 1, n do
-            local decomposed = torch.potrf(sigma[k]):triu() -- TODO remove triu as torch will be fixed
-            local r = torch.mm(torch.randn(n, d), decomposed) + mu
+            sampleFromDistribution(resultTensor[k], x[k]:resize(1, d), mu[k], sigma[k])
         end
-        --]]
-
+        return resultTensor
     end
 end

@@ -422,9 +422,36 @@ end
 -- ResultTensor, D, NxD
 -- ResultTensor, NxD, NxD
 
-local myTests1 = {}
+function myTests.testMultivariateDegenerate()
+    local N = 6
+    local D = 3
 
-local function generateTests()
+    local mu = torch.rand(1,  D)
+    local mean = mu:expand(N, D)
+    local cov = torch.eye(D)
+    cov[D][D] = 0
+
+    torch.manualSeed(seed)
+    randomkit.ffi.rk_seed(seed, randomkit._state)
+    local expected = randomkit.gauss(torch.Tensor(N, D)):add(mean)
+    expected:select(2,D):fill(mu[1][D])
+
+    torch.manualSeed(seed)
+    randomkit.ffi.rk_seed(seed, randomkit._state)
+    local actual = torch.Tensor(N, D)
+    randomkit.multivariateGaussianRand(actual, mean, cov)
+    -- Check that the second column is constant
+    tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
+
+    -- Check that the first column is what we expected
+    -- NOTE: at the moment, multivariateGaussian generates more random variables than
+    -- needed when the covariance is rank defficient. If in the future this changes,
+    -- the expected will change accordingly.
+    tester:assertTensorEq(actual, expected, 1e-16, 'did not generate expected values')
+end
+
+
+local function generateSystematicTests()
     local N = 10000
     local M = 3
     local D = 2
@@ -445,7 +472,7 @@ local function generateTests()
     local thirdArgDD = torch.Tensor {{2, 1}, {1, 1}}
     local thirdArgMDD = torch.Tensor(M, D, D):zero()
     for k = 1, M do
-        thirdArgMDD[k] = torch.Tensor {{k, k-1}, {k-1, k-1}}
+        thirdArgMDD[k] = torch.Tensor {{k+1, k}, {k, k}}
     end
     local thirdArgDE = torch.Tensor {{2, 1, 1}, {1, 1, 1}}
     local thirdArgEE = torch.Tensor {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
@@ -460,11 +487,9 @@ local function generateTests()
     end
 
     local function shouldBeFromOneGaussian(i1, v1, i2, v2, i3, v3, desc)
-
         local result = randomkit.multivariateGaussianRand(v1, v2, v3)
         tester:assert(result, "got no result - expected samples from a gaussian!")
         tester:asserteq(result:dim(), 2, "wrong dimensionality for result")
---        tester:asserteq(result:size(1), N, "expected " .. N .. " results") -- TODO ?
         tester:asserteq(result:size(2), v2:size(1), "expected results of size " .. v2:size(1))
         statisticalTestMultivariateGaussian(0.95, result, v2, v3, true)
     end
@@ -482,6 +507,7 @@ local function generateTests()
             notNil = notNil and results ~= nil
             correctDim = correctDim and results:dim() == 2
             correctSize = correctSize and results:size(1) == M
+            local gaussDim
             if v2:dim() == 2 then
                 gaussDim = v2:size(2)
             else
@@ -509,7 +535,6 @@ local function generateTests()
             statisticalTestMultivariateGaussian(0.95, accumulated[j], mu, sigma, true)
         end
     end
-
 
     local function null() end
 
@@ -568,45 +593,15 @@ local function generateTests()
                 if not testFunc then
                     error("Missing expected result handler for " .. desc)
                 end
---                if i3 == "MxDxD" then
-                    myTests1["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
-                        testFunc(i1, v1, i2, v2, i3, v3, desc)
-                    end
---                end
+                myTests1["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
+                    testFunc(i1, v1, i2, v2, i3, v3, desc)
+                end
             end
         end
     end
-end
-generateTests()
-
-function myTests.testMultivariateDegenerate()
-    local N = 6
-    local D = 3
-
-    local mu = torch.rand(1,  D)
-    local mean = mu:expand(N, D)
-    local cov = torch.eye(D)
-    cov[D][D] = 0
-
-    torch.manualSeed(seed)
-    randomkit.ffi.rk_seed(seed, randomkit._state)
-    local expected = randomkit.gauss(torch.Tensor(N, D)):add(mean)
-    expected:select(2,D):fill(mu[1][D])
-
-    torch.manualSeed(seed)
-    randomkit.ffi.rk_seed(seed, randomkit._state)
-    local actual = torch.Tensor(N, D)
-    randomkit.multivariateGaussianRand(actual, mean, cov)
-    -- Check that the second column is constant
-    tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
-
-    -- Check that the first column is what we expected
-    -- NOTE: at the moment, multivariateGaussian generates more random variables than
-    -- needed when the covariance is rank defficient. If in the future this changes,
-    -- the expected will change accordingly.
-    tester:assertTensorEq(actual, expected, 1e-16, 'did not generate expected values')
+    return testTable
 end
 
 tester:add(myTests)
-tester:add(myTests1)
+tester:add(generateSystematicTests())
 tester:run()
