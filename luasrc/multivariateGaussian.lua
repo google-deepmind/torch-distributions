@@ -92,16 +92,15 @@ function randomkit.multivariateGaussianRand(...)
         if not nParams and sigma:dim() == 3 then
             nParams = sigma:size(1)
         end
+        d = sigma:size(2)
         if type(resultInfo) == 'number' then
             n = resultInfo
-            d = sigma:size(1)
             resultTensor = torch.Tensor(n, d)
             if nParams and nParams ~= n then
                 error("Parameter sizes do not match number of samples requested")
             end
         elseif randomkit._isTensor(resultInfo) then
             resultTensor = resultInfo
-            d = sigma:size(1)
             if nParams then
                 n = nParams
             else
@@ -131,7 +130,12 @@ function randomkit.multivariateGaussianRand(...)
         end
         sigma:resize(1, d, d)
     end
+    if mu:size(2) ~= d or sigma:size(2) ~= d or sigma:size(3) ~= d then
+        error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+    end
     if mu:size(1) == 1 then
+        print("trying to expand mu to " .. n .. "x" .. d)
+        print("mu is ", mu)
         mu = mu:expand(n, d)
     end
     if sigma:size(1) == 1 then
