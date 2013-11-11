@@ -425,11 +425,11 @@ end
 local myTests1 = {}
 
 local function generateTests()
-    local N = 10
+    local N = 10000
     local M = 3
     local D = 2
 
-    local firstArgOptions = { N = N, NxD = torch.Tensor(N, D) }
+    local firstArgOptions = { N = N, M = M, NxD = torch.Tensor(N, D) }
 
     local secondArgD = torch.Tensor { 10, 0 }
     local secondArgMD = torch.Tensor(M, D):zero()
@@ -440,8 +440,7 @@ local function generateTests()
     end)
     local secondArgE = torch.Tensor { 10, 0, 0 }
 
-    local secondArgOptions = { D = secondArgD, E = secondArgE }
---    local secondArgOptions = { D = secondArgD, E = secondArgE, NxD = secondArgMD }
+    local secondArgOptions = { D = secondArgD, E = secondArgE, MxD = secondArgMD }
 
     local thirdArgDD = torch.Tensor {{2, 1}, {1, 1}}
     local thirdArgMDD = torch.Tensor(M, D, D):zero()
@@ -452,59 +451,84 @@ local function generateTests()
     local thirdArgEE = torch.Tensor {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
 
     local thirdArgOptions = { DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE }
---    local thirdArgOptions = { DxD = thirdArgDD, NxDxD = thirdArgMDD }
+    -- TODO multiple sigmas
 
     local function shouldError(i1, v1, i2, v2, i3, v3, desc)
-        local firstArg = firstArgOptions[i1]
-        local secondArg = secondArgOptions[i2]
-        local thirdArg = thirdArgOptions[i3]
-        print("TEST " , desc)
         tester:assertError(
-                function() randomkit.multivariateGaussianRand(firstArg, secondArg, thirdArg) end,
+                function() randomkit.multivariateGaussianRand(v1, v2, v3) end,
                 desc .. " should error!"
             )
     end
 
     local function shouldBeFromOneGaussian(i1, v1, i2, v2, i3, v3, desc)
-        local firstArg = firstArgOptions[i1]
-        local secondArg = secondArgOptions[i2]
-        local thirdArg = thirdArgOptions[i3]
 
-        print("TEST " , desc)
-        local result = randomkit.multivariateGaussianRand(firstArg, secondArg, thirdArg)
+        local result = randomkit.multivariateGaussianRand(v1, v2, v3)
         tester:assert(result, "got no result - expected samples from a gaussian!")
         tester:asserteq(result:dim(), 2, "wrong dimensionality for result")
---        tester:asserteq(result:size(1), N, "expected " .. N .. " results")
-        tester:asserteq(result:size(2), secondArg:size(1), "expected results of size " .. secondArg:size(1))
-        print("result", result)
-        -- TODO statistical test
-        statisticalTestMultivariateGaussian(0.95, result, secondArg, thirdArg, true)
+--        tester:asserteq(result:size(1), N, "expected " .. N .. " results") -- TODO ?
+        tester:asserteq(result:size(2), v2:size(1), "expected results of size " .. v2:size(1))
+        statisticalTestMultivariateGaussian(0.95, result, v2, v3, true)
     end
 
+    -- Constant covariance, N different means
     local function shouldBeFromNGaussians(i1, v1, i2, v2, i3, v3, desc)
-        -- TODO
+
+        local accumulated = torch.Tensor(M, N, D):zero()
+
+        for k = 1, N do
+            local results = randomkit.multivariateGaussianRand(v1, v2, v3)
+            tester:assert(results, "got no result - expected samples from a gaussian!")
+            tester:asserteq(results:dim(), 2, "wrong dimensionality for result")
+            tester:asserteq(results:size(1), M, "expected " .. M .. " results")
+            tester:asserteq(results:size(2), v2:size(2), "expected results of size " .. v2:size(2))
+            for j = 1, M do
+                accumulated[j][k] = results[j]
+            end
+        end
+
+        for j = 1, M do
+            statisticalTestMultivariateGaussian(0.95, accumulated[j], v2[j], v3, true)
+        end
     end
+
+    local function null() end
 
     local expectations = {}
     expectations["N, D, DxD"] = shouldBeFromOneGaussian
     expectations["N, D, DxE"] = shouldError
     expectations["N, D, ExE"] = shouldError
-    expectations["N, D, NxD"] = shouldBeFromNGaussians
 
     expectations["N, E, DxD"] = shouldError
     expectations["N, E, DxE"] = shouldError
     expectations["N, E, ExE"] = shouldBeFromOneGaussian
-    expectations["N, E, NxD"] = shouldError
+
+    expectations["N, MxD, DxD"] = shouldError
+    expectations["N, MxD, DxE"] = shouldError
+    expectations["N, MxD, ExE"] = shouldError
+
+    expectations["M, D, DxD"] = null
+    expectations["M, D, DxE"] = null
+    expectations["M, D, ExE"] = null
+
+    expectations["M, E, DxD"] = null
+    expectations["M, E, DxE"] = null
+    expectations["M, E, ExE"] = null
+
+    expectations["M, MxD, DxD"] = shouldBeFromNGaussians
+    expectations["M, MxD, DxE"] = shouldError
+    expectations["M, MxD, ExE"] = shouldError
 
     expectations["NxD, D, DxD"] = shouldBeFromOneGaussian
     expectations["NxD, E, DxD"] = shouldError
     expectations["NxD, D, DxE"] = shouldError
-    expectations["NxD, D, NxD"] = shouldBeFromNGaussians
 
     expectations["NxD, D, ExE"] = shouldError
     expectations["NxD, E, DxE"] = shouldError
     expectations["NxD, E, ExE"] = shouldBeFromOneGaussian
-    expectations["NxD, E, NxD"] = shouldError
+
+    expectations["NxD, MxD, DxD"] = shouldBeFromNGaussians
+    expectations["NxD, MxD, DxE"] = shouldError
+    expectations["NxD, MxD, ExE"] = shouldError
 
     for i1, v1 in pairs(firstArgOptions) do
         for i2, v2 in pairs(secondArgOptions) do
@@ -515,7 +539,7 @@ local function generateTests()
                 if not testFunc then
                     error("Missing expected result handler for " .. desc)
                 end
-                myTests1["test_multivariateGaussianRand_" .. key] = function()
+                myTests1["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
                     testFunc(i1, v1, i2, v2, i3, v3, desc)
                 end
             end
