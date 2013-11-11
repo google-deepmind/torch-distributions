@@ -107,6 +107,7 @@ function randomkit.multivariateGaussianRand(...)
             else
                 n = resultTensor:nElement() / d
             end
+            resultTensor:resize(n, d)
         else
             error("Unable to understand first argument for multivariateGaussianRand - should be an integer number of samples to be returned, or a result tensor")
         end
@@ -116,15 +117,19 @@ function randomkit.multivariateGaussianRand(...)
         Should be (mu, sigma), or (N, mu, sigma), or (ResultTensor, mu, sigma).")
     end
 
+    print("mu", mu)
+    print("sigma", sigma)
     -- Now make our inputs all tensors, for simplicity
     if mu:dim() == 1 then
         mu:resize(1, mu:nElement())
     end
     if sigma:dim() == 2 then
+        print("mu size", mu:size())
+        print("sigma size", sigma:size())
+        if mu:size(2) ~= sigma:size(1) or mu:size(2) ~= sigma:size(2) then
+            error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+        end
         sigma:resize(1, d, d)
-    end
-    if mu:size(2) ~= sigma:size(2) then
-        error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
     end
     if mu:size(1) == 1 then
         mu = mu:expand(n, d)
