@@ -4,7 +4,14 @@ require 'util.warn'
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
-local seed = 1234567890
+torch.manualSeed(os.clock())
+
+-- This is the confidence threshold for the statistical tests.
+local function bonferroniCorrection(alpha, n)
+    return 1 - (1 - alpha)/n
+end
+local statisticalTests = 28
+local alpha = bonferroniCorrection(0.5, statisticalTests)
 
 local standardGaussianPDFWindow = torch.Tensor({
     {0.058549831524319, 0.070096874908772, 0.080630598589333, 0.089110592667962, 0.094620883979159, 0.096532352630054, 0.094620883979159, 0.089110592667962, 0.080630598589333, 0.070096874908772, 0.058549831524319},
@@ -288,7 +295,7 @@ local function statisticalTestMultivariateGaussian(alpha, samples, mu, sigma, sh
         local p, chi2 = randomkit.chi2Gaussian(projectedSamples, mu[k], math.sqrt(sigma[k][k]))
 
         -- Bonferroni's correction
-        if p < (1 - alpha) / D then
+        if p < 1 - bonferroniCorrection(alpha, D) then
             -- we're rejecting the null hypothesis, that the sample is normally distributed with the above params
             rejectionCount = rejectionCount + 1
             tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters")
@@ -327,7 +334,7 @@ function myTests.test_multivariateGaussianRand_D_DD()
     tester:assert(dimOK, "single sample should return vector result")
     tester:assert(sizeOK, "result should have size = 2")
 
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+    statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
 
 function myTests.test_multivariateGaussianRand_D_DD_errorSizes()
@@ -353,7 +360,7 @@ function myTests.multivariateGaussianRand_N_D_DD_Standard()
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+    statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
 function myTests.multivariateGaussianRand_N_D_DD()
     local mu = torch.Tensor({10, 0})
@@ -365,7 +372,7 @@ function myTests.multivariateGaussianRand_N_D_DD()
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+    statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
 function myTests.multivariateGaussianRand_N_D_DD_fail_mean()
     local mu = torch.Tensor({10, 0})
@@ -377,7 +384,7 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_mean()
 
     -- Check we reject a sample with wrong mean
     result:select(2, 1):add(1)
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, false)
+    statisticalTestMultivariateGaussian(result, mu, sigma, false)
 end
 
 -- Check we reject a sample with wrong variance
@@ -389,7 +396,7 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_variance()
 
     local result = randomkit.multivariateGaussianRand(N, mu, sigma)
     result:select(2, 1):mul(2)
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, false)
+    statisticalTestMultivariateGaussian(result, mu, sigma, false)
 end
 --
 -- ResultTensor, D, DxD
@@ -404,7 +411,7 @@ function myTests.multivariateGaussianRand_Result_D_DD_Standard()
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+    statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
 -- ResultTensor, NxD, DxD
 
