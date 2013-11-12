@@ -52,6 +52,28 @@ function seedTest.testRNGState()
   -- test_generator(function() return torch.randn(oddN) end, 'torch.randn')
 end
 
+local getTempFileName = function(path)
+    path = path or '/tmp/'
+
+    local ffi = require 'ffi'
+    ffi.cdef[[char * mktemp(char *);]]
+    local fileTemplate = ffi.new("char[100]")
+    ffi.copy(fileTemplate, path .. '/testXXXXXX')
+    return ffi.string(ffi.C.mktemp(fileTemplate))
+end
+
+function seedTest.testSeralizeRNGState()
+
+    local fileName = getTempFileName()
+    local state = torch.getRNGState()
+    local before = randomkit.double()
+    torch.save(fileName, state)
+    local loadedState = torch.load(fileName)
+    torch.setRNGState(loadedState)
+    local after = randomkit.double()
+    tester:asserteq(before, after, 'Saving state to file then loading and restoring did not restore stream')
+    os.remove(fileName)
+end
 
 tester:add(seedTest)
 tester:run()
