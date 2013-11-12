@@ -438,23 +438,10 @@ function myTests.testMultivariateDegenerate()
     local cov = torch.eye(D)
     cov[D][D] = 0
 
-    torch.manualSeed(seed)
-    randomkit.ffi.rk_seed(seed, randomkit._state)
-    local expected = randomkit.gauss(torch.Tensor(N, D)):add(mean)
-    expected:select(2,D):fill(mu[1][D])
-
-    torch.manualSeed(seed)
-    randomkit.ffi.rk_seed(seed, randomkit._state)
     local actual = torch.Tensor(N, D)
     randomkit.multivariateGaussianRand(actual, mean, cov)
     -- Check that the second column is constant
     tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
-
-    -- Check that the first column is what we expected
-    -- NOTE: at the moment, multivariateGaussian generates more random variables than
-    -- needed when the covariance is rank defficient. If in the future this changes,
-    -- the expected will change accordingly.
-    tester:assertTensorEq(actual, expected, 1e-16, 'did not generate expected values')
 end
 
 
