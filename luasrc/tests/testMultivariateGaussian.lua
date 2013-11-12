@@ -4,7 +4,7 @@ require 'util.warn'
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
-torch.manualSeed(os.clock())
+torch.manualSeed(os.clock()*10000)
 
 -- This is the confidence threshold for the statistical tests.
 local function bonferroniCorrection(alpha, n)
@@ -272,7 +272,11 @@ function myTests.multivariateGaussianLogPDFNonStandard()
     tester:assertTensorEq(result, expected, 1e-12, "non-standard 2D gaussian log-pdf should match expected value")
 end
 
-local function statisticalTestMultivariateGaussian(alpha, samples, mu, sigma, shouldAccept)
+local testCount = 0
+
+local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAccept)
+
+    testCount = testCount + 1
 
     -- Part one: chi2 test projection onto each axis
 
@@ -463,6 +467,7 @@ local function generateSystematicTests()
 
     local secondArgOptions = { D = secondArgD, E = secondArgE, MxD = secondArgMD }
 
+    local thirdArgD = torch.Tensor { 2, 1 }
     local thirdArgDD = torch.Tensor {{2, 1}, {1, 1}}
     local thirdArgMDD = torch.Tensor(M, D, D):zero()
     for k = 1, M do
@@ -472,6 +477,7 @@ local function generateSystematicTests()
     local thirdArgEE = torch.Tensor {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
 
     local thirdArgOptions = { DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE, MxDxD = thirdArgMDD }
+--    local thirdArgOptions = { D = thirdArgD, DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE, MxDxD = thirdArgMDD }
 
     local function shouldError(v1, v2, v3, desc)
         tester:assertError(
@@ -498,6 +504,12 @@ local function generateSystematicTests()
     end
 
     local function shouldBeFromMGaussians(v1, v2, v3, desc)
+
+--        print(desc)
+--        if desc == 'randomkit.multivariateGaussianRand(M, D, MxDxD)' then
+--            print("saving state")
+--            torch.save("state.t7", torch.getRNGState())
+--        end
 
         local accumulated = torch.Tensor(M, N, D):zero()
 
@@ -537,52 +549,66 @@ local function generateSystematicTests()
                 sigma = v3[j]
             end
             statisticalTestMultivariateGaussian(accumulated[j], mu, sigma, true)
+            if desc == 'randomkit.multivariateGaussianRand(M, D, MxDxD)' then
+                gnuplot.pngfigure('mfig' .. j)
+                gnuplot.plot(accumulated[j], '.')
+                gnuplot.plotflush()
+            end
         end
     end
 
     local function null() end
 
     local expectations = {}
+    expectations["N, D, D"] = shouldBeFromOneDiagonalGaussian
     expectations["N, D, DxD"] = shouldBeFromOneGaussian
     expectations["N, D, DxE"] = shouldError
     expectations["N, D, ExE"] = shouldError
     expectations["N, D, MxDxD"] = shouldError
 
+    expectations["N, E, D"] = shouldError
     expectations["N, E, DxD"] = shouldError
     expectations["N, E, DxE"] = shouldError
     expectations["N, E, ExE"] = shouldBeFromOneGaussian
     expectations["N, E, MxDxD"] = shouldError
 
+    expectations["N, MxD, D"] = shouldError
     expectations["N, MxD, DxD"] = shouldError
     expectations["N, MxD, DxE"] = shouldError
     expectations["N, MxD, ExE"] = shouldError
     expectations["N, MxD, MxDxD"] = shouldError
 
+    expectations["M, D, D"] = null
     expectations["M, D, DxD"] = null
     expectations["M, D, DxE"] = shouldError
     expectations["M, D, ExE"] = shouldError
     expectations["M, D, MxDxD"] = shouldBeFromMGaussians
 
+    expectations["M, E, D"] = null
     expectations["M, E, DxD"] = null
     expectations["M, E, DxE"] = shouldError
     expectations["M, E, ExE"] = null
     expectations["M, E, MxDxD"] = shouldError
 
+    expectations["M, MxD, D"] = null -- TODO ?
     expectations["M, MxD, DxD"] = shouldBeFromMGaussians
     expectations["M, MxD, DxE"] = shouldError
     expectations["M, MxD, ExE"] = shouldError
     expectations["M, MxD, MxDxD"] = shouldBeFromMGaussians
 
+    expectations["NxD, D, D"] = shouldBeFromOneDiagonalGaussian
     expectations["NxD, D, DxD"] = shouldBeFromOneGaussian
     expectations["NxD, D, DxE"] = shouldError
     expectations["NxD, D, ExE"] = shouldError
     expectations["NxD, D, MxDxD"] = shouldBeFromMGaussians
 
+    expectations["NxD, E, D"] = shouldError
     expectations["NxD, E, DxD"] = shouldError
     expectations["NxD, E, DxE"] = shouldError
     expectations["NxD, E, ExE"] = shouldBeFromOneGaussian
     expectations["NxD, E, MxDxD"] = shouldError
 
+    expectations["NxD, MxD, D"] = null -- TODO ?
     expectations["NxD, MxD, DxD"] = shouldBeFromMGaussians
     expectations["NxD, MxD, DxE"] = shouldError
     expectations["NxD, MxD, ExE"] = shouldError
@@ -611,3 +637,5 @@ end
 tester:add(myTests)
 tester:add(generateSystematicTests())
 tester:run()
+
+print("test count", testCount)
