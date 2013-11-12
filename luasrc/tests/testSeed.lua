@@ -2,11 +2,7 @@ require 'randomkit'
 local seedTest = {}
 local tester = torch.Tester()
 
-function seedTest.manualSeed()
-
-end
-
-function seedTest.manualSeed()
+function seedTest.testManualSeed()
     local seed = 1234567890
 
     local function test_generator(f, s)
@@ -31,7 +27,7 @@ function seedTest.manualSeed()
 
 end
 
-function seedTest.RNGState()
+function seedTest.testRNGState()
    local ignored, state, stateCloned, before, after
 
     local function test_generator(f, s)
@@ -55,6 +51,7 @@ function seedTest.RNGState()
    -- TODO: uncomment below once torch7-distro/torch#191 is fixed
   -- test_generator(function() return torch.randn(oddN) end, 'torch.randn')
 end
+
 
 tester:add(seedTest)
 tester:run()
