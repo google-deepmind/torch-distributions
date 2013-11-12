@@ -179,8 +179,8 @@ end
 
 local _getRNGState = torch.getRNGState
 torch.getRNGState = function()
-    local clonedState = ffi.new('rk_state')
-    ffi.copy(clonedState, randomkit._state, ffi.sizeof(clonedState))
+    -- Serialize to string, required to write to file
+    local clonedState = ffi.string(randomkit._state, ffi.sizeof(randomkit._state))
     return {
         torch = _getRNGState(),
         randomkit = clonedState
@@ -193,10 +193,9 @@ torch.setRNGState = function(state)
         error('State was not saved with randomkit, cannot set it back')
     end
     _setRNGState(state.torch)
-    randomkit._state = state.randomkit
+    -- Deserialize from string
+    ffi.copy(randomkit._state, state.randomkit, ffi.sizeof(randomkit._state))
 end
-
-
 
 local returnTypeMapping = {
     int = torch.IntTensor,
