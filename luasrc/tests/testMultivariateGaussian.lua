@@ -473,26 +473,36 @@ local function generateSystematicTests()
 
     local thirdArgOptions = { DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE, MxDxD = thirdArgMDD }
 
-    local function shouldError(i1, v1, i2, v2, i3, v3, desc)
+    local function shouldError(v1, v2, v3, desc)
         tester:assertError(
                 function() randomkit.multivariateGaussianRand(v1, v2, v3) end,
                 desc .. " should error!"
             )
     end
 
-    local function shouldBeFromOneGaussian(i1, v1, i2, v2, i3, v3, desc)
-        local result = randomkit.multivariateGaussianRand(v1, v2, v3)
+    local function checkResultsGaussian(result, mu, sigma)
         tester:assert(result, "got no result - expected samples from a gaussian!")
         tester:asserteq(result:dim(), 2, "wrong dimensionality for result")
-        tester:asserteq(result:size(2), v2:size(1), "expected results of size " .. v2:size(1))
-        statisticalTestMultivariateGaussian(0.95, result, v2, v3, true)
+        tester:asserteq(result:size(2), mu:size(1), "expected results of size " .. mu:size(1))
+        statisticalTestMultivariateGaussian(result, mu, sigma, true)
     end
 
-    -- Constant covariance, M different means
-    local function shouldBeFromMGaussians(i1, v1, i2, v2, i3, v3, desc)
+    local function shouldBeFromOneGaussian(v1, v2, v3, desc)
+        local result = randomkit.multivariateGaussianRand(v1, v2, v3)
+        checkResultsGaussian(result, v2, v3)
+    end
+
+    local function shouldBeFromOneDiagonalGaussian(v1, v2, v3, desc)
+        local result = randomkit.multivariateGaussianRand(v1, v2, v3)
+        checkResultsGaussian(result, v2, torch.diag(v3))
+    end
+
+    local function shouldBeFromMGaussians(v1, v2, v3, desc)
 
         local accumulated = torch.Tensor(M, N, D):zero()
 
+        -- Each call only returns one sample from each distribution, so to
+        -- perform our statistical tests we need to make many calls.
         local notNil = true
         local correctDim = true
         local correctSize = true
@@ -526,7 +536,7 @@ local function generateSystematicTests()
             if v3:dim() == 3 then
                 sigma = v3[j]
             end
-            statisticalTestMultivariateGaussian(0.95, accumulated[j], mu, sigma, true)
+            statisticalTestMultivariateGaussian(accumulated[j], mu, sigma, true)
         end
     end
 
@@ -590,7 +600,7 @@ local function generateSystematicTests()
                     error("Missing expected result handler for " .. desc)
                 end
                 testTable["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
-                    testFunc(i1, v1, i2, v2, i3, v3, desc)
+                    testFunc(v1, v2, v3, desc)
                 end
             end
         end
