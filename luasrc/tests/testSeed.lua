@@ -2,11 +2,7 @@ require 'randomkit'
 local seedTest = {}
 local tester = torch.Tester()
 
-function seedTest.manualSeed()
-
-end
-
-function seedTest.manualSeed()
+function seedTest.testManualSeed()
     local seed = 1234567890
 
     local function test_generator(f, s)
@@ -31,7 +27,7 @@ function seedTest.manualSeed()
 
 end
 
-function seedTest.RNGState()
+function seedTest.testRNGState()
    local ignored, state, stateCloned, before, after
 
     local function test_generator(f, s)
@@ -54,6 +50,29 @@ function seedTest.RNGState()
    test_generator(function() return randomkit.gauss(torch.Tensor(oddN)) end, 'randomkit.gauss')
    -- TODO: uncomment below once torch7-distro/torch#191 is fixed
   -- test_generator(function() return torch.randn(oddN) end, 'torch.randn')
+end
+
+local getTempFileName = function(path)
+    path = path or '/tmp/'
+
+    local ffi = require 'ffi'
+    ffi.cdef[[char * mktemp(char *);]]
+    local fileTemplate = ffi.new("char[100]")
+    ffi.copy(fileTemplate, path .. '/testXXXXXX')
+    return ffi.string(ffi.C.mktemp(fileTemplate))
+end
+
+function seedTest.testSeralizeRNGState()
+
+    local fileName = getTempFileName()
+    local state = torch.getRNGState()
+    local before = randomkit.double()
+    torch.save(fileName, state)
+    local loadedState = torch.load(fileName)
+    torch.setRNGState(loadedState)
+    local after = randomkit.double()
+    tester:asserteq(before, after, 'Saving state to file then loading and restoring did not restore stream')
+    os.remove(fileName)
 end
 
 tester:add(seedTest)
