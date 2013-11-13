@@ -227,6 +227,43 @@ Log of probability density function of a Laplace distribution with location `loc
 
 Cumulative distribution function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
+##Hypothesis Testing
+
+Besides the generators, there are some functions for checking whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
+
+###randomkit.chi2Uniform(x, [low, up, nBins])
+
+Perform a chi-squared test, with null hypothesis "sample x is from a continuous uniform distribution on the interval `[low, up]`".
+
+* `x` should be a vector of sample values to test
+* `low` is the lower end of the uniform distribution's support interval (default: 0)
+* `up` is the upper end of the uniform distribution's support interval (default: 1)
+* `nBins` is number of frequency buckets to use for the test (default: 100)
+
+Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
+
+###randomkit.chi2TestCDF(x, cdf, cdfParams, [nBins])
+
+Perform a chi-squared test, with null hypothesis "sample x is from a distribution with cdf `cdf`, parameterised by `cdfParams`".
+
+* `x` should be a vector of sample values to test
+* `cdf` should be a function which takes a number of parameters followed by a sample value and returns the cumulative density of the distribution up to that point
+* `cdfParams` should be a table of parameters which will be passed to `cdf`
+* `nBins` is number of frequency buckets to use for the test (default: 100)
+
+Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
+
+###randomkit.chi2Gaussian(x, mu, sigma, [nBins])
+
+Perform a chi-squared test, with null hypothesis "sample x is from a Gaussian distribution with mean `mu` and variance `sigma`".
+
+* `x` should be a vector of sample values to test
+* `mu` should be a number - the mean
+* `sigma` should be a positive number - the variance
+* `nBins` is number of frequency buckets to use for the test (default: 100)
+
+Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
+
 ##Unit Tests
 
 Last but not least, the unit tests are in the folder
