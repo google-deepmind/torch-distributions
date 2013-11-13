@@ -355,10 +355,6 @@ function myTests.test_multivariateGaussianRand_D_DD_errorSizes()
 end
 
 
--- NxD, DxD
--- D, NxDxD
--- NxD, NxDxD
---
 -- N, D, DxD
 function myTests.multivariateGaussianRand_N_D_DD_Standard()
     local mu = torch.Tensor({10, 0})
@@ -423,21 +419,11 @@ function myTests.multivariateGaussianRand_Result_D_DD_Standard()
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
     statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
--- ResultTensor, NxD, DxD
 
--- ResultTensor, D, NxDxD
--- ResultTensor, NxD, NxDxD
---
 -- NxD, D
 -- D, NxD
 -- NxD, NxD
---
 -- N, D, D
---
--- ResultTensor, D, D
--- ResultTensor, NxD, D
--- ResultTensor, D, NxD
--- ResultTensor, NxD, NxD
 
 function myTests.testMultivariateDegenerate()
     local N = 6
@@ -483,7 +469,6 @@ local function generateSystematicTests()
     local thirdArgEE = torch.Tensor {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
 
     local thirdArgOptions = { DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE, MxDxD = thirdArgMDD }
---    local thirdArgOptions = { D = thirdArgD, DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE, MxDxD = thirdArgMDD }
 
     local function shouldError(v1, v2, v3, desc)
         tester:assertError(
@@ -585,7 +570,7 @@ local function generateSystematicTests()
     expectations["M, E, ExE"] = null
     expectations["M, E, MxDxD"] = shouldError
 
-    expectations["M, MxD, D"] = null -- TODO ?
+    expectations["M, MxD, D"] = null
     expectations["M, MxD, DxD"] = shouldBeFromMGaussians
     expectations["M, MxD, DxE"] = shouldError
     expectations["M, MxD, ExE"] = shouldError
@@ -603,7 +588,7 @@ local function generateSystematicTests()
     expectations["NxD, E, ExE"] = shouldBeFromOneGaussian
     expectations["NxD, E, MxDxD"] = shouldError
 
-    expectations["NxD, MxD, D"] = null -- TODO ?
+    expectations["NxD, MxD, D"] = null
     expectations["NxD, MxD, DxD"] = shouldBeFromMGaussians
     expectations["NxD, MxD, DxE"] = shouldError
     expectations["NxD, MxD, ExE"] = shouldError
