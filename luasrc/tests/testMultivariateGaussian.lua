@@ -4,14 +4,15 @@ require 'util.warn'
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
-torch.manualSeed(os.clock()*10000)
+torch.manualSeed(1234567890)
 
--- This is the confidence threshold for the statistical tests.
-local function bonferroniCorrection(alpha, n)
-    return 1 - (1 - alpha)/n
+local function sidakCorrection(alpha, n)
+    -- Sidak correction is good for independent tests -- which we have here.
+    return 1 - math.pow((1-alpha), 1/n)
 end
+-- This is the significance threshold for the statistical tests, i.e. close to 0
 local statisticalTests = 28
-local alpha = bonferroniCorrection(0.5, statisticalTests)
+local alpha = sidakCorrection(.05, statisticalTests)
 
 local standardGaussianPDFWindow = torch.Tensor({
     {0.058549831524319, 0.070096874908772, 0.080630598589333, 0.089110592667962, 0.094620883979159, 0.096532352630054, 0.094620883979159, 0.089110592667962, 0.080630598589333, 0.070096874908772, 0.058549831524319},
@@ -272,11 +273,7 @@ function myTests.multivariateGaussianLogPDFNonStandard()
     tester:assertTensorEq(result, expected, 1e-12, "non-standard 2D gaussian log-pdf should match expected value")
 end
 
-local testCount = 0
-
 local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAccept)
-
-    testCount = testCount + 1
 
     -- Part one: chi2 test projection onto each axis
 
@@ -298,8 +295,7 @@ local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAcc
         -- Now, we expect the distribution of the projected samples to be mu[k], math.sqrt(sigma[k][k])
         local p, chi2 = randomkit.chi2Gaussian(projectedSamples, mu[k], math.sqrt(sigma[k][k]))
 
-        -- Bonferroni's correction
-        if p < 1 - bonferroniCorrection(alpha, D) then
+        if p < sidakCorrection(alpha, D) then
             -- we're rejecting the null hypothesis, that the sample is normally distributed with the above params
             rejectionCount = rejectionCount + 1
             tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters")
@@ -505,12 +501,6 @@ local function generateSystematicTests()
 
     local function shouldBeFromMGaussians(v1, v2, v3, desc)
 
---        print(desc)
---        if desc == 'randomkit.multivariateGaussianRand(M, D, MxDxD)' then
---            print("saving state")
---            torch.save("state.t7", torch.getRNGState())
---        end
-
         local accumulated = torch.Tensor(M, N, D):zero()
 
         -- Each call only returns one sample from each distribution, so to
@@ -549,11 +539,6 @@ local function generateSystematicTests()
                 sigma = v3[j]
             end
             statisticalTestMultivariateGaussian(accumulated[j], mu, sigma, true)
-            if desc == 'randomkit.multivariateGaussianRand(M, D, MxDxD)' then
-                gnuplot.pngfigure('mfig' .. j)
-                gnuplot.plot(accumulated[j], '.')
-                gnuplot.plotflush()
-            end
         end
     end
 
@@ -638,4 +623,3 @@ tester:add(myTests)
 tester:add(generateSystematicTests())
 tester:run()
 
-print("test count", testCount)
