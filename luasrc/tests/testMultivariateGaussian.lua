@@ -468,7 +468,7 @@ local function generateSystematicTests()
     local thirdArgDE = torch.Tensor {{2, 1, 1}, {1, 1, 1}}
     local thirdArgEE = torch.Tensor {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
 
-    local thirdArgOptions = { DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE, MxDxD = thirdArgMDD }
+    local thirdArgOptions = { D = thirdArgD, DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE, MxDxD = thirdArgMDD }
 
     local function shouldError(v1, v2, v3, desc)
         tester:assertError(
