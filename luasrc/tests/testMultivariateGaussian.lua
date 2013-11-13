@@ -11,7 +11,7 @@ local function sidakCorrection(alpha, n)
     return 1 - math.pow((1-alpha), 1/n)
 end
 -- This is the significance threshold for the statistical tests, i.e. close to 0
-local statisticalTests = 28
+local statisticalTests = 56
 local alpha = sidakCorrection(.05, statisticalTests)
 
 local standardGaussianPDFWindow = torch.Tensor({
@@ -298,18 +298,28 @@ local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAcc
         if p < sidakCorrection(alpha, D) then
             -- we're rejecting the null hypothesis, that the sample is normally distributed with the above params
             rejectionCount = rejectionCount + 1
-            tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters")
+            tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters (1)")
+        end
+    end
+
+    -- Part two: transform and chi2 test against standard normal dist'n
+
+    mu = torch.Tensor(mu)
+    local expandedMu = mu:resize(1, D):expand(N, D)
+    local whitenedSamples = samples:clone() - expandedMu
+    local chol = torch.potrf(sigma):triu()
+    whitenedSamples = torch.gesv(whitenedSamples:t(), chol:t()):t()
+    for k = 1, D do
+        local projectedSamples = whitenedSamples:select(2, k)
+        local p, chi2 = randomkit.chi2Gaussian(projectedSamples, 0, 1)
+        if p < sidakCorrection(alpha, D) then
+            rejectionCount = rejectionCount + 1
+            tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters (2)")
         end
     end
 
     -- If we're not supposed to be accepting this sample, check that it was rejected by at least one of the tests
     tester:assert(shouldAccept or rejectionCount > 0, "projected sample should be rejected as gaussian with given parameters")
-
-    -- Part two: transform and chi2 test against standard normal dist'n
-
-    -- TODO
-
-
 
 end
 
