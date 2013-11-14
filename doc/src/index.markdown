@@ -1,60 +1,17 @@
 ---
-title: Randomkit RNG for Torch
+title: Probability distributions for Torch
 layout: doc
 ---
 
-#Randomkit random number generators, wrapped for Torch
-
-Provides and wraps the random nnumber generators the [Randomkit library](), copied from [Numpy]()
+#Probability distributions for Torch
 
 ##Example
 
-###Single sample
-
-You can call any of the wrapped functions with just the distribution's parameters to generate a single sample and return a number:
-
-```lua
-require 'randomkit'
-randomkit.poisson(5)
-```
-
-###Multiple samples from one distribution
-
-Often, you might want to generate many samples identically distributed. Simply pass as a first argument a tensor of the proper dimension, into which the samples will be stored:
-
-```lua
-x = torch.Tensor(10000)
-randomkit.poisson(x, 5)
-```
-
-The sampler returns the tensor, so you can shorten the above in:
-
-```lua
-x = randomkit.poisson(torch.Tensor(10000), 5)
-```
-
-###Multiple samples from multiple distributions
-
-Finally, you might want to generate many samples, each from a distribution with different parameters. This is achieved by passing a Tensor as the parameter of the distribution:
-
-```lua
-many_lambda = torch.Tensor{5, 3, 40, 60}
-x = randomkit.poisson(many_lambda)
-```
-
-Of course, this can be combined with passing a result Tensor as an optional first element, to re-use memory and avoid creaating a new Tensor at each call:
-
-```lua
-many_lambda = torch.Tensor{5, 3, 40, 60}
-x = torch.Tensor(many_lambda:size())
-randomkit.poisson(x, many_lambda)
-```
-
-**Note:** in the latter case, the size of the result Tensor must correspond to the size of the parameter tensor -- we do not resize the result tensor automatically, yet:
+TODO
 
 ###Getting/setting the seed and the state
 
-Randomkit is transparently integrated with Torch's random stream: just use `torch.manualSeed(seed)`, `torch.getRNGState()`, and `torch.setRNGState(state)` as usual.
+Distributions is transparently integrated with Torch's random stream: just use `torch.manualSeed(seed)`, `torch.getRNGState()`, and `torch.setRNGState(state)` as usual.
 
 
 ##Installation
@@ -62,84 +19,36 @@ Randomkit is transparently integrated with Torch's random stream: just use `torc
 From a terminal:
 
 ```bash
-torch-rocks install randomkit
+torch-rocks install distributions
 ```
 
-##List of Randomkit generators
-
-See this **[extensive automatically extracted doc](randomkit.html)**, built from Numpy's docstrings.
-
-###[Beta](randomkit.html#beta)
-###[Binomial](randomkit.html#binomial)
-###[Bytes](randomkit.html#bytes)
-###[Chisquare](randomkit.html#chisquare)
-###[Double](randomkit.html#double)
-###[Exponential](randomkit.html#exponential)
-###[F](randomkit.html#f)
-###[Gamma](randomkit.html#gamma)
-###[Gauss](randomkit.html#gauss)
-###[Geometric](randomkit.html#geometric)
-###[Gumbel](randomkit.html#gumbel)
-###[Hypergeometric](randomkit.html#hypergeometric)
-###[Interval](randomkit.html#interval)
-###[Laplace](randomkit.html#laplace)
-###[Logistic](randomkit.html#logistic)
-###[Lognormal](randomkit.html#lognormal)
-###[Logseries](randomkit.html#logseries)
-###[Long](randomkit.html#long)
-###[Negative binomial](randomkit.html#negative_binomial)
-###[Noncentral chisquare](randomkit.html#noncentral_chisquare)
-###[Noncentral F](randomkit.html#noncentral_f)
-###[Normal](randomkit.html#normal)
-###[Pareto](randomkit.html#pareto)
-###[Poisson](randomkit.html#poisson)
-###[Power](randomkit.html#power)
-###[Randint](randomkit.html#randint)
-###[Random](randomkit.html#random)
-###[Random sample](randomkit.html#random_sample)
-###[Rayleigh](randomkit.html#rayleigh)
-###[Standard cauchy](randomkit.html#standard_cauchy)
-###[Standard exponential](randomkit.html#standard_exponential)
-###[Standard gamma](randomkit.html#standard_gamma)
-###[Standard normal](randomkit.html#standard_normal)
-###[Standard t](randomkit.html#standard_t)
-###[Triangular](randomkit.html#triangular)
-###[Ulong](randomkit.html#ulong)
-###[Uniform](randomkit.html#uniform)
-###[Vonmises](randomkit.html#vonmises)
-###[Wald](randomkit.html#wald)
-###[Weibull](randomkit.html#weibull)
-###[Zipf](randomkit.html#zipf)
-
-##List of Torch-only generators
-
-These functions are provided in addition to the scipy randomkit functions.
+##List of Distributions
 
 ###Poisson
 
-####randomkit.poissonPDF(x, lambda)
+####distributions.poissonPDF(x, lambda)
 
 Probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-####randomkit.poissonLogPDF(x, lambda)
+####distributions.poissonLogPDF(x, lambda)
 
 Log of probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-####randomkit.poissonCDF(x, lambda)
+####distributions.poissonCDF(x, lambda)
 
 Cumulative distribution function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
 ###Gaussian
 
-####randomkit.gaussianPDF(x, mu, sigma)
+####distributions.gaussianPDF(x, mu, sigma)
 
 Probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####randomkit.gaussianLogPDF(x, mu, sigma)
+####distributions.gaussianLogPDF(x, mu, sigma)
 
 Log probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####randomkit.gaussianCDF(x, mu, sigms)
+####distributions.gaussianCDF(x, mu, sigms)
 
 Cumulative distribution function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
@@ -147,83 +56,83 @@ Cumulative distribution function of a Gaussian distribution with mean `mu` and s
 
 The covariance matrix passed to multivariate gaussian functions needs only be positive **semi**-definite: we deal gracefully with the degenerate case of rank-deficient covariance.
 
-####randomkit.multivariateGaussianPDF(x, mu, cov)
+####distributions.multivariateGaussianPDF(x, mu, cov)
 
 Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
 For a D-dimensional Gaussian, the following forms are valid:
 
-* `randomkit.multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
-* `randomkit.multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
-* `randomkit.multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
-* `randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
+* `distributions.multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
+* `distributions.multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
+* `distributions.multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
+* `distributions.multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector containing only the diagonal elements:
 
-* `randomkit.multivariateGaussianPDF([D], [D], [D])` - returns a number.
-* `randomkit.multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
-* `randomkit.multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
-* `randomkit.multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
+* `distributions.multivariateGaussianPDF([D], [D], [D])` - returns a number.
+* `distributions.multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
+* `distributions.multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
+* `distributions.multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
 
-####randomkit.multivariateGaussianLogPDF(x, mu, cov)
+####distributions.multivariateGaussianLogPDF(x, mu, cov)
 
 Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
 
-See `randomkit.multivariateGaussianPDF()` for description of valid forms for x, mu and cov.
+See `distributions.multivariateGaussianPDF()` for description of valid forms for x, mu and cov.
 
-####randomkit.multivariateGaussianRand([res,] mu, cov)
+####distributions.multivariateGaussianRand([res,] mu, cov)
 
 Sample from a multivariate Gaussian distribution with mean `mu` and covariance `cov`.
 
 For a D-dimensional Gaussian, the following forms are valid:
 
-* `randomkit.multivariateGaussianPDF([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
-* `randomkit.multivariateGaussianPDF([N, D], [D, D])` - returns N samples in a N-by-D Tensor
-* `randomkit.multivariateGaussianPDF([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
-* `randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `distributions.multivariateGaussianPDF([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
+* `distributions.multivariateGaussianPDF([N, D], [D, D])` - returns N samples in a N-by-D Tensor
+* `distributions.multivariateGaussianPDF([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `distributions.multivariateGaussianPDF([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.
 
 ###Cauchy
 
-####randomkit.cauchyPDF(x, a, b)
+####distributions.cauchyPDF(x, a, b)
 
 Probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-####randomkit.cauchyLogPDF(x, a, b)
+####distributions.cauchyLogPDF(x, a, b)
 
 Log of probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-####randomkit.cauchyCDF(x, a, b)
+####distributions.cauchyCDF(x, a, b)
 
 Cumulative distribution function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
 ###Chi square
 
-####randomkit.chi2PDF(x, dof)
+####distributions.chi2PDF(x, dof)
 
 Probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-####randomkit.chi2LogPDF(x, dof)
+####distributions.chi2LogPDF(x, dof)
 
 Log of probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-####randomkit.chi2CDF(x, dof)
+####distributions.chi2CDF(x, dof)
 
 Cumulative distribution function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
 ###Laplace
 
-####randomkit.laplacePDF(x, loc, scale)
+####distributions.laplacePDF(x, loc, scale)
 
 Probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-####randomkit.laplaceLogPDF(x, loc, scale)
+####distributions.laplaceLogPDF(x, loc, scale)
 
 Log of probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-####randomkit.laplaceCDF(x, loc, scale)
+####distributions.laplaceCDF(x, loc, scale)
 
 Cumulative distribution function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
@@ -231,7 +140,7 @@ Cumulative distribution function of a Laplace distribution with location `loc` a
 
 Besides the generators, there are some functions for checking whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
 
-###randomkit.chi2Uniform(x, [low, up, nBins])
+###distributions.chi2Uniform(x, [low, up, nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a continuous uniform distribution on the interval `[low, up]`".
 
@@ -242,7 +151,7 @@ Perform a chi-squared test, with null hypothesis "sample x is from a continuous 
 
 Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
 
-###randomkit.chi2TestCDF(x, cdf, cdfParams, [nBins])
+###distributions.chi2TestCDF(x, cdf, cdfParams, [nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a distribution with cdf `cdf`, parameterised by `cdfParams`".
 
@@ -253,7 +162,7 @@ Perform a chi-squared test, with null hypothesis "sample x is from a distributio
 
 Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
 
-###randomkit.chi2Gaussian(x, mu, sigma, [nBins])
+###distributions.chi2Gaussian(x, mu, sigma, [nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a Gaussian distribution with mean `mu` and variance `sigma`".
 
@@ -267,18 +176,11 @@ Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respec
 ##Unit Tests
 
 Last but not least, the unit tests are in the folder
-[`luasrc/tests`](https://github.com/jucor/torch-randomkit/tree/master/luasrc/tests). You can run them from your local clone of the repostiory with:
+[`luasrc/tests`](https://github.com/jucor/torch-distributions/tree/master/luasrc/tests). You can run them from your local clone of the repostiory with:
 
 ```bash
-git clone https://www.github.com/jucor/torch-randomkit
-find torch-randomkit/luasrc/tests -name "test*lua" -exec torch {} \;
+git clone https://www.github.com/jucor/torch-distributions
+find torch-distributions/luasrc/tests -name "test*lua" -exec torch {} \;
 ```
 
 Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.
-
-##Direct access to FFI
-
-###randomkit.ffi.*
-
-Functions directly accessible at the top of the `randomkit` table are Lua wrappers to the actual C functions from Randomkit, with extra error checking. If, for any reason, you want to get rid of this error checking and of a possible overhead, the FFI-wrapper functions can be called directly via `randomkit.ffi.myfunction()` instead of `randomkit.myfunction()`.
-

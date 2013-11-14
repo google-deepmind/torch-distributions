@@ -1,16 +1,16 @@
 
 --[[ TODO - wrap multinomial or remove these
 function myTest.test_multinomial_basic()
-    randomkit.multinomial(100, {0.2, 0.8})
+    distributions.multinomial(100, {0.2, 0.8})
 end
 
 function myTest.test_multinomial_zero_probability()
-    randomkit.multinomial(100, {0.2, 0.8, 0.0, 0.0, 0.0})
+    distributions.multinomial(100, {0.2, 0.8, 0.0, 0.0, 0.0})
 end
 
 function myTest.test_multinomial_int_negative_interval()
-    tester:assert( -5 <= randomkit.randint(-5, -1) < -1)
-    x = randomkit.randint(-5, -1, 5)
+    tester:assert( -5 <= distributions.randint(-5, -1) < -1)
+    x = distributions.randint(-5, -1, 5)
     tester:assert(all(-5 <= x))
     tester:assert(all(x < -1))
 end
@@ -21,7 +21,7 @@ function myTest.test_dirichlet()
     torch.manualSeed(seed)
     alpha = torch.Tensor({51.72840233779265162,  39.74494232180943953})
     local actual = torch.Tensor(3, 2)
-    randomkit.dirichlet(actual, alpha)
+    distributions.dirichlet(actual, alpha)
     local desired = torch.Tensor({{{ 0.54539444573611562,  0.45460555426388438},
     { 0.62345816822039413,  0.37654183177960598}},
     {{ 0.55206000085785778,  0.44793999914214233},
@@ -35,7 +35,7 @@ end
 function myTest.test_multinomial()
     torch.manualSeed(seed)
     local actual = torch.Tensor(3, 2)
-    randomkit.multinomial(actual, 20, {1/6, 1/6, 1/6, 1/6, 1/6, 1/6})
+    distributions.multinomial(actual, 20, {1/6, 1/6, 1/6, 1/6, 1/6, 1/6})
     local desired = torch.Tensor({{{4, 3, 5, 4, 2, 2},
     {5, 2, 8, 2, 2, 1}},
     {{3, 4, 3, 6, 0, 4},
@@ -53,7 +53,7 @@ local actual = torch.Tensor(3, 2)
 local mean= (.123456789, 10)
 local cov = {{1, 0}, {1, 0}}
 local size = {3, 2}
-local actual = randomkit.multivariate_normal(mean, cov, size)
+local actual = distributions.multivariate_normal(mean, cov, size)
 local desired = torch.Tensor({{{ -1.47027513018564449,  10.                 },
 { -1.65915081534845532,  10.                 }},
 {{ -2.29186329304599745,  10.                 },

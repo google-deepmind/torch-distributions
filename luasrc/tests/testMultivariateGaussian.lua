@@ -1,4 +1,4 @@
-require 'randomkit'
+require 'distributions'
 require 'util.warn'
 
 local myTests = {}
@@ -93,7 +93,7 @@ function myTests.multivariateGaussianPDF()
     for i = 1, N do
         for j = 1, N do
             local x = torch.Tensor({inputXs[i], inputXs[j]}) -- One point
-            local r = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            local r = distributions.multivariateGaussianPDF(x, mu, sigma)
             returnNumbers = returnNumbers and type(r) == 'number'
             result[i][j] = r
         end
@@ -124,7 +124,7 @@ function myTests.multivariateGaussianPDFNonStandard()
     for i = 1, N do
         for j = 1, N do
             local x = torch.Tensor({inputXs[i], inputXs[j]}) -- One point
-            local r = randomkit.multivariateGaussianPDF(x, mu, sigma)
+            local r = distributions.multivariateGaussianPDF(x, mu, sigma)
             returnNumbers = returnNumbers and type(r) == 'number'
             result[i][j] = r
         end
@@ -157,7 +157,7 @@ function myTests.multivariateGaussianPDFMultiple1()
         end
     end
 
-    tester:assertTensorEq(randomkit.multivariateGaussianPDF(x, mu, sigma), expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
+    tester:assertTensorEq(distributions.multivariateGaussianPDF(x, mu, sigma), expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
 -- Try calling 1xD, D, DxD
@@ -166,8 +166,8 @@ function myTests.multivariateGaussianPDFMultiple2()
     local mu = torch.Tensor({0.2, -0.2})
     local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
     local expected = torch.Tensor({{nonStandardGaussianPDFWindow[6][6]}})
-    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
-    tester:assertTensorEq(randomkit.multivariateGaussianPDF(x, mu, sigma), got, 1e-14, "multivariateGaussianPDF should not modify args")
+    local got = distributions.multivariateGaussianPDF(x, mu, sigma)
+    tester:assertTensorEq(distributions.multivariateGaussianPDF(x, mu, sigma), got, 1e-14, "multivariateGaussianPDF should not modify args")
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
@@ -177,7 +177,7 @@ function myTests.multivariateGaussianPDFMultiple3()
     local mu = torch.Tensor({{-0.2, 0.2}})
     local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
     local expected = torch.Tensor({{nonStandardGaussianPDFWindow[6][6]}})
-    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    local got = distributions.multivariateGaussianPDF(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
@@ -187,7 +187,7 @@ function myTests.multivariateGaussianPDFMultiple4()
     local mu = torch.Tensor({{-0.2, 0.2}, {-0.4, 0.4}, {0.0, 0.0}})
     local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
     local expected = torch.Tensor({{nonStandardGaussianPDFWindow[6][6]}, {0.000000597017644}, {5.305164769729846}})
-    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    local got = distributions.multivariateGaussianPDF(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
@@ -198,7 +198,7 @@ function myTests.multivariateGaussianPDFMultiple5()
     local mu = torch.Tensor({-0.2, 0.2})
     local sigma = torch.Tensor({0.05, 0.4})
     local expected = 0.717583785682725
-    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    local got = distributions.multivariateGaussianPDF(x, mu, sigma)
     tester:assertalmosteq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
@@ -208,7 +208,7 @@ function myTests.multivariateGaussianPDFMultiple6()
     local mu = torch.Tensor({{-0.2, 0.2}})
     local sigma = torch.Tensor({0.05, 0.4})
     local expected = torch.Tensor({0.717583785682725})
-    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    local got = distributions.multivariateGaussianPDF(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
@@ -218,7 +218,7 @@ function myTests.multivariateGaussianPDFMultiple7()
     local mu = torch.Tensor({{-0.2, 0.2}, {-0.4, 0.4}, {0.0, 0.0}})
     local sigma = torch.Tensor({0.05, 0.4})
     local expected = torch.Tensor({0.717583785682725, 0.186026607635655, 1.125395395196383})
-    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    local got = distributions.multivariateGaussianPDF(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
@@ -228,7 +228,7 @@ function myTests.multivariateGaussianPDFMultiple8()
     local mu = torch.Tensor({-0.2, 0.2})
     local sigma = torch.Tensor({0.05, 0.4})
     local expected = torch.Tensor({0.717583785682725})
-    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    local got = distributions.multivariateGaussianPDF(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
@@ -238,7 +238,7 @@ function myTests.multivariateGaussianPDFMultiple9()
     local mu = torch.Tensor({-0.2, 0.2})
     local sigma = torch.Tensor({0.05, 0.4})
     local expected = torch.Tensor({0.717583785682725, 0.457551622898630, 0.909950056726693})
-    local got = randomkit.multivariateGaussianPDF(x, mu, sigma)
+    local got = distributions.multivariateGaussianPDF(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
@@ -264,7 +264,7 @@ function myTests.multivariateGaussianLogPDFNonStandard()
     for i = 1, N do
         for j = 1, N do
             local x = torch.Tensor({inputXs[i], inputXs[j]}) -- One point
-            local r = randomkit.multivariateGaussianLogPDF(x, mu, sigma)
+            local r = distributions.multivariateGaussianLogPDF(x, mu, sigma)
             returnNumbers = returnNumbers and type(r) == 'number'
             result[i][j] = r
         end
@@ -293,7 +293,7 @@ local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAcc
         local projectedSamples = samples:select(2, k)
 
         -- Now, we expect the distribution of the projected samples to be mu[k], math.sqrt(sigma[k][k])
-        local p, chi2 = randomkit.chi2Gaussian(projectedSamples, mu[k], math.sqrt(sigma[k][k]))
+        local p, chi2 = distributions.chi2Gaussian(projectedSamples, mu[k], math.sqrt(sigma[k][k]))
 
         if p < sidakCorrection(alpha, D) then
             -- we're rejecting the null hypothesis, that the sample is normally distributed with the above params
@@ -311,7 +311,7 @@ local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAcc
     whitenedSamples = torch.gesv(whitenedSamples:t(), chol:t()):t()
     for k = 1, D do
         local projectedSamples = whitenedSamples:select(2, k)
-        local p, chi2 = randomkit.chi2Gaussian(projectedSamples, 0, 1)
+        local p, chi2 = distributions.chi2Gaussian(projectedSamples, 0, 1)
         if p < sidakCorrection(alpha, D) then
             rejectionCount = rejectionCount + 1
             tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters (2)")
@@ -336,7 +336,7 @@ function myTests.test_multivariateGaussianRand_D_DD()
     local sizeOK = true
     local result = torch.Tensor(N, D):zero()
     for k = 1, N do
-        local sample = randomkit.multivariateGaussianRand(mu, sigma)
+        local sample = distributions.multivariateGaussianRand(mu, sigma)
         dimOK = dimOK and sample:dim() == 1
         sizeOK = sizeOK and sample:size(1) == D
         result[k] = sample
@@ -351,7 +351,7 @@ function myTests.test_multivariateGaussianRand_D_DD_errorSizes()
     -- Check we get an error with inconsistent sizes
     local mu = torch.zeros(3)
     local sigma = torch.eye(2) * 2
-    tester:assertError(function() randomkit.multivariateGaussianRand(mu, sigma) end)
+    tester:assertError(function() distributions.multivariateGaussianRand(mu, sigma) end)
 end
 
 
@@ -362,7 +362,7 @@ function myTests.multivariateGaussianRand_N_D_DD_Standard()
     local N = 10000
     local D = 2
 
-    local result = randomkit.multivariateGaussianRand(N, mu, sigma)
+    local result = distributions.multivariateGaussianRand(N, mu, sigma)
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
@@ -374,7 +374,7 @@ function myTests.multivariateGaussianRand_N_D_DD()
     local N = 20000
     local D = 2
 
-    local result = randomkit.multivariateGaussianRand(N, mu, sigma)
+    local result = distributions.multivariateGaussianRand(N, mu, sigma)
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
@@ -386,7 +386,7 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_mean()
     local N = 10000
     local D = 2
 
-    local result = randomkit.multivariateGaussianRand(N, mu, sigma)
+    local result = distributions.multivariateGaussianRand(N, mu, sigma)
 
     -- Check we reject a sample with wrong mean
     result:select(2, 1):add(1)
@@ -400,7 +400,7 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_variance()
     local N = 10000
     local D = 2
 
-    local result = randomkit.multivariateGaussianRand(N, mu, sigma)
+    local result = distributions.multivariateGaussianRand(N, mu, sigma)
     result:select(2, 1):mul(2)
     statisticalTestMultivariateGaussian(result, mu, sigma, false)
 end
@@ -413,7 +413,7 @@ function myTests.multivariateGaussianRand_Result_D_DD_Standard()
     local D = 2
     local result = torch.Tensor(N, D)
 
-    randomkit.multivariateGaussianRand(result, mu, sigma)
+    distributions.multivariateGaussianRand(result, mu, sigma)
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
@@ -435,7 +435,7 @@ function myTests.testMultivariateDegenerate()
     cov[D][D] = 0
 
     local actual = torch.Tensor(N, D)
-    randomkit.multivariateGaussianRand(actual, mean, cov)
+    distributions.multivariateGaussianRand(actual, mean, cov)
     -- Check that the second column is constant
     tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
 end
@@ -472,7 +472,7 @@ local function generateSystematicTests()
 
     local function shouldError(v1, v2, v3, desc)
         tester:assertError(
-                function() randomkit.multivariateGaussianRand(v1, v2, v3) end,
+                function() distributions.multivariateGaussianRand(v1, v2, v3) end,
                 desc .. " should error!"
             )
     end
@@ -485,12 +485,12 @@ local function generateSystematicTests()
     end
 
     local function shouldBeFromOneGaussian(v1, v2, v3, desc)
-        local result = randomkit.multivariateGaussianRand(v1, v2, v3)
+        local result = distributions.multivariateGaussianRand(v1, v2, v3)
         checkResultsGaussian(result, v2, v3)
     end
 
     local function shouldBeFromOneDiagonalGaussian(v1, v2, v3, desc)
-        local result = randomkit.multivariateGaussianRand(v1, v2, v3)
+        local result = distributions.multivariateGaussianRand(v1, v2, v3)
         checkResultsGaussian(result, v2, torch.diag(v3))
     end
 
@@ -504,7 +504,7 @@ local function generateSystematicTests()
         local correctDim = true
         local correctSize = true
         for k = 1, N do
-            local results = randomkit.multivariateGaussianRand(v1, v2, v3)
+            local results = distributions.multivariateGaussianRand(v1, v2, v3)
             notNil = notNil and results ~= nil
             correctDim = correctDim and results:dim() == 2
             correctSize = correctSize and results:size(1) == M
@@ -600,7 +600,7 @@ local function generateSystematicTests()
         for i2, v2 in pairs(secondArgOptions) do
             for i3, v3 in pairs(thirdArgOptions) do
                 local key = table.concat { i1, ", ", i2, ", ", i3 }
-                local desc = table.concat { "randomkit.multivariateGaussianRand(", key, ")" }
+                local desc = table.concat { "distributions.multivariateGaussianRand(", key, ")" }
                 local testFunc = expectations[key]
                 if not testFunc then
                     error("Missing expected result handler for " .. desc)

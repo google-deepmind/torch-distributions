@@ -1,4 +1,4 @@
-function randomkit.multivariateGaussianLogPDF(x, mu, sigma)
+function distributions.multivariateGaussianLogPDF(x, mu, sigma)
     x = torch.Tensor(x)
     mu = torch.Tensor(mu)
 
@@ -44,7 +44,7 @@ function randomkit.multivariateGaussianLogPDF(x, mu, sigma)
         transformed = torch.mm(x, torch.inverse(decomposed))
         logdet = decomposed:diag():log():sum()
     end
-    transformed:apply(function(a) return randomkit.gaussianLogPDF(a, 0, 1) end)
+    transformed:apply(function(a) return distributions.gaussianLogPDF(a, 0, 1) end)
     local result = transformed:sum(2) - logdet -- by independence
     if scalarResult then
         return result[1][1]
@@ -53,8 +53,8 @@ function randomkit.multivariateGaussianLogPDF(x, mu, sigma)
     end
 end
 
-function randomkit.multivariateGaussianPDF(...)
-    local r = randomkit.multivariateGaussianLogPDF(...)
+function distributions.multivariateGaussianPDF(...)
+    local r = distributions.multivariateGaussianLogPDF(...)
     if type(r) == 'number' then
         return math.exp(r)
     else
@@ -62,7 +62,7 @@ function randomkit.multivariateGaussianPDF(...)
     end
 end
 
-function randomkit.multivariateGaussianRand(...)
+function distributions.multivariateGaussianRand(...)
     local nArgs = select("#", ...)
     local resultTensor
 
@@ -109,7 +109,7 @@ function randomkit.multivariateGaussianRand(...)
             if nParams and nParams ~= n then
                 error("Parameter sizes do not match number of samples requested")
             end
-        elseif randomkit._isTensor(resultInfo) then
+        elseif distributions._isTensor(resultInfo) then
             resultTensor = resultInfo
             if nParams then
                 n = nParams

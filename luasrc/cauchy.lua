@@ -1,19 +1,19 @@
-function randomkit.cauchyPDF(x, a, b)
+function distributions.cauchyPDF(x, a, b)
     return 1.0 / math.pi * b / (math.pow(x - a, 2) + b*b)
 end
 
-function randomkit.cauchyLogPDF(x, a, b)
+function distributions.cauchyLogPDF(x, a, b)
     return -math.log(math.pi) + math.log(b) - math.log(math.pow(x - a, 2) + b*b)
 end
 
-function randomkit.cauchyCDF(x, a, b)
+function distributions.cauchyCDF(x, a, b)
     return 1.0 / math.pi * cephes.atan((x - a) / b) + 0.5
 end
 
-function randomkit.cauchyQuantile(p, a, b)
+function distributions.cauchyQuantile(p, a, b)
     error("Not implemented")
 end
 
-function randomkit.cauchyRand(...)
+function distributions.cauchyRand(...)
     error("Not implemented")
 end

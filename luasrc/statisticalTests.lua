@@ -12,8 +12,8 @@ One sample Chi-square test with uniform distribution with the specified support.
 @return p-value of the test
 @return value of the test statistic
 ]]
-function randomkit.chi2Uniform(x, low, up, nBins)
-    if not randomkit._isTensor(x) then
+function distributions.chi2Uniform(x, low, up, nBins)
+    if not distributions._isTensor(x) then
         error("chi2Uniform: expected tensor of samples as first argument")
     end
     if not x:nDimension() == 1 then
@@ -59,8 +59,8 @@ One sample Chi-square test with known CDF.
 
 @return same as chi2Uniform()
 --]]
-function randomkit.chi2TestCDF(x, cdf, cdfParams, ...)
-    if not randomkit._isTensor(x) then
+function distributions.chi2TestCDF(x, cdf, cdfParams, ...)
+    if not distributions._isTensor(x) then
         error("chi2TestCDF requires a tensor of samples as its first argument")
     end
     if not (type(cdf) == 'function') then
@@ -71,7 +71,7 @@ function randomkit.chi2TestCDF(x, cdf, cdfParams, ...)
     end
     cdfParams[#cdfParams+1] = x
     local transformed = cdf(unpack(cdfParams))
-    return randomkit.chi2Uniform(transformed, 0, 1, ...)
+    return distributions.chi2Uniform(transformed, 0, 1, ...)
 end
 
 --[[! Chi square test for gaussian distribution
@@ -85,11 +85,11 @@ One sample Chi-square test with gaussian.
 
 @return same as chi2Uniform()
 --]]
-function randomkit.chi2Gaussian(x, mu, sigma, ...)
+function distributions.chi2Gaussian(x, mu, sigma, ...)
     local function gaussianCDF(x)
         return cephes.ndtr((x-mu) / sigma)
     end
 
-    return randomkit.chi2TestCDF(x, gaussianCDF, {}, ...)
+    return distributions.chi2TestCDF(x, gaussianCDF, {}, ...)
 end
 
