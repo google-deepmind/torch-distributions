@@ -28,8 +28,8 @@ function randomkit.chi2Uniform(x, low, up, nBins)
     for i=1,nBins  do
         actualBins[i] = 0
     end
-    local nPoints = 0
-    for k = 1,x:size(1) do
+    local nPoints = x:size(1)
+    for k = 1,nPoints do
         local v = x[k]
         local idx = 1+math.floor(nBins*(v-low)/(up-low))
         if idx < 1 or idx > nBins  or v < low or v > up then
@@ -37,7 +37,6 @@ function randomkit.chi2Uniform(x, low, up, nBins)
             return 0
         end
         actualBins[idx] = actualBins[idx] + 1
-        nPoints = nPoints + 1
     end
 
     local expected = nPoints / nBins

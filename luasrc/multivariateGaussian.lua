@@ -71,11 +71,21 @@ function randomkit.multivariateGaussianRand(...)
     local mu -- mean
     local sigma -- covariance matrix
 
+    local function inferDimension(sigma)
+        if sigma:dim() == 1 then
+            -- diagonal, and only one covariance matrix
+            return sigma:size(1)
+        else
+            return sigma:size(2)
+        end
+        return d
+    end
+
     if nArgs == 2 then -- mu, sigma only: return one sample
         n = 1
         mu = torch.Tensor(select(1, ...))
         sigma = torch.Tensor(select(2, ...))
-        d = sigma:size(2)
+        d = inferDimension(sigma)
         resultTensor = torch.Tensor(d)
     elseif nArgs == 3 then -- RESULT, mu, sigma - where result is either a number or an output tensor
         local resultInfo = select(1, ...)
@@ -92,21 +102,21 @@ function randomkit.multivariateGaussianRand(...)
         if not nParams and sigma:dim() == 3 then
             nParams = sigma:size(1)
         end
+        d = inferDimension(sigma)
         if type(resultInfo) == 'number' then
             n = resultInfo
-            d = sigma:size(1)
             resultTensor = torch.Tensor(n, d)
             if nParams and nParams ~= n then
                 error("Parameter sizes do not match number of samples requested")
             end
         elseif randomkit._isTensor(resultInfo) then
             resultTensor = resultInfo
-            d = sigma:size(1)
             if nParams then
                 n = nParams
             else
                 n = resultTensor:nElement() / d
             end
+            resultTensor:resize(n, d)
         else
             error("Unable to understand first argument for multivariateGaussianRand - should be an integer number of samples to be returned, or a result tensor")
         end
@@ -120,43 +130,67 @@ function randomkit.multivariateGaussianRand(...)
     if mu:dim() == 1 then
         mu:resize(1, mu:nElement())
     end
-    if sigma:dim() == 2 then
+    if sigma:dim() == 1 then
+        if mu:size(2) ~= sigma:size(1) then
+            error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+        end
+        sigma:resize(1, d)
+    elseif sigma:dim() == 2 then
+        -- either DxD or NxD
+        if sigma:size(1) == sigma:size(2) then
+            if n == d then
+                error("multivariateGaussianRand: ambiguous covariance input")
+            end
+        end
+
+        if mu:size(2) ~= sigma:size(1) or mu:size(2) ~= sigma:size(2) then
+            error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+        end
         sigma:resize(1, d, d)
-    end
-    if mu:size(2) ~= sigma:size(2) then
-        error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+    elseif sigma:dim() == 3 then
+        if mu:size(2) ~= d or sigma:size(2) ~= d or sigma:size(3) ~= d then
+            error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+        end
     end
     if mu:size(1) == 1 then
         mu = mu:expand(n, d)
     end
-    if sigma:size(1) == 1 then
+
+    local function sampleFromDistribution(resultTensor, x, mu, sigma)
         local resultSize = resultTensor:size()
-        local x = torch.Tensor(n,d)
-        randomkit.gauss(x)
         local y
-        -- TODO: when Lapack's pstrf will be wrapped in Torch, use that instead of Cholesky with SVD failsafe
-        local fullRank, decomposed = pcall(function() return torch.potrf(sigma[1]):triu() end)
-        if fullRank then
-            -- Definite positive matrix: use Cholesky
-            y = torch.mm(x, decomposed)
+        if sigma:dim() == 2 then
+            -- TODO: when Lapack's pstrf will be wrapped in Torch, use that instead of Cholesky with SVD failsafe
+            local fullRank, decomposed = pcall(function() return torch.potrf(sigma):triu() end)
+            if fullRank then
+                -- Definite positive matrix: use Cholesky
+                y = torch.mm(x, decomposed)
+            else
+                -- Rank-deficient matrix: fall back on SVD
+                local u, s, v = torch.svd(sigma)
+                local tmp = torch.cmul(x, s:sqrt():resize(1, d):expand(n, d))
+                y = torch.mm(tmp, v)
+            end
         else
-            -- Rank-deficient matrix: fall back on SVD
-            local u, s, v = torch.svd(sigma[1])
-            local tmp = torch.cmul(x, s:sqrt():resize(1, d):expand(n, d))
-            y = torch.mm(tmp, v)
+            -- diagonal sigma
+            local decomposed = sigma:clone():sqrt():resize(1, d):expand(n, d)
+            y = torch.cmul(decomposed, x)
         end
+
         torch.add(resultTensor, y, mu):resize(resultSize)
 
+    end
+
+    local x = torch.Tensor(n,d)
+    randomkit.gauss(x)
+    if sigma:size(1) == 1 then
+        sampleFromDistribution(resultTensor, x, mu, sigma[1])
         return resultTensor
 
     else
-        error("Multiple covariance matrices: not implemented")
-        --[[ TODO multiple sigmas
         for k = 1, n do
-            local decomposed = torch.potrf(sigma[k]):triu() -- TODO remove triu as torch will be fixed
-            local r = torch.mm(torch.randn(n, d), decomposed) + mu
+            sampleFromDistribution(resultTensor[k], x[k]:resize(1, d), mu[k], sigma[k])
         end
-        --]]
-
+        return resultTensor
     end
 end

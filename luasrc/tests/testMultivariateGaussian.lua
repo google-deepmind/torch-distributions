@@ -4,7 +4,15 @@ require 'util.warn'
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
-local seed = 1234567890
+torch.manualSeed(1234567890)
+
+local function sidakCorrection(alpha, n)
+    -- Sidak correction is good for independent tests -- which we have here.
+    return 1 - math.pow((1-alpha), 1/n)
+end
+-- This is the significance threshold for the statistical tests, i.e. close to 0
+local statisticalTests = 56
+local alpha = sidakCorrection(.05, statisticalTests)
 
 local standardGaussianPDFWindow = torch.Tensor({
     {0.058549831524319, 0.070096874908772, 0.080630598589333, 0.089110592667962, 0.094620883979159, 0.096532352630054, 0.094620883979159, 0.089110592667962, 0.080630598589333, 0.070096874908772, 0.058549831524319},
@@ -265,20 +273,7 @@ function myTests.multivariateGaussianLogPDFNonStandard()
     tester:assertTensorEq(result, expected, 1e-12, "non-standard 2D gaussian log-pdf should match expected value")
 end
 
--- 1-D, one-sample T test
-local function tTest(samples, mu, sigma)
-    local sampleMean = samples:mean()
-    local sampleStdDev = math.sqrt(samples:var())
-    local n = samples:nElement()
-    print("n", n)
-    print("sampelMean, stddev", sampleMean, sampleStdDev)
-
-    local t = (sampleMean - mu) * math.sqrt(n) / sampleStdDev
-    local p = 1 - cephes.stdtr(n - 1, t)
-    return p, t
-end
-
-local function statisticalTestMultivariateGaussian(alpha, samples, mu, sigma, shouldAccept)
+local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAccept)
 
     -- Part one: chi2 test projection onto each axis
 
@@ -300,22 +295,31 @@ local function statisticalTestMultivariateGaussian(alpha, samples, mu, sigma, sh
         -- Now, we expect the distribution of the projected samples to be mu[k], math.sqrt(sigma[k][k])
         local p, chi2 = randomkit.chi2Gaussian(projectedSamples, mu[k], math.sqrt(sigma[k][k]))
 
-        -- Bonferroni's correction
-        if p < (1 - alpha) / D then
+        if p < sidakCorrection(alpha, D) then
             -- we're rejecting the null hypothesis, that the sample is normally distributed with the above params
             rejectionCount = rejectionCount + 1
-            tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters")
+            tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters (1)")
+        end
+    end
+
+    -- Part two: transform and chi2 test against standard normal dist'n
+
+    mu = torch.Tensor(mu)
+    local expandedMu = mu:resize(1, D):expand(N, D)
+    local whitenedSamples = samples:clone() - expandedMu
+    local chol = torch.potrf(sigma):triu()
+    whitenedSamples = torch.gesv(whitenedSamples:t(), chol:t()):t()
+    for k = 1, D do
+        local projectedSamples = whitenedSamples:select(2, k)
+        local p, chi2 = randomkit.chi2Gaussian(projectedSamples, 0, 1)
+        if p < sidakCorrection(alpha, D) then
+            rejectionCount = rejectionCount + 1
+            tester:assert(not shouldAccept, "projected sample should be accepted as gaussian with given parameters (2)")
         end
     end
 
     -- If we're not supposed to be accepting this sample, check that it was rejected by at least one of the tests
     tester:assert(shouldAccept or rejectionCount > 0, "projected sample should be rejected as gaussian with given parameters")
-
-    -- Part two: transform and chi2 test against standard normal dist'n
-
-    -- TODO
-
-
 
 end
 
@@ -340,7 +344,7 @@ function myTests.test_multivariateGaussianRand_D_DD()
     tester:assert(dimOK, "single sample should return vector result")
     tester:assert(sizeOK, "result should have size = 2")
 
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+    statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
 
 function myTests.test_multivariateGaussianRand_D_DD_errorSizes()
@@ -351,10 +355,6 @@ function myTests.test_multivariateGaussianRand_D_DD_errorSizes()
 end
 
 
--- NxD, DxD
--- D, NxDxD
--- NxD, NxDxD
---
 -- N, D, DxD
 function myTests.multivariateGaussianRand_N_D_DD_Standard()
     local mu = torch.Tensor({10, 0})
@@ -366,7 +366,7 @@ function myTests.multivariateGaussianRand_N_D_DD_Standard()
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+    statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
 function myTests.multivariateGaussianRand_N_D_DD()
     local mu = torch.Tensor({10, 0})
@@ -378,7 +378,7 @@ function myTests.multivariateGaussianRand_N_D_DD()
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+    statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
 function myTests.multivariateGaussianRand_N_D_DD_fail_mean()
     local mu = torch.Tensor({10, 0})
@@ -390,7 +390,7 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_mean()
 
     -- Check we reject a sample with wrong mean
     result:select(2, 1):add(1)
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, false)
+    statisticalTestMultivariateGaussian(result, mu, sigma, false)
 end
 
 -- Check we reject a sample with wrong variance
@@ -402,7 +402,7 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_variance()
 
     local result = randomkit.multivariateGaussianRand(N, mu, sigma)
     result:select(2, 1):mul(2)
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, false)
+    statisticalTestMultivariateGaussian(result, mu, sigma, false)
 end
 --
 -- ResultTensor, D, DxD
@@ -417,23 +417,13 @@ function myTests.multivariateGaussianRand_Result_D_DD_Standard()
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
-    statisticalTestMultivariateGaussian(0.95, result, mu, sigma, true)
+    statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
--- ResultTensor, NxD, DxD
 
--- ResultTensor, D, NxDxD
--- ResultTensor, NxD, NxDxD
---
 -- NxD, D
 -- D, NxD
 -- NxD, NxD
---
 -- N, D, D
---
--- ResultTensor, D, D
--- ResultTensor, NxD, D
--- ResultTensor, D, NxD
--- ResultTensor, NxD, NxD
 
 function myTests.testMultivariateDegenerate()
     local N = 6
@@ -444,24 +434,187 @@ function myTests.testMultivariateDegenerate()
     local cov = torch.eye(D)
     cov[D][D] = 0
 
-    torch.manualSeed(seed)
-    randomkit.ffi.rk_seed(seed, randomkit._state)
-    local expected = randomkit.gauss(torch.Tensor(N, D)):add(mean)
-    expected:select(2,D):fill(mu[1][D])
-
-    torch.manualSeed(seed)
-    randomkit.ffi.rk_seed(seed, randomkit._state)
     local actual = torch.Tensor(N, D)
     randomkit.multivariateGaussianRand(actual, mean, cov)
     -- Check that the second column is constant
     tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
+end
 
-    -- Check that the first column is what we expected
-    -- NOTE: at the moment, multivariateGaussian generates more random variables than
-    -- needed when the covariance is rank defficient. If in the future this changes,
-    -- the expected will change accordingly.
-    tester:assertTensorEq(actual, expected, 1e-16, 'did not generate expected values')
+
+local function generateSystematicTests()
+    local N = 10000
+    local M = 3
+    local D = 2
+
+    local firstArgOptions = { N = N, M = M, NxD = torch.Tensor(N, D) }
+
+    local secondArgD = torch.Tensor { 10, 0 }
+    local secondArgMD = torch.Tensor(M, D):zero()
+    local k = 0
+    secondArgMD:apply(function()
+        k = k + 1
+        return k % 2 * ((k - 1) / 2)
+    end)
+    local secondArgE = torch.Tensor { 10, 0, 0 }
+
+    local secondArgOptions = { D = secondArgD, E = secondArgE, MxD = secondArgMD }
+
+    local thirdArgD = torch.Tensor { 2, 1 }
+    local thirdArgDD = torch.Tensor {{2, 1}, {1, 1}}
+    local thirdArgMDD = torch.Tensor(M, D, D):zero()
+    for k = 1, M do
+        thirdArgMDD[k] = torch.Tensor {{k+1, k}, {k, k}}
+    end
+    local thirdArgDE = torch.Tensor {{2, 1, 1}, {1, 1, 1}}
+    local thirdArgEE = torch.Tensor {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
+
+    local thirdArgOptions = { D = thirdArgD, DxD = thirdArgDD, DxE = thirdArgDE, ExE = thirdArgEE, MxDxD = thirdArgMDD }
+
+    local function shouldError(v1, v2, v3, desc)
+        tester:assertError(
+                function() randomkit.multivariateGaussianRand(v1, v2, v3) end,
+                desc .. " should error!"
+            )
+    end
+
+    local function checkResultsGaussian(result, mu, sigma)
+        tester:assert(result, "got no result - expected samples from a gaussian!")
+        tester:asserteq(result:dim(), 2, "wrong dimensionality for result")
+        tester:asserteq(result:size(2), mu:size(1), "expected results of size " .. mu:size(1))
+        statisticalTestMultivariateGaussian(result, mu, sigma, true)
+    end
+
+    local function shouldBeFromOneGaussian(v1, v2, v3, desc)
+        local result = randomkit.multivariateGaussianRand(v1, v2, v3)
+        checkResultsGaussian(result, v2, v3)
+    end
+
+    local function shouldBeFromOneDiagonalGaussian(v1, v2, v3, desc)
+        local result = randomkit.multivariateGaussianRand(v1, v2, v3)
+        checkResultsGaussian(result, v2, torch.diag(v3))
+    end
+
+    local function shouldBeFromMGaussians(v1, v2, v3, desc)
+
+        local accumulated = torch.Tensor(M, N, D):zero()
+
+        -- Each call only returns one sample from each distribution, so to
+        -- perform our statistical tests we need to make many calls.
+        local notNil = true
+        local correctDim = true
+        local correctSize = true
+        for k = 1, N do
+            local results = randomkit.multivariateGaussianRand(v1, v2, v3)
+            notNil = notNil and results ~= nil
+            correctDim = correctDim and results:dim() == 2
+            correctSize = correctSize and results:size(1) == M
+            local gaussDim
+            if v2:dim() == 2 then
+                gaussDim = v2:size(2)
+            else
+                gaussDim = v2:size(1)
+            end
+            correctSize = correctSize and results:size(2) == gaussDim
+            for j = 1, M do
+                accumulated[j][k] = results[j]
+            end
+        end
+
+        tester:assert(notNil, "got no result - expected samples from a gaussian!")
+        tester:assert(correctDim, "wrong dimensionality for result")
+        tester:assert(correctSize, "expected results of correct size")
+
+        for j = 1, M do
+            local mu = v2
+            if v2:dim() == 2 then
+                mu = v2[j]
+            end
+            local sigma = v3
+            if v3:dim() == 3 then
+                sigma = v3[j]
+            end
+            statisticalTestMultivariateGaussian(accumulated[j], mu, sigma, true)
+        end
+    end
+
+    local function null() end
+
+    local expectations = {}
+    expectations["N, D, D"] = shouldBeFromOneDiagonalGaussian
+    expectations["N, D, DxD"] = shouldBeFromOneGaussian
+    expectations["N, D, DxE"] = shouldError
+    expectations["N, D, ExE"] = shouldError
+    expectations["N, D, MxDxD"] = shouldError
+
+    expectations["N, E, D"] = shouldError
+    expectations["N, E, DxD"] = shouldError
+    expectations["N, E, DxE"] = shouldError
+    expectations["N, E, ExE"] = shouldBeFromOneGaussian
+    expectations["N, E, MxDxD"] = shouldError
+
+    expectations["N, MxD, D"] = shouldError
+    expectations["N, MxD, DxD"] = shouldError
+    expectations["N, MxD, DxE"] = shouldError
+    expectations["N, MxD, ExE"] = shouldError
+    expectations["N, MxD, MxDxD"] = shouldError
+
+    expectations["M, D, D"] = null
+    expectations["M, D, DxD"] = null
+    expectations["M, D, DxE"] = shouldError
+    expectations["M, D, ExE"] = shouldError
+    expectations["M, D, MxDxD"] = shouldBeFromMGaussians
+
+    expectations["M, E, D"] = null
+    expectations["M, E, DxD"] = null
+    expectations["M, E, DxE"] = shouldError
+    expectations["M, E, ExE"] = null
+    expectations["M, E, MxDxD"] = shouldError
+
+    expectations["M, MxD, D"] = null
+    expectations["M, MxD, DxD"] = shouldBeFromMGaussians
+    expectations["M, MxD, DxE"] = shouldError
+    expectations["M, MxD, ExE"] = shouldError
+    expectations["M, MxD, MxDxD"] = shouldBeFromMGaussians
+
+    expectations["NxD, D, D"] = shouldBeFromOneDiagonalGaussian
+    expectations["NxD, D, DxD"] = shouldBeFromOneGaussian
+    expectations["NxD, D, DxE"] = shouldError
+    expectations["NxD, D, ExE"] = shouldError
+    expectations["NxD, D, MxDxD"] = shouldBeFromMGaussians
+
+    expectations["NxD, E, D"] = shouldError
+    expectations["NxD, E, DxD"] = shouldError
+    expectations["NxD, E, DxE"] = shouldError
+    expectations["NxD, E, ExE"] = shouldBeFromOneGaussian
+    expectations["NxD, E, MxDxD"] = shouldError
+
+    expectations["NxD, MxD, D"] = null
+    expectations["NxD, MxD, DxD"] = shouldBeFromMGaussians
+    expectations["NxD, MxD, DxE"] = shouldError
+    expectations["NxD, MxD, ExE"] = shouldError
+    expectations["NxD, MxD, MxDxD"] = shouldBeFromMGaussians
+
+    local testTable = {}
+
+    for i1, v1 in pairs(firstArgOptions) do
+        for i2, v2 in pairs(secondArgOptions) do
+            for i3, v3 in pairs(thirdArgOptions) do
+                local key = table.concat { i1, ", ", i2, ", ", i3 }
+                local desc = table.concat { "randomkit.multivariateGaussianRand(", key, ")" }
+                local testFunc = expectations[key]
+                if not testFunc then
+                    error("Missing expected result handler for " .. desc)
+                end
+                testTable["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
+                    testFunc(v1, v2, v3, desc)
+                end
+            end
+        end
+    end
+    return testTable
 end
 
 tester:add(myTests)
+tester:add(generateSystematicTests())
 tester:run()
+
