@@ -26,29 +26,29 @@ torch-rocks install distributions
 
 ###Poisson
 
-####distributions.poissonPDF(x, lambda)
+####poissonPDF(x, lambda)
 
 Probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-####distributions.poissonLogPDF(x, lambda)
+####poissonLogPDF(x, lambda)
 
 Log of probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-####distributions.poissonCDF(x, lambda)
+####poissonCDF(x, lambda)
 
 Cumulative distribution function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
 ###Gaussian
 
-####distributions.gaussianPDF(x, mu, sigma)
+####gaussianPDF(x, mu, sigma)
 
 Probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####distributions.gaussianLogPDF(x, mu, sigma)
+####gaussianLogPDF(x, mu, sigma)
 
 Log probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####distributions.gaussianCDF(x, mu, sigms)
+####gaussianCDF(x, mu, sigms)
 
 Cumulative distribution function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
@@ -56,83 +56,83 @@ Cumulative distribution function of a Gaussian distribution with mean `mu` and s
 
 The covariance matrix passed to multivariate gaussian functions needs only be positive **semi**-definite: we deal gracefully with the degenerate case of rank-deficient covariance.
 
-####distributions.multivariateGaussianPDF(x, mu, cov)
+####multivariateGaussianPDF(x, mu, cov)
 
 Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
 For a D-dimensional Gaussian, the following forms are valid:
 
-* `distributions.multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
-* `distributions.multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
-* `distributions.multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
-* `distributions.multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
+* `multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
+* `multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
+* `multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
+* `multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector containing only the diagonal elements:
 
-* `distributions.multivariateGaussianPDF([D], [D], [D])` - returns a number.
-* `distributions.multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
-* `distributions.multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
-* `distributions.multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
+* `multivariateGaussianPDF([D], [D], [D])` - returns a number.
+* `multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
+* `multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
+* `multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
 
-####distributions.multivariateGaussianLogPDF(x, mu, cov)
+####multivariateGaussianLogPDF(x, mu, cov)
 
 Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
 
-See `distributions.multivariateGaussianPDF()` for description of valid forms for x, mu and cov.
+See `multivariateGaussianPDF()` for description of valid forms for x, mu and cov.
 
-####distributions.multivariateGaussianRand([res,] mu, cov)
+####multivariateGaussianRand([res,] mu, cov)
 
 Sample from a multivariate Gaussian distribution with mean `mu` and covariance `cov`.
 
 For a D-dimensional Gaussian, the following forms are valid:
 
-* `distributions.multivariateGaussianPDF([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
-* `distributions.multivariateGaussianPDF([N, D], [D, D])` - returns N samples in a N-by-D Tensor
-* `distributions.multivariateGaussianPDF([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
-* `distributions.multivariateGaussianPDF([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `multivariateGaussianPDF([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
+* `multivariateGaussianPDF([N, D], [D, D])` - returns N samples in a N-by-D Tensor
+* `multivariateGaussianPDF([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `multivariateGaussianPDF([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.
 
 ###Cauchy
 
-####distributions.cauchyPDF(x, a, b)
+####cauchyPDF(x, a, b)
 
 Probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-####distributions.cauchyLogPDF(x, a, b)
+####cauchyLogPDF(x, a, b)
 
 Log of probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-####distributions.cauchyCDF(x, a, b)
+####cauchyCDF(x, a, b)
 
 Cumulative distribution function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
 ###Chi square
 
-####distributions.chi2PDF(x, dof)
+####chi2PDF(x, dof)
 
 Probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-####distributions.chi2LogPDF(x, dof)
+####chi2LogPDF(x, dof)
 
 Log of probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-####distributions.chi2CDF(x, dof)
+####chi2CDF(x, dof)
 
 Cumulative distribution function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
 ###Laplace
 
-####distributions.laplacePDF(x, loc, scale)
+####laplacePDF(x, loc, scale)
 
 Probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-####distributions.laplaceLogPDF(x, loc, scale)
+####laplaceLogPDF(x, loc, scale)
 
 Log of probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-####distributions.laplaceCDF(x, loc, scale)
+####laplaceCDF(x, loc, scale)
 
 Cumulative distribution function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
@@ -140,7 +140,7 @@ Cumulative distribution function of a Laplace distribution with location `loc` a
 
 Besides the generators, there are some functions for checking whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
 
-###distributions.chi2Uniform(x, [low, up, nBins])
+###chi2Uniform(x, [low, up, nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a continuous uniform distribution on the interval `[low, up]`".
 
@@ -151,7 +151,7 @@ Perform a chi-squared test, with null hypothesis "sample x is from a continuous 
 
 Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
 
-###distributions.chi2TestCDF(x, cdf, cdfParams, [nBins])
+###chi2TestCDF(x, cdf, cdfParams, [nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a distribution with cdf `cdf`, parameterised by `cdfParams`".
 
@@ -162,7 +162,7 @@ Perform a chi-squared test, with null hypothesis "sample x is from a distributio
 
 Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
 
-###distributions.chi2Gaussian(x, mu, sigma, [nBins])
+###chi2Gaussian(x, mu, sigma, [nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a Gaussian distribution with mean `mu` and variance `sigma`".
 
