@@ -2,7 +2,7 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Randomkit RNG for Torch</title>
+    <title>Probability distributions for Torch</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -19,255 +19,124 @@
           <div id="navcontainer">
           <ul>
 <li>
-<a href="#toc_0">Randomkit random number generators, wrapped for Torch</a>
+<a href="#toc_0">Probability distributions for Torch</a>
 <ul>
 <li>
 <a href="#toc_1">Example</a>
 <ul>
 <li>
-<a href="#toc_2">Single sample</a>
-</li>
-<li>
-<a href="#toc_3">Multiple samples from one distribution</a>
-</li>
-<li>
-<a href="#toc_4">Multiple samples from multiple distributions</a>
-</li>
-<li>
-<a href="#toc_5">Getting/setting the seed and the state</a>
+<a href="#toc_2">Getting/setting the seed and the state</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_6">Installation</a>
+<a href="#toc_3">Installation</a>
 </li>
 <li>
-<a href="#toc_7">List of Randomkit generators</a>
+<a href="#toc_4">List of Distributions</a>
 <ul>
 <li>
-<a href="#toc_8">Beta</a>
-</li>
-<li>
-<a href="#toc_9">Binomial</a>
-</li>
-<li>
-<a href="#toc_10">Bytes</a>
-</li>
-<li>
-<a href="#toc_11">Chisquare</a>
-</li>
-<li>
-<a href="#toc_12">Double</a>
-</li>
-<li>
-<a href="#toc_13">Exponential</a>
-</li>
-<li>
-<a href="#toc_14">F</a>
-</li>
-<li>
-<a href="#toc_15">Gamma</a>
-</li>
-<li>
-<a href="#toc_16">Gauss</a>
-</li>
-<li>
-<a href="#toc_17">Geometric</a>
-</li>
-<li>
-<a href="#toc_18">Gumbel</a>
-</li>
-<li>
-<a href="#toc_19">Hypergeometric</a>
-</li>
-<li>
-<a href="#toc_20">Interval</a>
-</li>
-<li>
-<a href="#toc_21">Laplace</a>
-</li>
-<li>
-<a href="#toc_22">Logistic</a>
-</li>
-<li>
-<a href="#toc_23">Lognormal</a>
-</li>
-<li>
-<a href="#toc_24">Logseries</a>
-</li>
-<li>
-<a href="#toc_25">Long</a>
-</li>
-<li>
-<a href="#toc_26">Negative binomial</a>
-</li>
-<li>
-<a href="#toc_27">Noncentral chisquare</a>
-</li>
-<li>
-<a href="#toc_28">Noncentral F</a>
-</li>
-<li>
-<a href="#toc_29">Normal</a>
-</li>
-<li>
-<a href="#toc_30">Pareto</a>
-</li>
-<li>
-<a href="#toc_31">Poisson</a>
-</li>
-<li>
-<a href="#toc_32">Power</a>
-</li>
-<li>
-<a href="#toc_33">Randint</a>
-</li>
-<li>
-<a href="#toc_34">Random</a>
-</li>
-<li>
-<a href="#toc_35">Random sample</a>
-</li>
-<li>
-<a href="#toc_36">Rayleigh</a>
-</li>
-<li>
-<a href="#toc_37">Standard cauchy</a>
-</li>
-<li>
-<a href="#toc_38">Standard exponential</a>
-</li>
-<li>
-<a href="#toc_39">Standard gamma</a>
-</li>
-<li>
-<a href="#toc_40">Standard normal</a>
-</li>
-<li>
-<a href="#toc_41">Standard t</a>
-</li>
-<li>
-<a href="#toc_42">Triangular</a>
-</li>
-<li>
-<a href="#toc_43">Ulong</a>
-</li>
-<li>
-<a href="#toc_44">Uniform</a>
-</li>
-<li>
-<a href="#toc_45">Vonmises</a>
-</li>
-<li>
-<a href="#toc_46">Wald</a>
-</li>
-<li>
-<a href="#toc_47">Weibull</a>
-</li>
-<li>
-<a href="#toc_48">Zipf</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_49">List of Torch-only generators</a>
+<a href="#toc_5">Poisson</a>
 <ul>
 <li>
-<a href="#toc_50">Poisson</a>
+<a href="#toc_6">distributions.poissonPDF(x, lambda)</a>
+</li>
+<li>
+<a href="#toc_7">distributions.poissonLogPDF(x, lambda)</a>
+</li>
+<li>
+<a href="#toc_8">distributions.poissonCDF(x, lambda)</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_9">Gaussian</a>
 <ul>
 <li>
-<a href="#toc_51">randomkit.poissonPDF(x, lambda)</a>
+<a href="#toc_10">distributions.gaussianPDF(x, mu, sigma)</a>
 </li>
 <li>
-<a href="#toc_52">randomkit.poissonLogPDF(x, lambda)</a>
+<a href="#toc_11">distributions.gaussianLogPDF(x, mu, sigma)</a>
 </li>
 <li>
-<a href="#toc_53">randomkit.poissonCDF(x, lambda)</a>
+<a href="#toc_12">distributions.gaussianCDF(x, mu, sigms)</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_54">Gaussian</a>
+<a href="#toc_13">Multivariate Gaussian</a>
 <ul>
 <li>
-<a href="#toc_55">randomkit.gaussianPDF(x, mu, sigma)</a>
+<a href="#toc_14">distributions.multivariateGaussianPDF(x, mu, cov)</a>
 </li>
 <li>
-<a href="#toc_56">randomkit.gaussianLogPDF(x, mu, sigma)</a>
+<a href="#toc_15">distributions.multivariateGaussianLogPDF(x, mu, cov)</a>
 </li>
 <li>
-<a href="#toc_57">randomkit.gaussianCDF(x, mu, sigms)</a>
+<a href="#toc_16">distributions.multivariateGaussianRand([res,] mu, cov)</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_58">Multivariate Gaussian</a>
+<a href="#toc_17">Cauchy</a>
 <ul>
 <li>
-<a href="#toc_59">randomkit.multivariateGaussianPDF(x, mu, cov)</a>
+<a href="#toc_18">distributions.cauchyPDF(x, a, b)</a>
 </li>
 <li>
-<a href="#toc_60">randomkit.multivariateGaussianLogPDF(x, mu, cov)</a>
+<a href="#toc_19">distributions.cauchyLogPDF(x, a, b)</a>
 </li>
 <li>
-<a href="#toc_61">randomkit.multivariateGaussianRand([res,] mu, cov)</a>
+<a href="#toc_20">distributions.cauchyCDF(x, a, b)</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_62">Cauchy</a>
+<a href="#toc_21">Chi square</a>
 <ul>
 <li>
-<a href="#toc_63">randomkit.cauchyPDF(x, a, b)</a>
+<a href="#toc_22">distributions.chi2PDF(x, dof)</a>
 </li>
 <li>
-<a href="#toc_64">randomkit.cauchyLogPDF(x, a, b)</a>
+<a href="#toc_23">distributions.chi2LogPDF(x, dof)</a>
 </li>
 <li>
-<a href="#toc_65">randomkit.cauchyCDF(x, a, b)</a>
+<a href="#toc_24">distributions.chi2CDF(x, dof)</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_66">Chi square</a>
+<a href="#toc_25">Laplace</a>
 <ul>
 <li>
-<a href="#toc_67">randomkit.chi2PDF(x, dof)</a>
+<a href="#toc_26">distributions.laplacePDF(x, loc, scale)</a>
 </li>
 <li>
-<a href="#toc_68">randomkit.chi2LogPDF(x, dof)</a>
+<a href="#toc_27">distributions.laplaceLogPDF(x, loc, scale)</a>
 </li>
 <li>
-<a href="#toc_69">randomkit.chi2CDF(x, dof)</a>
+<a href="#toc_28">distributions.laplaceCDF(x, loc, scale)</a>
+</li>
+</ul>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_70">Laplace</a>
+<a href="#toc_29">Hypothesis Testing</a>
 <ul>
 <li>
-<a href="#toc_71">randomkit.laplacePDF(x, loc, scale)</a>
+<a href="#toc_30">distributions.chi2Uniform(x, [low, up, nBins])</a>
 </li>
 <li>
-<a href="#toc_72">randomkit.laplaceLogPDF(x, loc, scale)</a>
+<a href="#toc_31">distributions.chi2TestCDF(x, cdf, cdfParams, [nBins])</a>
 </li>
 <li>
-<a href="#toc_73">randomkit.laplaceCDF(x, loc, scale)</a>
+<a href="#toc_32">distributions.chi2Gaussian(x, mu, sigma, [nBins])</a>
 </li>
 </ul>
 </li>
-</ul>
-</li>
 <li>
-<a href="#toc_74">Unit Tests</a>
-</li>
-<li>
-<a href="#toc_75">Direct access to FFI</a>
-<ul>
-<li>
-<a href="#toc_76">randomkit.ffi.*</a>
-</li>
-</ul>
+<a href="#toc_33">Unit Tests</a>
 </li>
 </ul>
 </li>
@@ -276,270 +145,191 @@
           </div>
           </header>
           <section>
-          <h1 id="toc_0">Randomkit random number generators, wrapped for Torch</h1>
-
-<p>Provides and wraps the random nnumber generators the <a href="">Randomkit library</a>, copied from <a href="">Numpy</a></p>
+          <h1 id="toc_0">Probability distributions for Torch</h1>
 
 <h2 id="toc_1">Example</h2>
 
-<h3 id="toc_2">Single sample</h3>
+<p>TODO</p>
 
-<p>You can call any of the wrapped functions with just the distribution&#39;s parameters to generate a single sample and return a number:</p>
-<div class="highlight"><pre><code class="lua language-lua" data-lang="lua"><span class="nb">require</span> <span class="s1">&#39;</span><span class="s">randomkit&#39;</span>
-<span class="n">randomkit</span><span class="p">.</span><span class="n">poisson</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-</code></pre></div>
-<h3 id="toc_3">Multiple samples from one distribution</h3>
+<h3 id="toc_2">Getting/setting the seed and the state</h3>
 
-<p>Often, you might want to generate many samples identically distributed. Simply pass as a first argument a tensor of the proper dimension, into which the samples will be stored:</p>
-<div class="highlight"><pre><code class="lua language-lua" data-lang="lua"><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
-<span class="n">randomkit</span><span class="p">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-</code></pre></div>
-<p>The sampler returns the tensor, so you can shorten the above in:</p>
-<div class="highlight"><pre><code class="lua language-lua" data-lang="lua"><span class="n">x</span> <span class="o">=</span> <span class="n">randomkit</span><span class="p">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">(</span><span class="mi">10000</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
-</code></pre></div>
-<h3 id="toc_4">Multiple samples from multiple distributions</h3>
+<p>Distributions is transparently integrated with Torch&#39;s random stream: just use <code>torch.manualSeed(seed)</code>, <code>torch.getRNGState()</code>, and <code>torch.setRNGState(state)</code> as usual.</p>
 
-<p>Finally, you might want to generate many samples, each from a distribution with different parameters. This is achieved by passing a Tensor as the parameter of the distribution:</p>
-<div class="highlight"><pre><code class="lua language-lua" data-lang="lua"><span class="n">many_lambda</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">{</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">}</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">randomkit</span><span class="p">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">many_lambda</span><span class="p">)</span>
-</code></pre></div>
-<p>Of course, this can be combined with passing a result Tensor as an optional first element, to re-use memory and avoid creaating a new Tensor at each call:</p>
-<div class="highlight"><pre><code class="lua language-lua" data-lang="lua"><span class="n">many_lambda</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">{</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">}</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">many_lambda</span><span class="p">:</span><span class="n">size</span><span class="p">())</span>
-<span class="n">randomkit</span><span class="p">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">many_lambda</span><span class="p">)</span>
-</code></pre></div>
-<p><strong>Note:</strong> in the latter case, the size of the result Tensor must correspond to the size of the parameter tensor -- we do not resize the result tensor automatically, yet:</p>
-
-<h3 id="toc_5">Getting/setting the seed and the state</h3>
-
-<p>Randomkit is transparently integrated with Torch&#39;s random stream: just use <code>torch.manualSeed(seed)</code>, <code>torch.getRNGState()</code>, and <code>torch.setRNGState(state)</code> as usual.</p>
-
-<h2 id="toc_6">Installation</h2>
+<h2 id="toc_3">Installation</h2>
 
 <p>From a terminal:</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">torch-rocks install randomkit
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">torch-rocks install distributions
 </code></pre></div>
-<h2 id="toc_7">List of Randomkit generators</h2>
+<h2 id="toc_4">List of Distributions</h2>
 
-<p>See this <strong><a href="randomkit.html">extensive automatically extracted doc</a></strong>, built from Numpy&#39;s docstrings.</p>
+<h3 id="toc_5">Poisson</h3>
 
-<h3 id="toc_8"><a href="randomkit.html#beta">Beta</a></h3>
-
-<h3 id="toc_9"><a href="randomkit.html#binomial">Binomial</a></h3>
-
-<h3 id="toc_10"><a href="randomkit.html#bytes">Bytes</a></h3>
-
-<h3 id="toc_11"><a href="randomkit.html#chisquare">Chisquare</a></h3>
-
-<h3 id="toc_12"><a href="randomkit.html#double">Double</a></h3>
-
-<h3 id="toc_13"><a href="randomkit.html#exponential">Exponential</a></h3>
-
-<h3 id="toc_14"><a href="randomkit.html#f">F</a></h3>
-
-<h3 id="toc_15"><a href="randomkit.html#gamma">Gamma</a></h3>
-
-<h3 id="toc_16"><a href="randomkit.html#gauss">Gauss</a></h3>
-
-<h3 id="toc_17"><a href="randomkit.html#geometric">Geometric</a></h3>
-
-<h3 id="toc_18"><a href="randomkit.html#gumbel">Gumbel</a></h3>
-
-<h3 id="toc_19"><a href="randomkit.html#hypergeometric">Hypergeometric</a></h3>
-
-<h3 id="toc_20"><a href="randomkit.html#interval">Interval</a></h3>
-
-<h3 id="toc_21"><a href="randomkit.html#laplace">Laplace</a></h3>
-
-<h3 id="toc_22"><a href="randomkit.html#logistic">Logistic</a></h3>
-
-<h3 id="toc_23"><a href="randomkit.html#lognormal">Lognormal</a></h3>
-
-<h3 id="toc_24"><a href="randomkit.html#logseries">Logseries</a></h3>
-
-<h3 id="toc_25"><a href="randomkit.html#long">Long</a></h3>
-
-<h3 id="toc_26"><a href="randomkit.html#negative_binomial">Negative binomial</a></h3>
-
-<h3 id="toc_27"><a href="randomkit.html#noncentral_chisquare">Noncentral chisquare</a></h3>
-
-<h3 id="toc_28"><a href="randomkit.html#noncentral_f">Noncentral F</a></h3>
-
-<h3 id="toc_29"><a href="randomkit.html#normal">Normal</a></h3>
-
-<h3 id="toc_30"><a href="randomkit.html#pareto">Pareto</a></h3>
-
-<h3 id="toc_31"><a href="randomkit.html#poisson">Poisson</a></h3>
-
-<h3 id="toc_32"><a href="randomkit.html#power">Power</a></h3>
-
-<h3 id="toc_33"><a href="randomkit.html#randint">Randint</a></h3>
-
-<h3 id="toc_34"><a href="randomkit.html#random">Random</a></h3>
-
-<h3 id="toc_35"><a href="randomkit.html#random_sample">Random sample</a></h3>
-
-<h3 id="toc_36"><a href="randomkit.html#rayleigh">Rayleigh</a></h3>
-
-<h3 id="toc_37"><a href="randomkit.html#standard_cauchy">Standard cauchy</a></h3>
-
-<h3 id="toc_38"><a href="randomkit.html#standard_exponential">Standard exponential</a></h3>
-
-<h3 id="toc_39"><a href="randomkit.html#standard_gamma">Standard gamma</a></h3>
-
-<h3 id="toc_40"><a href="randomkit.html#standard_normal">Standard normal</a></h3>
-
-<h3 id="toc_41"><a href="randomkit.html#standard_t">Standard t</a></h3>
-
-<h3 id="toc_42"><a href="randomkit.html#triangular">Triangular</a></h3>
-
-<h3 id="toc_43"><a href="randomkit.html#ulong">Ulong</a></h3>
-
-<h3 id="toc_44"><a href="randomkit.html#uniform">Uniform</a></h3>
-
-<h3 id="toc_45"><a href="randomkit.html#vonmises">Vonmises</a></h3>
-
-<h3 id="toc_46"><a href="randomkit.html#wald">Wald</a></h3>
-
-<h3 id="toc_47"><a href="randomkit.html#weibull">Weibull</a></h3>
-
-<h3 id="toc_48"><a href="randomkit.html#zipf">Zipf</a></h3>
-
-<h2 id="toc_49">List of Torch-only generators</h2>
-
-<p>These functions are provided in addition to the scipy randomkit functions.</p>
-
-<h3 id="toc_50">Poisson</h3>
-
-<h4 id="toc_51">randomkit.poissonPDF(x, lambda)</h4>
+<h4 id="toc_6">distributions.poissonPDF(x, lambda)</h4>
 
 <p>Probability density function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_52">randomkit.poissonLogPDF(x, lambda)</h4>
+<h4 id="toc_7">distributions.poissonLogPDF(x, lambda)</h4>
 
 <p>Log of probability density function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_53">randomkit.poissonCDF(x, lambda)</h4>
+<h4 id="toc_8">distributions.poissonCDF(x, lambda)</h4>
 
 <p>Cumulative distribution function of a Poisson distribution with mean <code>lambda</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_54">Gaussian</h3>
+<h3 id="toc_9">Gaussian</h3>
 
-<h4 id="toc_55">randomkit.gaussianPDF(x, mu, sigma)</h4>
+<h4 id="toc_10">distributions.gaussianPDF(x, mu, sigma)</h4>
 
 <p>Probability density function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_56">randomkit.gaussianLogPDF(x, mu, sigma)</h4>
+<h4 id="toc_11">distributions.gaussianLogPDF(x, mu, sigma)</h4>
 
 <p>Log probability density function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_57">randomkit.gaussianCDF(x, mu, sigms)</h4>
+<h4 id="toc_12">distributions.gaussianCDF(x, mu, sigms)</h4>
 
 <p>Cumulative distribution function of a Gaussian distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_58">Multivariate Gaussian</h3>
+<h3 id="toc_13">Multivariate Gaussian</h3>
 
 <p>The covariance matrix passed to multivariate gaussian functions needs only be positive <strong>semi</strong>-definite: we deal gracefully with the degenerate case of rank-deficient covariance.</p>
 
-<h4 id="toc_59">randomkit.multivariateGaussianPDF(x, mu, cov)</h4>
+<h4 id="toc_14">distributions.multivariateGaussianPDF(x, mu, cov)</h4>
 
 <p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>cov</code>, evaluated at <code>x</code>.</p>
 
 <p>For a D-dimensional Gaussian, the following forms are valid:</p>
 
 <ul>
-<li><code>randomkit.multivariateGaussianPDF([D], [D], [D, D])</code> - returns a number.</li>
-<li><code>randomkit.multivariateGaussianPDF([N, D], [D], [D, D])</code> - returns a Tensor.</li>
-<li><code>randomkit.multivariateGaussianPDF([D], [N, D], [D, D])</code> - returns a Tensor.</li>
-<li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - returns a Tensor.</li>
+<li><code>distributions.multivariateGaussianPDF([D], [D], [D, D])</code> - returns a number.</li>
+<li><code>distributions.multivariateGaussianPDF([N, D], [D], [D, D])</code> - returns a Tensor.</li>
+<li><code>distributions.multivariateGaussianPDF([D], [N, D], [D, D])</code> - returns a Tensor.</li>
+<li><code>distributions.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - returns a Tensor.</li>
 </ul>
 
 <p>In the case of a diagonal covariance <code>cov</code>, you may also opt to pass a vector containing only the diagonal elements:</p>
 
 <ul>
-<li><code>randomkit.multivariateGaussianPDF([D], [D], [D])</code> - returns a number.</li>
-<li><code>randomkit.multivariateGaussianPDF([N, D], [D], [D])</code> - returns a Tensor.</li>
-<li><code>randomkit.multivariateGaussianPDF([D], [N, D], [D])</code> - returns a Tensor.</li>
-<li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D])</code> - returns a Tensor.</li>
+<li><code>distributions.multivariateGaussianPDF([D], [D], [D])</code> - returns a number.</li>
+<li><code>distributions.multivariateGaussianPDF([N, D], [D], [D])</code> - returns a Tensor.</li>
+<li><code>distributions.multivariateGaussianPDF([D], [N, D], [D])</code> - returns a Tensor.</li>
+<li><code>distributions.multivariateGaussianPDF([N, D], [N, D], [D])</code> - returns a Tensor.</li>
 </ul>
 
-<h4 id="toc_60">randomkit.multivariateGaussianLogPDF(x, mu, cov)</h4>
+<h4 id="toc_15">distributions.multivariateGaussianLogPDF(x, mu, cov)</h4>
 
 <p>Probability density function of a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>cov</code>, evaluated at <code>x</code>.</p>
 
-<p>See <code>randomkit.multivariateGaussianPDF()</code> for description of valid forms for x, mu and cov.</p>
+<p>See <code>distributions.multivariateGaussianPDF()</code> for description of valid forms for x, mu and cov.</p>
 
-<h4 id="toc_61">randomkit.multivariateGaussianRand([res,] mu, cov)</h4>
+<h4 id="toc_16">distributions.multivariateGaussianRand([res,] mu, cov)</h4>
 
 <p>Sample from a multivariate Gaussian distribution with mean <code>mu</code> and covariance <code>cov</code>.</p>
 
 <p>For a D-dimensional Gaussian, the following forms are valid:</p>
 
 <ul>
-<li><code>randomkit.multivariateGaussianPDF([D], [D, D])</code> - returns 1 sample in a 1-by-D Tensor</li>
-<li><code>randomkit.multivariateGaussianPDF([N, D], [D, D])</code> - returns N samples in a N-by-D Tensor</li>
-<li><code>randomkit.multivariateGaussianPDF([N, D], [D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
-<li><code>randomkit.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
+<li><code>distributions.multivariateGaussianPDF([D], [D, D])</code> - returns 1 sample in a 1-by-D Tensor</li>
+<li><code>distributions.multivariateGaussianPDF([N, D], [D, D])</code> - returns N samples in a N-by-D Tensor</li>
+<li><code>distributions.multivariateGaussianPDF([N, D], [D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
+<li><code>distributions.multivariateGaussianPDF([N, D], [N, D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
 </ul>
 
 <p>In the case of a diagonal covariance <code>cov</code>, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.</p>
 
-<h3 id="toc_62">Cauchy</h3>
+<h3 id="toc_17">Cauchy</h3>
 
-<h4 id="toc_63">randomkit.cauchyPDF(x, a, b)</h4>
+<h4 id="toc_18">distributions.cauchyPDF(x, a, b)</h4>
 
 <p>Probability density function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_64">randomkit.cauchyLogPDF(x, a, b)</h4>
+<h4 id="toc_19">distributions.cauchyLogPDF(x, a, b)</h4>
 
 <p>Log of probability density function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_65">randomkit.cauchyCDF(x, a, b)</h4>
+<h4 id="toc_20">distributions.cauchyCDF(x, a, b)</h4>
 
 <p>Cumulative distribution function of a Cauchy distribution with location <code>a</code> and scale <code>b</code>, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_66">Chi square</h3>
+<h3 id="toc_21">Chi square</h3>
 
-<h4 id="toc_67">randomkit.chi2PDF(x, dof)</h4>
+<h4 id="toc_22">distributions.chi2PDF(x, dof)</h4>
 
 <p>Probability density function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_68">randomkit.chi2LogPDF(x, dof)</h4>
+<h4 id="toc_23">distributions.chi2LogPDF(x, dof)</h4>
 
 <p>Log of probability density function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_69">randomkit.chi2CDF(x, dof)</h4>
+<h4 id="toc_24">distributions.chi2CDF(x, dof)</h4>
 
 <p>Cumulative distribution function of a Chi square distribution with <code>dof</code> degrees of freedom, evaluated at <code>x</code>.</p>
 
-<h3 id="toc_70">Laplace</h3>
+<h3 id="toc_25">Laplace</h3>
 
-<h4 id="toc_71">randomkit.laplacePDF(x, loc, scale)</h4>
+<h4 id="toc_26">distributions.laplacePDF(x, loc, scale)</h4>
 
 <p>Probability density function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_72">randomkit.laplaceLogPDF(x, loc, scale)</h4>
+<h4 id="toc_27">distributions.laplaceLogPDF(x, loc, scale)</h4>
 
 <p>Log of probability density function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_73">randomkit.laplaceCDF(x, loc, scale)</h4>
+<h4 id="toc_28">distributions.laplaceCDF(x, loc, scale)</h4>
 
 <p>Cumulative distribution function of a Laplace distribution with location <code>loc</code> and scale <code>scale</code>, evaluated at <code>x</code>.</p>
 
-<h2 id="toc_74">Unit Tests</h2>
+<h2 id="toc_29">Hypothesis Testing</h2>
+
+<p>Besides the generators, there are some functions for checking whether a sample fits a particular distribution, using <a href="http://en.wikipedia.org/wiki/Pearson&#x27;s_chi-squared_test"><code>Pearson&#39;s chi-squared test</code></a>.</p>
+
+<h3 id="toc_30">distributions.chi2Uniform(x, [low, up, nBins])</h3>
+
+<p>Perform a chi-squared test, with null hypothesis &quot;sample x is from a continuous uniform distribution on the interval <code>[low, up]</code>&quot;.</p>
+
+<ul>
+<li><code>x</code> should be a vector of sample values to test</li>
+<li><code>low</code> is the lower end of the uniform distribution&#39;s support interval (default: 0)</li>
+<li><code>up</code> is the upper end of the uniform distribution&#39;s support interval (default: 1)</li>
+<li><code>nBins</code> is number of frequency buckets to use for the test (default: 100)</li>
+</ul>
+
+<p>Returns: <code>p</code>, <code>chi2</code> - the p-value and the chi-squared score of the test, respectively.</p>
+
+<h3 id="toc_31">distributions.chi2TestCDF(x, cdf, cdfParams, [nBins])</h3>
+
+<p>Perform a chi-squared test, with null hypothesis &quot;sample x is from a distribution with cdf <code>cdf</code>, parameterised by <code>cdfParams</code>&quot;.</p>
+
+<ul>
+<li><code>x</code> should be a vector of sample values to test</li>
+<li><code>cdf</code> should be a function which takes a number of parameters followed by a sample value and returns the cumulative density of the distribution up to that point</li>
+<li><code>cdfParams</code> should be a table of parameters which will be passed to <code>cdf</code></li>
+<li><code>nBins</code> is number of frequency buckets to use for the test (default: 100)</li>
+</ul>
+
+<p>Returns: <code>p</code>, <code>chi2</code> - the p-value and the chi-squared score of the test, respectively.</p>
+
+<h3 id="toc_32">distributions.chi2Gaussian(x, mu, sigma, [nBins])</h3>
+
+<p>Perform a chi-squared test, with null hypothesis &quot;sample x is from a Gaussian distribution with mean <code>mu</code> and variance <code>sigma</code>&quot;.</p>
+
+<ul>
+<li><code>x</code> should be a vector of sample values to test</li>
+<li><code>mu</code> should be a number - the mean</li>
+<li><code>sigma</code> should be a positive number - the variance</li>
+<li><code>nBins</code> is number of frequency buckets to use for the test (default: 100)</li>
+</ul>
+
+<p>Returns: <code>p</code>, <code>chi2</code> - the p-value and the chi-squared score of the test, respectively.</p>
+
+<h2 id="toc_33">Unit Tests</h2>
 
 <p>Last but not least, the unit tests are in the folder
-<a href="https://github.com/jucor/torch-randomkit/tree/master/luasrc/tests"><code>luasrc/tests</code></a>. You can run them from your local clone of the repostiory with:</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">git clone https://www.github.com/jucor/torch-randomkit
-find torch-randomkit/luasrc/tests -name <span class="s2">&quot;test*lua&quot;</span> -exec torch <span class="o">{}</span> <span class="se">\;</span>
+<a href="https://github.com/jucor/torch-distributions/tree/master/luasrc/tests"><code>luasrc/tests</code></a>. You can run them from your local clone of the repostiory with:</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">git clone https://www.github.com/jucor/torch-distributions
+find torch-distributions/luasrc/tests -name <span class="s2">&quot;test*lua&quot;</span> -exec torch <span class="o">{}</span> <span class="se">\;</span>
 </code></pre></div>
 <p>Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.</p>
-
-<h2 id="toc_75">Direct access to FFI</h2>
-
-<h3 id="toc_76">randomkit.ffi.*</h3>
-
-<p>Functions directly accessible at the top of the <code>randomkit</code> table are Lua wrappers to the actual C functions from Randomkit, with extra error checking. If, for any reason, you want to get rid of this error checking and of a possible overhead, the FFI-wrapper functions can be called directly via <code>randomkit.ffi.myfunction()</code> instead of <code>randomkit.myfunction()</code>.</p>
 
           </section>
       </div>
