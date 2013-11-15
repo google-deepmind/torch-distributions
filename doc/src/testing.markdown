@@ -1,3 +1,8 @@
+-----
+title: A note on Unit Tests
+layout: doc
+---
+
 # Unit Tests
 
 This page contains some additional information on torch-distributions's unit tests. For the most part, the tests should be self explanatory, but the Multivariate Gaussian has a lot of cases to test and so is somewhat more involved.

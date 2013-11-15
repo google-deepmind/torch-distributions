@@ -24,21 +24,21 @@ torch-rocks install distributions
 
 ##List of Distributions
 
-###Poisson
+###Poisson: poisson
 
-####poissonPDF(x, lambda)
+####poisson.pdf(x, lambda)
 
 Probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-####poissonLogPDF(x, lambda)
+####poisson.logpdf(x, lambda)
 
 Log of probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-####poissonCDF(x, lambda)
+####poisson.cdf(x, lambda)
 
 Cumulative distribution function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-###Normal/Gaussian
+###Normal/Gaussian: norm
 
 ####norm.pdf(x, mu, sigma)
 
@@ -52,11 +52,11 @@ Log probability density function of a Normal distribution with mean `mu` and sta
 
 Cumulative distribution function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-###Multivariate Normal
+###Multivariate Normal: mvn
 
 The covariance matrix passed to multivariate gaussian functions needs only be positive **semi**-definite: we deal gracefully with the degenerate case of rank-deficient covariance.
 
-####multivariateNormalPDF(x, mu, cov)
+####mnv.pdf(x, mu, cov)
 
 Probability density function of a multivariate Normal distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
@@ -74,14 +74,14 @@ In the case of a diagonal covariance `cov`, you may also opt to pass a vector co
 * `multivariateNormalPDF([D], [N, D], [D])` - returns a Tensor.
 * `multivariateNormalPDF([N, D], [N, D], [D])` - returns a Tensor.
 
-####multivariateNormalLogPDF(x, mu, cov)
+####mvn.logpdf(x, mu, cov)
 
 Probability density function of a multivariate Normal distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
 
 See `multivariateNormalPDF()` for description of valid forms for x, mu and cov.
 
-####multivariateNormalRand([res,] mu, cov)
+####mvn.rnd([res,] mu, cov)
 
 Sample from a multivariate Normal distribution with mean `mu` and covariance `cov`.
 
@@ -94,45 +94,45 @@ For a D-dimensional Normal, the following forms are valid:
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.
 
-###Cauchy
+###Cauchy: cauchy
 
-####cauchyPDF(x, a, b)
+####cauch.pdf(x, a, b)
 
 Probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-####cauchyLogPDF(x, a, b)
+####cauchy.logpdf(x, a, b)
 
 Log of probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-####cauchyCDF(x, a, b)
+####cauchy.cdf(x, a, b)
 
 Cumulative distribution function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-###Chi square
+###Chi square: chi2
 
-####chi2PDF(x, dof)
+####chi2.pdf(x, dof)
 
 Probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-####chi2LogPDF(x, dof)
+####chi2.logpdf(x, dof)
 
 Log of probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-####chi2CDF(x, dof)
+####chi2.cdf(x, dof)
 
 Cumulative distribution function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-###Laplace
+###Laplace: laplace
 
-####laplacePDF(x, loc, scale)
+####laplage.pdf(x, loc, scale)
 
 Probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-####laplaceLogPDF(x, loc, scale)
+####laplace.logpdf(x, loc, scale)
 
 Log of probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-####laplaceCDF(x, loc, scale)
+####laplace.cdf(x, loc, scale)
 
 Cumulative distribution function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 

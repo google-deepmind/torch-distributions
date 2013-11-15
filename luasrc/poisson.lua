@@ -1,5 +1,7 @@
 require 'cephes'
 
+distributions.poisson = {}
+
 local function vectorise1param(func)
     return function(x, param)
         if not distributions._isTensor(x) and not distributions._isTensor(param) then
@@ -20,15 +22,15 @@ local function vectorise1param(func)
     end
 end
 
-distributions.poissonPDF = vectorise1param(function(x, lambda)
+distributions.poisson.pdf = vectorise1param(function(x, lambda)
     return cephes.pow(lambda, x) / cephes.fac(x) * cephes.exp(-lambda)
 end)
 
-function distributions.poissonLogPDF(x, lambda)
+function distributions.poisson.logpdf(x, lambda)
     return x * cephes.log(lambda) - cephes.lgam(x+1) - lambda
 end
 
-function distributions.poissonCDF(x, lambda)
+function distributions.poisson.cdf(x, lambda)
     if x >= 0 then
         return cephes.pdtr(x, lambda)
     else
@@ -36,6 +38,10 @@ function distributions.poissonCDF(x, lambda)
     end
 end
 
-function distributions.poissonQuantile(p, lambda)
+function distributions.poisson.qtl(p, lambda)
+    error("Not implemented")
+end
+
+function distributions.poisson.rnd(p, lambda)
     error("Not implemented")
 end
