@@ -1,4 +1,6 @@
-function distributions.multivariateGaussianLogPDF(x, mu, sigma)
+distributions.mvn = {}
+
+function distributions.mvn.logpdf(x, mu, sigma)
     x = torch.Tensor(x)
     mu = torch.Tensor(mu)
 
@@ -44,7 +46,7 @@ function distributions.multivariateGaussianLogPDF(x, mu, sigma)
         transformed = torch.mm(x, torch.inverse(decomposed))
         logdet = decomposed:diag():log():sum()
     end
-    transformed:apply(function(a) return distributions.gaussianLogPDF(a, 0, 1) end)
+    transformed:apply(function(a) return distributions.norm.logpdf(a, 0, 1) end)
     local result = transformed:sum(2) - logdet -- by independence
     if scalarResult then
         return result[1][1]
@@ -53,8 +55,8 @@ function distributions.multivariateGaussianLogPDF(x, mu, sigma)
     end
 end
 
-function distributions.multivariateGaussianPDF(...)
-    local r = distributions.multivariateGaussianLogPDF(...)
+function distributions.mvn.pdf(...)
+    local r = distributions.mvn.logpdf(...)
     if type(r) == 'number' then
         return math.exp(r)
     else
@@ -62,7 +64,7 @@ function distributions.multivariateGaussianPDF(...)
     end
 end
 
-function distributions.multivariateGaussianRand(...)
+function distributions.mvn.Rand(...)
     local nArgs = select("#", ...)
     local resultTensor
 
@@ -96,7 +98,7 @@ function distributions.multivariateGaussianRand(...)
         if mu:dim() ~= 1 then
             nParams = mu:size(1)
             if sigma:dim() == 3 and sigma:size(1) ~= nParams then
-                error("Incoherent parameter sizes for multivariateGaussianRand")
+                error("Incoherent parameter sizes for mvn.Rand")
             end
         end
         if not nParams and sigma:dim() == 3 then
@@ -118,11 +120,11 @@ function distributions.multivariateGaussianRand(...)
             end
             resultTensor:resize(n, d)
         else
-            error("Unable to understand first argument for multivariateGaussianRand - should be an integer number of samples to be returned, or a result tensor")
+            error("Unable to understand first argument for mvn.Rand - should be an integer number of samples to be returned, or a result tensor")
         end
 
     else
-        error("Invalid arguments for multivariateGaussianRand().\
+        error("Invalid arguments for mvn.Rand().\
         Should be (mu, sigma), or (N, mu, sigma), or (ResultTensor, mu, sigma).")
     end
 
@@ -132,24 +134,24 @@ function distributions.multivariateGaussianRand(...)
     end
     if sigma:dim() == 1 then
         if mu:size(2) ~= sigma:size(1) then
-            error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+            error("mvn.Rand: inconsistent sizes for mu and sigma")
         end
         sigma:resize(1, d)
     elseif sigma:dim() == 2 then
         -- either DxD or NxD
         if sigma:size(1) == sigma:size(2) then
             if n == d then
-                error("multivariateGaussianRand: ambiguous covariance input")
+                error("mvn.Rand: ambiguous covariance input")
             end
         end
 
         if mu:size(2) ~= sigma:size(1) or mu:size(2) ~= sigma:size(2) then
-            error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+            error("mvn.Rand: inconsistent sizes for mu and sigma")
         end
         sigma:resize(1, d, d)
     elseif sigma:dim() == 3 then
         if mu:size(2) ~= d or sigma:size(2) ~= d or sigma:size(3) ~= d then
-            error("multivariateGaussianRand: inconsistent sizes for mu and sigma")
+            error("mvn.Rand: inconsistent sizes for mu and sigma")
         end
     end
     if mu:size(1) == 1 then

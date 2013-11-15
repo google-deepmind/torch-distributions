@@ -38,59 +38,59 @@ Log of probability density function of a Poisson distribution with mean `lambda`
 
 Cumulative distribution function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-###Gaussian
+###Normal/Gaussian
 
-####gaussianPDF(x, mu, sigma)
+####norm.pdf(x, mu, sigma)
 
-Probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
+Probability density function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####gaussianLogPDF(x, mu, sigma)
+####norm.logpdf(x, mu, sigma)
 
-Log probability density function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
+Log probability density function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####gaussianCDF(x, mu, sigms)
+####norm.cdf(x, mu, sigms)
 
-Cumulative distribution function of a Gaussian distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
+Cumulative distribution function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-###Multivariate Gaussian
+###Multivariate Normal
 
 The covariance matrix passed to multivariate gaussian functions needs only be positive **semi**-definite: we deal gracefully with the degenerate case of rank-deficient covariance.
 
-####multivariateGaussianPDF(x, mu, cov)
+####multivariateNormalPDF(x, mu, cov)
 
-Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `cov`, evaluated at `x`.
+Probability density function of a multivariate Normal distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
-For a D-dimensional Gaussian, the following forms are valid:
+For a D-dimensional Normal, the following forms are valid:
 
-* `multivariateGaussianPDF([D], [D], [D, D])` - returns a number.
-* `multivariateGaussianPDF([N, D], [D], [D, D])` - returns a Tensor.
-* `multivariateGaussianPDF([D], [N, D], [D, D])` - returns a Tensor.
-* `multivariateGaussianPDF([N, D], [N, D], [D, D])` - returns a Tensor.
+* `multivariateNormalPDF([D], [D], [D, D])` - returns a number.
+* `multivariateNormalPDF([N, D], [D], [D, D])` - returns a Tensor.
+* `multivariateNormalPDF([D], [N, D], [D, D])` - returns a Tensor.
+* `multivariateNormalPDF([N, D], [N, D], [D, D])` - returns a Tensor.
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector containing only the diagonal elements:
 
-* `multivariateGaussianPDF([D], [D], [D])` - returns a number.
-* `multivariateGaussianPDF([N, D], [D], [D])` - returns a Tensor.
-* `multivariateGaussianPDF([D], [N, D], [D])` - returns a Tensor.
-* `multivariateGaussianPDF([N, D], [N, D], [D])` - returns a Tensor.
+* `multivariateNormalPDF([D], [D], [D])` - returns a number.
+* `multivariateNormalPDF([N, D], [D], [D])` - returns a Tensor.
+* `multivariateNormalPDF([D], [N, D], [D])` - returns a Tensor.
+* `multivariateNormalPDF([N, D], [N, D], [D])` - returns a Tensor.
 
-####multivariateGaussianLogPDF(x, mu, cov)
+####multivariateNormalLogPDF(x, mu, cov)
 
-Probability density function of a multivariate Gaussian distribution with mean `mu` and covariance `cov`, evaluated at `x`.
+Probability density function of a multivariate Normal distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
 
-See `multivariateGaussianPDF()` for description of valid forms for x, mu and cov.
+See `multivariateNormalPDF()` for description of valid forms for x, mu and cov.
 
-####multivariateGaussianRand([res,] mu, cov)
+####multivariateNormalRand([res,] mu, cov)
 
-Sample from a multivariate Gaussian distribution with mean `mu` and covariance `cov`.
+Sample from a multivariate Normal distribution with mean `mu` and covariance `cov`.
 
-For a D-dimensional Gaussian, the following forms are valid:
+For a D-dimensional Normal, the following forms are valid:
 
-* `multivariateGaussianPDF([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
-* `multivariateGaussianPDF([N, D], [D, D])` - returns N samples in a N-by-D Tensor
-* `multivariateGaussianPDF([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
-* `multivariateGaussianPDF([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `multivariateNormalPDF([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
+* `multivariateNormalPDF([N, D], [D, D])` - returns N samples in a N-by-D Tensor
+* `multivariateNormalPDF([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `multivariateNormalPDF([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.
 
@@ -164,7 +164,7 @@ Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respec
 
 ###chi2Gaussian(x, mu, sigma, [nBins])
 
-Perform a chi-squared test, with null hypothesis "sample x is from a Gaussian distribution with mean `mu` and variance `sigma`".
+Perform a chi-squared test, with null hypothesis "sample x is from a Normal distribution with mean `mu` and variance `sigma`".
 
 * `x` should be a vector of sample values to test
 * `mu` should be a number - the mean
