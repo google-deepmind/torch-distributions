@@ -1,6 +1,6 @@
 distributions.mvn = {}
 
-function distributions.mvn.logpdf(x, mu, sigma)
+function distributions.mvn.logpdf(x, mu, sigma, options)
     x = torch.Tensor(x)
     mu = torch.Tensor(mu)
 
@@ -64,7 +64,7 @@ function distributions.mvn.pdf(...)
     end
 end
 
-function distributions.mvn.Rand(...)
+function distributions.mvn.rnd(...)
     local nArgs = select("#", ...)
     local resultTensor
 
@@ -98,7 +98,7 @@ function distributions.mvn.Rand(...)
         if mu:dim() ~= 1 then
             nParams = mu:size(1)
             if sigma:dim() == 3 and sigma:size(1) ~= nParams then
-                error("Incoherent parameter sizes for mvn.Rand")
+                error("Incoherent parameter sizes for mvn.rnd")
             end
         end
         if not nParams and sigma:dim() == 3 then
@@ -120,11 +120,11 @@ function distributions.mvn.Rand(...)
             end
             resultTensor:resize(n, d)
         else
-            error("Unable to understand first argument for mvn.Rand - should be an integer number of samples to be returned, or a result tensor")
+            error("Unable to understand first argument for mvn.rnd - should be an integer number of samples to be returned, or a result tensor")
         end
 
     else
-        error("Invalid arguments for mvn.Rand().\
+        error("Invalid arguments for mvn.rnd().\
         Should be (mu, sigma), or (N, mu, sigma), or (ResultTensor, mu, sigma).")
     end
 
@@ -134,24 +134,24 @@ function distributions.mvn.Rand(...)
     end
     if sigma:dim() == 1 then
         if mu:size(2) ~= sigma:size(1) then
-            error("mvn.Rand: inconsistent sizes for mu and sigma")
+            error("mvn.rnd: inconsistent sizes for mu and sigma")
         end
         sigma:resize(1, d)
     elseif sigma:dim() == 2 then
         -- either DxD or NxD
         if sigma:size(1) == sigma:size(2) then
             if n == d then
-                error("mvn.Rand: ambiguous covariance input")
+                error("mvn.rnd: ambiguous covariance input")
             end
         end
 
         if mu:size(2) ~= sigma:size(1) or mu:size(2) ~= sigma:size(2) then
-            error("mvn.Rand: inconsistent sizes for mu and sigma")
+            error("mvn.rnd: inconsistent sizes for mu and sigma")
         end
         sigma:resize(1, d, d)
     elseif sigma:dim() == 3 then
         if mu:size(2) ~= d or sigma:size(2) ~= d or sigma:size(3) ~= d then
-            error("mvn.Rand: inconsistent sizes for mu and sigma")
+            error("mvn.rnd: inconsistent sizes for mu and sigma")
         end
     end
     if mu:size(1) == 1 then

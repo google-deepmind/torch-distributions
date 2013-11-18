@@ -62,24 +62,24 @@ Probability density function of a multivariate Normal distribution with mean `mu
 
 For a D-dimensional Normal, the following forms are valid:
 
-* `multivariateNormalPDF([D], [D], [D, D])` - returns a number.
-* `multivariateNormalPDF([N, D], [D], [D, D])` - returns a Tensor.
-* `multivariateNormalPDF([D], [N, D], [D, D])` - returns a Tensor.
-* `multivariateNormalPDF([N, D], [N, D], [D, D])` - returns a Tensor.
+* `mvn.pdf([D], [D], [D, D])` - returns a number.
+* `mvn.pdf([N, D], [D], [D, D])` - returns a Tensor.
+* `mvn.pdf([D], [N, D], [D, D])` - returns a Tensor.
+* `mvn.pdf([N, D], [N, D], [D, D])` - returns a Tensor.
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector containing only the diagonal elements:
 
-* `multivariateNormalPDF([D], [D], [D])` - returns a number.
-* `multivariateNormalPDF([N, D], [D], [D])` - returns a Tensor.
-* `multivariateNormalPDF([D], [N, D], [D])` - returns a Tensor.
-* `multivariateNormalPDF([N, D], [N, D], [D])` - returns a Tensor.
+* `mvn.pdf([D], [D], [D])` - returns a number.
+* `mvn.pdf([N, D], [D], [D])` - returns a Tensor.
+* `mvn.pdf([D], [N, D], [D])` - returns a Tensor.
+* `mvn.pdf([N, D], [N, D], [D])` - returns a Tensor.
 
 ####mvn.logpdf(x, mu, cov)
 
 Probability density function of a multivariate Normal distribution with mean `mu` and covariance `cov`, evaluated at `x`.
 
 
-See `multivariateNormalPDF()` for description of valid forms for x, mu and cov.
+See `mvn.pdf()` for description of valid forms for x, mu and cov.
 
 ####mvn.rnd([res,] mu, cov)
 
@@ -87,10 +87,10 @@ Sample from a multivariate Normal distribution with mean `mu` and covariance `co
 
 For a D-dimensional Normal, the following forms are valid:
 
-* `multivariateNormalPDF([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
-* `multivariateNormalPDF([N, D], [D, D])` - returns N samples in a N-by-D Tensor
-* `multivariateNormalPDF([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
-* `multivariateNormalPDF([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `mvn.rnd([D], [D, D])` - returns 1 sample in a 1-by-D Tensor
+* `mvn.rnd([N, D], [D, D])` - returns N samples in a N-by-D Tensor
+* `mvn.rnd([N, D], [D], [D, D])` - stores and returns N samples in the N-by-D Tensor
+* `mvn.rnd([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.
 

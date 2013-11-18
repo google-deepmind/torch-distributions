@@ -1,6 +1,8 @@
 require 'distributions'
 require 'util.warn'
 
+dofile('multivariateGaussian.lua')
+
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
@@ -336,7 +338,7 @@ function myTests.test_multivariateGaussianRand_D_DD()
     local sizeOK = true
     local result = torch.Tensor(N, D):zero()
     for k = 1, N do
-        local sample = distributions.mvn.Rand(mu, sigma)
+        local sample = distributions.mvn.rnd(mu, sigma)
         dimOK = dimOK and sample:dim() == 1
         sizeOK = sizeOK and sample:size(1) == D
         result[k] = sample
@@ -351,7 +353,7 @@ function myTests.test_multivariateGaussianRand_D_DD_errorSizes()
     -- Check we get an error with inconsistent sizes
     local mu = torch.zeros(3)
     local sigma = torch.eye(2) * 2
-    tester:assertError(function() distributions.mvn.Rand(mu, sigma) end)
+    tester:assertError(function() distributions.mvn.rnd(mu, sigma) end)
 end
 
 
@@ -362,7 +364,7 @@ function myTests.multivariateGaussianRand_N_D_DD_Standard()
     local N = 10000
     local D = 2
 
-    local result = distributions.mvn.Rand(N, mu, sigma)
+    local result = distributions.mvn.rnd(N, mu, sigma)
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
@@ -374,7 +376,7 @@ function myTests.multivariateGaussianRand_N_D_DD()
     local N = 20000
     local D = 2
 
-    local result = distributions.mvn.Rand(N, mu, sigma)
+    local result = distributions.mvn.rnd(N, mu, sigma)
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
@@ -386,7 +388,7 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_mean()
     local N = 10000
     local D = 2
 
-    local result = distributions.mvn.Rand(N, mu, sigma)
+    local result = distributions.mvn.rnd(N, mu, sigma)
 
     -- Check we reject a sample with wrong mean
     result:select(2, 1):add(1)
@@ -400,7 +402,7 @@ function myTests.multivariateGaussianRand_N_D_DD_fail_variance()
     local N = 10000
     local D = 2
 
-    local result = distributions.mvn.Rand(N, mu, sigma)
+    local result = distributions.mvn.rnd(N, mu, sigma)
     result:select(2, 1):mul(2)
     statisticalTestMultivariateGaussian(result, mu, sigma, false)
 end
@@ -413,7 +415,7 @@ function myTests.multivariateGaussianRand_Result_D_DD_Standard()
     local D = 2
     local result = torch.Tensor(N, D)
 
-    distributions.mvn.Rand(result, mu, sigma)
+    distributions.mvn.rnd(result, mu, sigma)
     tester:assert(result:dim() == 2, "multiple samples should return NxD tensor")
     tester:assert(result:size(1) == N, "multiple samples should return NxD tensor")
     tester:assert(result:size(2) == D, "multiple samples should return NxD tensor")
@@ -435,7 +437,7 @@ function myTests.testMultivariateDegenerate()
     cov[D][D] = 0
 
     local actual = torch.Tensor(N, D)
-    distributions.mvn.Rand(actual, mean, cov)
+    distributions.mvn.rnd(actual, mean, cov)
     -- Check that the second column is constant
     tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
 end
@@ -472,7 +474,7 @@ local function generateSystematicTests()
 
     local function shouldError(v1, v2, v3, desc)
         tester:assertError(
-                function() distributions.mvn.Rand(v1, v2, v3) end,
+                function() distributions.mvn.rnd(v1, v2, v3) end,
                 desc .. " should error!"
             )
     end
@@ -485,12 +487,12 @@ local function generateSystematicTests()
     end
 
     local function shouldBeFromOneGaussian(v1, v2, v3, desc)
-        local result = distributions.mvn.Rand(v1, v2, v3)
+        local result = distributions.mvn.rnd(v1, v2, v3)
         checkResultsGaussian(result, v2, v3)
     end
 
     local function shouldBeFromOneDiagonalGaussian(v1, v2, v3, desc)
-        local result = distributions.mvn.Rand(v1, v2, v3)
+        local result = distributions.mvn.rnd(v1, v2, v3)
         checkResultsGaussian(result, v2, torch.diag(v3))
     end
 
@@ -504,7 +506,7 @@ local function generateSystematicTests()
         local correctDim = true
         local correctSize = true
         for k = 1, N do
-            local results = distributions.mvn.Rand(v1, v2, v3)
+            local results = distributions.mvn.rnd(v1, v2, v3)
             notNil = notNil and results ~= nil
             correctDim = correctDim and results:dim() == 2
             correctSize = correctSize and results:size(1) == M
@@ -600,7 +602,7 @@ local function generateSystematicTests()
         for i2, v2 in pairs(secondArgOptions) do
             for i3, v3 in pairs(thirdArgOptions) do
                 local key = table.concat { i1, ", ", i2, ", ", i3 }
-                local desc = table.concat { "distributions.mvn.Rand(", key, ")" }
+                local desc = table.concat { "distributions.mvn.rnd(", key, ")" }
                 local testFunc = expectations[key]
                 if not testFunc then
                     error("Missing expected result handler for " .. desc)
