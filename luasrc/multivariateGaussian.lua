@@ -1,6 +1,7 @@
 distributions.mvn = {}
 
 function distributions.mvn.logpdf(x, mu, sigma, options)
+    options = options or {}
     x = torch.Tensor(x)
     mu = torch.Tensor(mu)
 
@@ -34,15 +35,23 @@ function distributions.mvn.logpdf(x, mu, sigma, options)
 
     local logdet
     local transformed
+    local decomposed
 
     -- For a diagonal covariance matrix, we allow passing a vector of the diagonal entries
     if sigma:dim() == 1 then
         local D = sigma:size(1)
-        local decomposed = sigma:sqrt()
+        decomposed  = sigma
+        if not options.cholesky then
+            decomposed:sqrt()
+        end
         logdet = decomposed:clone():log():sum()
         transformed = torch.cdiv(x, decomposed:resize(1, D):expand(nResults, D))
     else
-        local decomposed = torch.potrf(sigma):triu() -- TODO remove triu as torch will be fixed
+        if not options.cholesky then
+            decomposed = torch.potrf(sigma):triu() -- TODO remove triu as torch will be fixed
+        else
+            decomposed = sigma
+        end
         transformed = torch.gesv(x:t(), decomposed:t()):t()
         logdet = decomposed:diag():log():sum()
     end
@@ -188,7 +197,7 @@ function distributions.mvn.rnd(...)
 
         else
             -- diagonal sigma
-            local decomposed 
+            local decomposed
             decomposed = sigma:clone()
             if not options.cholesky then
                 decomposed:sqrt()
