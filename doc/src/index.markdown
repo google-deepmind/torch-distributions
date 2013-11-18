@@ -85,7 +85,7 @@ Probability density function of a multivariate Normal distribution with mean `mu
 
 See `mvn.pdf()` for description of valid forms for x, mu and cov and options.
 
-####mvn.rnd([res,] mu, cov, [options])
+####mvn.rnd([res,] mu, M, [options])
 
 Sample from a multivariate Normal distribution with mean `mu` and covariance matrix `M`.
 
