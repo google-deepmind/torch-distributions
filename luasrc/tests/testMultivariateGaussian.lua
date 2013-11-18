@@ -442,6 +442,21 @@ function myTests.testMultivariateDegenerate()
     tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
 end
 
+function myTests.testCholesky()
+    local N = 30
+    local D = 2
+
+    local mu = torch.Tensor{1, 2}
+    local cov = torch.Tensor{{3, 2}, {2, 4}}
+    local chol = torch.potrf(cov):triu()
+
+    local state = torch.getRNGState()
+    local xFull = distributions.mvn.rnd(N, mu, cov)
+
+    torch.setRNGState(state)
+    local xChol = distributions.mvn.rnd(N, mu, chol, {cholesky = true})
+    tester:assertTensorEq(xChol, xFull, 1e-16, 'With cholesky and without sample same values')
+end
 
 local function generateSystematicTests()
     local N = 10000
@@ -615,6 +630,7 @@ local function generateSystematicTests()
     end
     return testTable
 end
+
 
 tester:add(myTests)
 tester:add(generateSystematicTests())
