@@ -43,7 +43,7 @@ function distributions.mvn.logpdf(x, mu, sigma, options)
         transformed = torch.cdiv(x, decomposed:resize(1, D):expand(nResults, D))
     else
         local decomposed = torch.potrf(sigma):triu() -- TODO remove triu as torch will be fixed
-        transformed = torch.mm(x, torch.inverse(decomposed))
+        transformed = torch.gesv(x:t(), decomposed:t()):t()
         logdet = decomposed:diag():log():sum()
     end
     transformed:apply(function(a) return distributions.norm.logpdf(a, 0, 1) end)
