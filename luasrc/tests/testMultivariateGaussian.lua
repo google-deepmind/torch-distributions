@@ -1,13 +1,10 @@
 require 'distributions'
 require 'util.warn'
 
-dofile('multivariateGaussian.lua')
-
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
---torch.manualSeed(1234567890)
-torch.manualSeed(os.clock()*10000)
+torch.manualSeed(1234567890)
 
 local function sidakCorrection(alpha, n)
     -- Sidak correction is good for independent tests -- which we have here.
