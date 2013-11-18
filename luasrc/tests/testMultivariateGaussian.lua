@@ -6,7 +6,8 @@ dofile('multivariateGaussian.lua')
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
-torch.manualSeed(1234567890)
+--torch.manualSeed(1234567890)
+torch.manualSeed(os.clock()*10000)
 
 local function sidakCorrection(alpha, n)
     -- Sidak correction is good for independent tests -- which we have here.
@@ -442,6 +443,49 @@ function myTests.testMultivariateDegenerate()
     tester:assertTensorEq(actual:select(2,D), mean:select(2,D), 1e-16, 'did not generate constant values')
 end
 
+function myTests.testCholesky()
+    local N = 30
+    local D = 2
+
+    local options = {cholesky = true}
+
+    local mu = torch.Tensor{1, 2}
+    local cov = torch.Tensor{{3, 2}, {2, 4}}
+
+    local state = torch.getRNGState()
+    local xFull = distributions.mvn.rnd(N, mu, cov)
+    torch.setRNGState(state)
+    local xChol = distributions.mvn.rnd(N, mu, torch.potrf(cov):triu(), options)
+    tester:assertTensorEq(xChol, xFull, 1e-16, 'Rnd with and without full cholesky should generate same values')
+
+    local state = torch.getRNGState()
+    local diag = torch.diag(cov)
+    local xFull = distributions.mvn.rnd(N, mu, diag)
+    torch.setRNGState(state)
+    local xChol = distributions.mvn.rnd(N, mu, diag:clone():sqrt(), options)
+    tester:assertTensorEq(xChol, xFull, 1e-16, 'Rnd with and without diag cholesky should generate same values')
+
+    local x = torch.randn(N, D)
+    local logpdfFull = distributions.mvn.logpdf(x, mu, cov)
+    local logpdfChol = distributions.mvn.logpdf(x, mu, torch.potrf(cov):triu(), options)
+    tester:assertTensorEq(logpdfChol, logpdfFull, 1e-16, 'Logpdf with and without full cholesky should return same result')
+
+    local x = torch.randn(N, D)
+    local logpdfFull = distributions.mvn.logpdf(x, mu, torch.diag(cov))
+    local logpdfChol = distributions.mvn.logpdf(x, mu, torch.diag(cov):sqrt(), options)
+    tester:assertTensorEq(logpdfChol, logpdfFull, 1e-16, 'Logpdf with and without diag cholesky should return same result')
+
+    local x = torch.randn(N, D)
+    local pdfFull = distributions.mvn.pdf(x, mu, cov)
+    local pdfChol = distributions.mvn.pdf(x, mu, torch.potrf(cov):triu(), options)
+    tester:assertTensorEq(pdfChol, pdfFull, 1e-16, 'pdf with and without full cholesky should return same result')
+
+    local x = torch.randn(N, D)
+    local pdfFull = distributions.mvn.pdf(x, mu, torch.diag(cov))
+    local pdfChol = distributions.mvn.pdf(x, mu, torch.diag(cov):sqrt(), options)
+    tester:assertTensorEq(pdfChol, pdfFull, 1e-16, 'pdf with and without diag cholesky should return same result')
+
+end
 
 local function generateSystematicTests()
     local N = 10000
@@ -615,6 +659,7 @@ local function generateSystematicTests()
     end
     return testTable
 end
+
 
 tester:add(myTests)
 tester:add(generateSystematicTests())
