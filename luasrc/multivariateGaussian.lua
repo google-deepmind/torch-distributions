@@ -83,6 +83,13 @@ function distributions.mvn.rnd(...)
         return d
     end
 
+    local options = {}
+    -- Is the last argument an options table?
+    if type(select(nArgs, ...)) == 'table' then
+        options = select(nArgs, ...)
+        nArgs = nArgs - 1
+    end
+
     if nArgs == 2 then -- mu, sigma only: return one sample
         n = 1
         mu = torch.Tensor(select(1, ...))
@@ -125,7 +132,7 @@ function distributions.mvn.rnd(...)
 
     else
         error("Invalid arguments for mvn.rnd().\
-        Should be (mu, sigma), or (N, mu, sigma), or (ResultTensor, mu, sigma).")
+        Expecting [N|ResultTensor,] mu, sigma [, options].")
     end
 
     -- Now make our inputs all tensors, for simplicity
@@ -162,21 +169,31 @@ function distributions.mvn.rnd(...)
         local resultSize = resultTensor:size()
         local y
         if sigma:dim() == 2 then
-            -- TODO: when Lapack's pstrf will be wrapped in Torch, use that instead of Cholesky with SVD failsafe
-            local fullRank, decomposed = pcall(function() return torch.potrf(sigma):triu() end)
-            if fullRank then
-                -- Definite positive matrix: use Cholesky
-                y = torch.mm(x, decomposed)
+            -- TODO: when Lapack's pstrf will be wrapped in Torch,
+            -- use that instead of Cholesky with SVD failsafe
+            if options.cholesky then
+                y = torch.mm(x, sigma)
             else
-                -- Rank-deficient matrix: fall back on SVD
-                local u, s, v = torch.svd(sigma)
-                local tmp = torch.cmul(x, s:sqrt():resize(1, d):expand(n, d))
-                y = torch.mm(tmp, v)
+                local fullRank, decomposed = pcall(function() return torch.potrf(sigma):triu() end)
+                if fullRank then
+                    -- Definite positive matrix: use Cholesky
+                    y = torch.mm(x, decomposed)
+                else
+                    -- Rank-deficient matrix: fall back on SVD
+                    local u, s, v = torch.svd(sigma)
+                    local tmp = torch.cmul(x, s:sqrt():resize(1, d):expand(n, d))
+                    y = torch.mm(tmp, v)
+                end
             end
+
         else
             -- diagonal sigma
-            local decomposed = sigma:clone():sqrt():resize(1, d):expand(n, d)
-            y = torch.cmul(decomposed, x)
+            local decomposed 
+            decomposed = sigma:clone()
+            if not options.cholesky then
+                decomposed:sqrt()
+            end
+            y = torch.cmul(decomposed:resize(1,d):expand(n,d), x)
         end
 
         torch.add(resultTensor, y, mu):resize(resultSize)
@@ -188,7 +205,6 @@ function distributions.mvn.rnd(...)
     if sigma:size(1) == 1 then
         sampleFromDistribution(resultTensor, x, mu, sigma[1])
         return resultTensor
-
     else
         for k = 1, n do
             sampleFromDistribution(resultTensor[k], x[k]:resize(1, d), mu[k], sigma[k])

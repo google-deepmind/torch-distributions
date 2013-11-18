@@ -6,7 +6,8 @@ dofile('multivariateGaussian.lua')
 local myTests = {}
 local notRun = {}
 local tester = torch.Tester()
-torch.manualSeed(1234567890)
+--torch.manualSeed(1234567890)
+torch.manualSeed(os.clock()*10000)
 
 local function sidakCorrection(alpha, n)
     -- Sidak correction is good for independent tests -- which we have here.
@@ -455,7 +456,7 @@ function myTests.testCholesky()
 
     torch.setRNGState(state)
     local xChol = distributions.mvn.rnd(N, mu, chol, {cholesky = true})
-    tester:assertTensorEq(xChol, xFull, 1e-16, 'With cholesky and without sample same values')
+    tester:assertTensorEq(xChol, xFull, 1e-16, 'With cholesky and without sample should generate same values')
 end
 
 local function generateSystematicTests()
