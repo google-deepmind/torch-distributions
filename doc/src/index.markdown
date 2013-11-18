@@ -48,17 +48,21 @@ Probability density function of a Normal distribution with mean `mu` and standar
 
 Log probability density function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####norm.cdf(x, mu, sigms)
+####norm.cdf(x, mu, sigma)
 
 Cumulative distribution function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
 ###Multivariate Normal: mvn
 
-The covariance matrix passed to multivariate gaussian functions needs only be positive **semi**-definite: we deal gracefully with the degenerate case of rank-deficient covariance.
+The covariance matrix passed to multivariate gaussian functions needs only be positive **semi**-definite: we deal gracefully with the degenerate case of rank-deficient covariance. 
 
-####mnv.pdf(x, mu, cov)
+Those functions also accept the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
-Probability density function of a multivariate Normal distribution with mean `mu` and covariance `cov`, evaluated at `x`.
+####mnv.pdf(x, mu, M, [options])
+
+Probability density function of a multivariate Normal distribution with mean `mu` and covariance or cholesky of the covariance specified in `M`, evaluated at `x`. 
+
+By defaut, the matrix `M` is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
 For a D-dimensional Normal, the following forms are valid:
 
@@ -74,16 +78,16 @@ In the case of a diagonal covariance `cov`, you may also opt to pass a vector co
 * `mvn.pdf([D], [N, D], [D])` - returns a Tensor.
 * `mvn.pdf([N, D], [N, D], [D])` - returns a Tensor.
 
-####mvn.logpdf(x, mu, cov)
+####mvn.logpdf(x, mu, M, [options])
 
-Probability density function of a multivariate Normal distribution with mean `mu` and covariance `cov`, evaluated at `x`.
+Probability density function of a multivariate Normal distribution with mean `mu` and covariance matrix `M`, evaluated at `x`.
 
 
-See `mvn.pdf()` for description of valid forms for x, mu and cov.
+See `mvn.pdf()` for description of valid forms for x, mu and cov and options.
 
-####mvn.rnd([res,] mu, cov)
+####mvn.rnd([res,] mu, cov, [options])
 
-Sample from a multivariate Normal distribution with mean `mu` and covariance `cov`.
+Sample from a multivariate Normal distribution with mean `mu` and covariance matrix `M`.
 
 For a D-dimensional Normal, the following forms are valid:
 
@@ -93,6 +97,8 @@ For a D-dimensional Normal, the following forms are valid:
 * `mvn.rnd([N, D], [N, D], [D, D])` - stores and returns N samples in the N-by-D Tensor
 
 In the case of a diagonal covariance `cov`, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.
+
+By defaut, the matrix `M` is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
 ###Cauchy: cauchy
 
