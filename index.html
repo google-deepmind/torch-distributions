@@ -59,7 +59,7 @@
 <a href="#toc_11">norm.logpdf(x, mu, sigma)</a>
 </li>
 <li>
-<a href="#toc_12">norm.cdf(x, mu, sigms)</a>
+<a href="#toc_12">norm.cdf(x, mu, sigma)</a>
 </li>
 </ul>
 </li>
@@ -67,13 +67,13 @@
 <a href="#toc_13">Multivariate Normal: mvn</a>
 <ul>
 <li>
-<a href="#toc_14">mnv.pdf(x, mu, cov)</a>
+<a href="#toc_14">mnv.pdf(x, mu, M, [options])</a>
 </li>
 <li>
-<a href="#toc_15">mvn.logpdf(x, mu, cov)</a>
+<a href="#toc_15">mvn.logpdf(x, mu, M, [options])</a>
 </li>
 <li>
-<a href="#toc_16">mvn.rnd([res,] mu, cov)</a>
+<a href="#toc_16">mvn.rnd([res,] mu, cov, [options])</a>
 </li>
 </ul>
 </li>
@@ -186,56 +186,62 @@
 
 <p>Log probability density function of a Normal distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
 
-<h4 id="toc_12">norm.cdf(x, mu, sigms)</h4>
+<h4 id="toc_12">norm.cdf(x, mu, sigma)</h4>
 
 <p>Cumulative distribution function of a Normal distribution with mean <code>mu</code> and standard deviation <code>sigma</code>, evaluated at <code>x</code>.</p>
 
 <h3 id="toc_13">Multivariate Normal: mvn</h3>
 
-<p>The covariance matrix passed to multivariate gaussian functions needs only be positive <strong>semi</strong>-definite: we deal gracefully with the degenerate case of rank-deficient covariance.</p>
+<p>The covariance matrix passed to multivariate gaussian functions needs only be positive <strong>semi</strong>-definite: we deal gracefully with the degenerate case of rank-deficient covariance. </p>
 
-<h4 id="toc_14">mnv.pdf(x, mu, cov)</h4>
+<p>Those functions also accept the upper-triangular Cholesky decomposition instead, by setting the field <code>cholesky = true</code> in the optional table <code>options</code>.</p>
 
-<p>Probability density function of a multivariate Normal distribution with mean <code>mu</code> and covariance <code>cov</code>, evaluated at <code>x</code>.</p>
+<h4 id="toc_14">mnv.pdf(x, mu, M, [options])</h4>
+
+<p>Probability density function of a multivariate Normal distribution with mean <code>mu</code> and covariance or cholesky of the covariance specified in <code>M</code>, evaluated at <code>x</code>. </p>
+
+<p>By defaut, the matrix <code>M</code> is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field <code>cholesky = true</code> in the optional table <code>options</code>.</p>
 
 <p>For a D-dimensional Normal, the following forms are valid:</p>
 
 <ul>
-<li><code>multivariateNormalPDF([D], [D], [D, D])</code> - returns a number.</li>
-<li><code>multivariateNormalPDF([N, D], [D], [D, D])</code> - returns a Tensor.</li>
-<li><code>multivariateNormalPDF([D], [N, D], [D, D])</code> - returns a Tensor.</li>
-<li><code>multivariateNormalPDF([N, D], [N, D], [D, D])</code> - returns a Tensor.</li>
+<li><code>mvn.pdf([D], [D], [D, D])</code> - returns a number.</li>
+<li><code>mvn.pdf([N, D], [D], [D, D])</code> - returns a Tensor.</li>
+<li><code>mvn.pdf([D], [N, D], [D, D])</code> - returns a Tensor.</li>
+<li><code>mvn.pdf([N, D], [N, D], [D, D])</code> - returns a Tensor.</li>
 </ul>
 
 <p>In the case of a diagonal covariance <code>cov</code>, you may also opt to pass a vector containing only the diagonal elements:</p>
 
 <ul>
-<li><code>multivariateNormalPDF([D], [D], [D])</code> - returns a number.</li>
-<li><code>multivariateNormalPDF([N, D], [D], [D])</code> - returns a Tensor.</li>
-<li><code>multivariateNormalPDF([D], [N, D], [D])</code> - returns a Tensor.</li>
-<li><code>multivariateNormalPDF([N, D], [N, D], [D])</code> - returns a Tensor.</li>
+<li><code>mvn.pdf([D], [D], [D])</code> - returns a number.</li>
+<li><code>mvn.pdf([N, D], [D], [D])</code> - returns a Tensor.</li>
+<li><code>mvn.pdf([D], [N, D], [D])</code> - returns a Tensor.</li>
+<li><code>mvn.pdf([N, D], [N, D], [D])</code> - returns a Tensor.</li>
 </ul>
 
-<h4 id="toc_15">mvn.logpdf(x, mu, cov)</h4>
+<h4 id="toc_15">mvn.logpdf(x, mu, M, [options])</h4>
 
-<p>Probability density function of a multivariate Normal distribution with mean <code>mu</code> and covariance <code>cov</code>, evaluated at <code>x</code>.</p>
+<p>Probability density function of a multivariate Normal distribution with mean <code>mu</code> and covariance matrix <code>M</code>, evaluated at <code>x</code>.</p>
 
-<p>See <code>multivariateNormalPDF()</code> for description of valid forms for x, mu and cov.</p>
+<p>See <code>mvn.pdf()</code> for description of valid forms for x, mu and cov and options.</p>
 
-<h4 id="toc_16">mvn.rnd([res,] mu, cov)</h4>
+<h4 id="toc_16">mvn.rnd([res,] mu, cov, [options])</h4>
 
-<p>Sample from a multivariate Normal distribution with mean <code>mu</code> and covariance <code>cov</code>.</p>
+<p>Sample from a multivariate Normal distribution with mean <code>mu</code> and covariance matrix <code>M</code>.</p>
 
 <p>For a D-dimensional Normal, the following forms are valid:</p>
 
 <ul>
-<li><code>multivariateNormalPDF([D], [D, D])</code> - returns 1 sample in a 1-by-D Tensor</li>
-<li><code>multivariateNormalPDF([N, D], [D, D])</code> - returns N samples in a N-by-D Tensor</li>
-<li><code>multivariateNormalPDF([N, D], [D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
-<li><code>multivariateNormalPDF([N, D], [N, D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
+<li><code>mvn.rnd([D], [D, D])</code> - returns 1 sample in a 1-by-D Tensor</li>
+<li><code>mvn.rnd([N, D], [D, D])</code> - returns N samples in a N-by-D Tensor</li>
+<li><code>mvn.rnd([N, D], [D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
+<li><code>mvn.rnd([N, D], [N, D], [D, D])</code> - stores and returns N samples in the N-by-D Tensor</li>
 </ul>
 
 <p>In the case of a diagonal covariance <code>cov</code>, you may also opt to pass a vector (not a matrix) containing only the diagonal elements.</p>
+
+<p>By defaut, the matrix <code>M</code> is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field <code>cholesky = true</code> in the optional table <code>options</code>.</p>
 
 <h3 id="toc_17">Cauchy: cauchy</h3>
 
