@@ -1,4 +1,3 @@
---Methods for sampling and resampling particles and multinomials
 require 'torchffi'
 
 -- TODO: support result tensor
@@ -12,26 +11,39 @@ function distributions.cat.logpdf(...)
     error('Not implemented')
 end
 
--- Multinomial sampling
+local function _resultAndN(x)
+    -- return res, N
+    if type(x) == 'number' then
+        return torch.LongTensor(x), x
+    elseif distributions._isTensor(x) then
+        return x, x:numel()
+    end
+end
+
+-- Categorical sampling
 function distributions.cat.rnd(...)
-    local N, p, options
+    local res, N, p, options
     local nArgs = select('#', ...)
     if nArgs == 1 then
         -- only p
-        N = 1
-        p = ...
+        res, N = _resultAndN(1)
+        p = select(1, ...)
         options = {type = 'iid'}
     elseif nArgs == 2 then
         -- (N,  p) or (p, options)
         if type(select(2, ...)) == 'table' then
-            N = 1
+            -- (p, options)
+            res, N = _resultAndN(1)
             p, options = ...
         else
-            N, p = ...
+            -- (N, p)
+            res, N = _resultAndN(select(1, ...))
+            p = select(2, ...)
         end
     elseif nArgs == 3 then
         -- (N, p, options)
-        N, p, options = ...
+        res, N = _resultAndN(select(1, ...))
+        p, options = select(2, ...)
     else
         error('Expected cat.rnd([N], p, [options])')
     end
@@ -44,19 +56,19 @@ function distributions.cat.rnd(...)
     cdf = cdf:div(totalmass)
 
     if not options or not options.type or options.type == 'iid' then
-        return distributions.cat._iid(N, cdf)
+        return distributions.cat._iid(res, cdf)
     elseif options.type == 'dichotomy' then
-        return distributions.cat._dichotomy(N, cdf)
+        return distributions.cat._dichotomy(res, cdf)
     elseif options.type == 'stratified' then
-        return distributions.cat._stratified(N, cdf)
+        return distributions.cat._stratified(res, cdf)
     else
         error('Unknow categorical sampling type ' .. options.type)
     end
 end
 
 -- IID sampling , FFI version
-function distributions.cat._iid(N, cdf)
-    local I = torch.LongTensor(N)
+function distributions.cat._iid(I, cdf)
+    local N = I:numel()
     local U = torch.rand(N)
     local permutation
     U, permutation = torch.sort(U)
@@ -77,14 +89,14 @@ function distributions.cat._iid(N, cdf)
     return I
 end
 
--- Multinomial sampling with dichotomy search
+-- Categorical sampling with dichotomy search
 -- Note: since randDiscrete is so much faster with FFI, 
 -- it always overspeeds randDiscreteDichotomy, so better
 -- use randDiscrete instead
 -- Note that this FFI version is faster than a non-FFI version
 -- when N > 3.
-function distributions.cat._dichotomy(N, cdf)
-    local I = torch.LongTensor(N)
+function distributions.cat._dichotomy(I, cdf)
+    local N = I:numel()
     local U = torch.rand(N)
     local permutation
     U, permutation = torch.sort(U)
@@ -93,6 +105,7 @@ function distributions.cat._dichotomy(N, cdf)
     local permdata = torch.data(permutation)
     local cdfdata = torch.data(cdf:contiguous())
     local idata = torch.data(I)
+    local nBins = cdf:numel()
 
     local left = 0
     local right = 0
@@ -119,8 +132,8 @@ function distributions.cat._dichotomy(N, cdf)
 end
 
 -- sorted stratified sampler
-function distributions.cat._stratified(N, cdf)
-    local I = torch.LongTensor(N)
+function distributions.cat._stratified(I, cdf)
+    local N = I:numel()
     local U = torch.rand(N)
 
     local udata = torch.data(U)

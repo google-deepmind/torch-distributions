@@ -114,7 +114,7 @@ Not implemented
 
 Not implemented
 
-####mvn.rnd([N,] p, [options])
+####mvn.rnd([res|N,] p, [options])
 
 Sample `N = size(res,1)` amongst `K = 1 ... p:numel()`, where the probability of category k is given by p[k]/p:sum().
 
@@ -125,7 +125,7 @@ Options is a table containing:
     - 'dichotomy': dichotomic search, same variance, faster when small K large N
     - 'stratified': sorted stratified samples, sample has lower variance than i.i.d. but not independent, best when K/N is close to 1
 
-Returns a LongTensor N
+Returns a LongTensor vector with N elements, or store into the given result tensor.
 
 ###Cauchy: cauchy
 

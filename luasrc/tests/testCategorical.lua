@@ -4,7 +4,7 @@ local dist = require('distributions')
 local tester = torch.Tester()
 local testCategorical = {}
 
-function testCategorical.testCall()
+function testCategorical.testCallNoResult()
     local x
     local p = torch.Tensor{.3, .3, .4}
 
@@ -24,6 +24,25 @@ function testCategorical.testCall()
     -- call with 3 parameters
     x = dist.cat.rnd(N, p, options)
     tester:asserteq(x:numel(), N)
+end
+
+function testCategorical.testCallResult()
+    local x
+    local p = torch.Tensor{.3, .3, .4}
+
+    -- calls with 2 parameters
+    local res = torch.LongTensor(10):fill(0)
+    x = dist.cat.rnd(res, p)
+    tester:asserteq(x, res, '2 params did not use result tensor')
+
+    -- calls with 2 parameters, not a LongTensor
+    local res = torch.DoubleTensor(10):fill(0)
+    x = dist.cat.rnd(res, p)
+    tester:asserteq(x, res, '2 params with did not use result DoubleTensor')
+
+    -- call with 3 parameters
+    x = dist.cat.rnd(res, p, options)
+    tester:asserteq(x, res, '3 params did not use result tensor')
 end
 
 function testCategorical.testNormalization()
@@ -91,7 +110,7 @@ end
 
 function testCategorical.testSpeed()
     nBins = 10000
-    nSamples = 2
+    nSamples = 10
     p = torch.ones(nBins)
     timer = torch.Timer()
     x = dist.cat.rnd(nSamples, p)
