@@ -1,5 +1,5 @@
 require 'distributions'
-require 'util.warn'
+require 'pl.strict'
 
 local myTests = {}
 local notRun = {}
