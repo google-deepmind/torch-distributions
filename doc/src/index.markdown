@@ -100,6 +100,33 @@ In the case of a diagonal covariance `cov`, you may also opt to pass a vector (n
 
 By defaut, the matrix `M` is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
+###Categorical: cat
+
+Categorical distributions on indices from 1 to K = p:numel()
+
+Not vectorized in p.
+
+####cat.pdf(x, p, [options])
+
+Not implemented
+
+####mvn.logpdf(x, p, [options])
+
+Not implemented
+
+####mvn.rnd([N,] p, [options])
+
+Sample `N = size(res,1)` amongst `K = 1 ... p:numel()`, where the probability of category k is given by p[k]/p:sum().
+
+Options is a table containing:
+
+* options.type Type of sampler:
+    - `nil` or `'iid'`: default, i.i.d samples, use linear search in O(N log N + max(K, N)), best when K/N is close to 1.
+    - 'dichotomy': dichotomic search, same variance, faster when small K large N
+    - 'stratified': sorted stratified samples, sample has lower variance than i.i.d. but not independent, best when K/N is close to 1
+
+Returns a LongTensor N
+
 ###Cauchy: cauchy
 
 ####cauch.pdf(x, a, b)
