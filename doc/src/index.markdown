@@ -100,6 +100,40 @@ In the case of a diagonal covariance `cov`, you may also opt to pass a vector (n
 
 By defaut, the matrix `M` is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
+###Categorical: cat
+
+Categorical distributions on indices from 1 to K = p:numel()
+
+Not vectorized in p.
+
+####cat.pdf(x, p, [options])
+
+Not implemented
+
+####mvn.logpdf(x, p, [options])
+
+Not implemented
+
+####mvn.rnd([res|N,] p, [options])
+
+Sample `N = size(res,1)` amongst `K = 1 ... p:numel()`, where the probability of category k is given by p[k]/p:sum().
+
+Options is a table containing:
+
+* options.type Type of sampler:
+    - `nil` or `'iid'`: default, i.i.d samples, use linear search in O(N log N + max(K, N)), best when K/N is close to 1.
+    - 'dichotomy': dichotomic search, same variance, faster when small K large N
+    - 'stratified': sorted stratified samples, sample has lower variance than i.i.d. but not independent, best when K/N is close to 1
+
+* options.categories Categories to sample from
+    - `nil`: default, returns integers between 1 and K
+    - K-by-D tensor: each row is a category, must have has many rows as p:numel()
+
+Returns a LongTensor vector with N elements in the resulting tensor if no categories is given,
+or a new tensor of N rows corresponding to the categories given.
+
+Note that it is not yet possible to use a result tensor *and* categories at the same time. This will be possible once [torch's index() accepts result tensor](https://github.com/torch/torch7-distro/issues/202).
+
 ###Cauchy: cauchy
 
 ####cauch.pdf(x, a, b)
