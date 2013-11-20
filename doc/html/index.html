@@ -276,16 +276,25 @@
 <p>Options is a table containing:</p>
 
 <ul>
-<li>options.type Type of sampler:
+<li><p>options.type Type of sampler:</p>
 
 <ul>
 <li><code>nil</code> or <code>&#39;iid&#39;</code>: default, i.i.d samples, use linear search in O(N log N + max(K, N)), best when K/N is close to 1.</li>
 <li>&#39;dichotomy&#39;: dichotomic search, same variance, faster when small K large N</li>
 <li>&#39;stratified&#39;: sorted stratified samples, sample has lower variance than i.i.d. but not independent, best when K/N is close to 1</li>
 </ul></li>
+<li><p>options.categories Categories to sample from</p>
+
+<ul>
+<li><code>nil</code>: default, returns integers between 1 and K</li>
+<li>K-by-D tensor: each row is a category, must have has many rows as p:numel()</li>
+</ul></li>
 </ul>
 
-<p>Returns a LongTensor vector with N elements, or store into the given result tensor.</p>
+<p>Returns a LongTensor vector with N elements in the resulting tensor if no categories is given,
+or a new tensor of N rows corresponding to the categories given.</p>
+
+<p>Note that it is not yet possible to use a result tensor <em>and</em> categories at the same time. This will be possible once <a href="https://github.com/torch/torch7-distro/issues/202">torch&#39;s index() accepts result tensor</a>.</p>
 
 <h3 id="toc_21">Cauchy: cauchy</h3>
 
