@@ -1,6 +1,5 @@
 require 'torchffi'
 
--- TODO: support result tensor
 distributions.cat = {}
 
 function distributions.cat.pdf(...)
