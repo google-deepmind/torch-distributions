@@ -68,6 +68,45 @@ function testCategorical.zeroprob()
     tester:assertError(function() dist.cat.rnd(1, nullProba) end, 'should not be able to resample with null total mass')
 end
 
+function testCategorical.resampleCategories()
+    local nrow = 30
+    local ncol = 20
+    local x = torch.zeros(nrow, ncol)
+    for i = 1, nrow do
+        x[i] = torch.range(10*i, 10*i+ncol):resize(1,ncol)
+    end
+
+    -- should throw an error when probabilities are not assigned to each row
+    local p = torch.ones(nrow - 1)
+    tester:assertError(function() dist.cat.rnd(p, {categories = x}) end, 'should require probabilities for each row')
+
+    local onlySurvivor = 2
+    local p = torch.zeros(nrow)
+    local N = 10
+    p[onlySurvivor] = 1
+    local expected = torch.Tensor(N,ncol)
+    for i = 1, N do
+        expected[i] = x[onlySurvivor]
+    end
+    local res = dist.cat.rnd(N, p, {categories = x})
+    tester:assertTensorEq(res, expected, 1e-16, 'should have only survivor')
+
+    local nExtended = 50
+    local expected = torch.Tensor(nExtended,ncol)
+    for i = 1, nExtended do
+        expected[i] = x[onlySurvivor]
+    end
+    tester:assertTensorEq(dist.cat.rnd(nExtended, p, {categories = x}), expected, 1e-16, 'should have extended survivor')
+
+    local nShrinked = 2
+    local expected = torch.Tensor(nShrinked,ncol)
+    for i = 1, nShrinked do
+        expected[i] = x[onlySurvivor]
+    end
+    tester:assertTensorEq(dist.cat.rnd(nShrinked, p, {categories = x}), expected, 1e-16, 'should have shrinked survivor')
+end
+
+
 local function isSamplerSorted(sampler)
     local p = torch.ones(10)
     local nSamples = 10000

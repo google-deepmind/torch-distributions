@@ -11,11 +11,15 @@ function distributions.cat.logpdf(...)
     error('Not implemented')
 end
 
-local function _resultAndN(x)
+local function _idxResultAndN(x, categories)
     -- return res, N
     if type(x) == 'number' then
         return torch.LongTensor(x), x
     elseif distributions._isTensor(x) then
+        if categories then
+            print('WARNING: cannot use result tensors and categories at the same time. Ignoring result tensor.')
+            -- TODO: once index() will accept resulting tensor, use it
+        end
         return x, x:numel()
     end
 end
@@ -26,26 +30,33 @@ function distributions.cat.rnd(...)
     local nArgs = select('#', ...)
     if nArgs == 1 then
         -- only p
-        res, N = _resultAndN(1)
+        I, N = _idxResultAndN(1)
         p = select(1, ...)
-        options = {type = 'iid'}
+        options = {}
     elseif nArgs == 2 then
         -- (N,  p) or (p, options)
         if type(select(2, ...)) == 'table' then
             -- (p, options)
-            res, N = _resultAndN(1)
             p, options = ...
+            options = options or {}
+            I, N = _idxResultAndN(1, options.categories)
         else
             -- (N, p)
-            res, N = _resultAndN(select(1, ...))
+            I, N = _idxResultAndN(select(1, ...), nil)
             p = select(2, ...)
+            options = {}
         end
     elseif nArgs == 3 then
         -- (N, p, options)
-        res, N = _resultAndN(select(1, ...))
         p, options = select(2, ...)
+        options = options or {}
+        I, N = _idxResultAndN(select(1, ...), options.categories)
     else
         error('Expected cat.rnd([N], p, [options])')
+    end
+
+    if options.categories and options.categories:size(1) ~= p:numel() then
+        error('the number of categories does not match the length of the probability vector')
     end
 
     local cdf = p:cumsum(1)
@@ -55,14 +66,21 @@ function distributions.cat.rnd(...)
     end
     cdf = cdf:div(totalmass)
 
-    if not options or not options.type or options.type == 'iid' then
-        return distributions.cat._iid(res, cdf)
+    if not options.type or options.type == 'iid' then
+        distributions.cat._iid(I, cdf)
     elseif options.type == 'dichotomy' then
-        return distributions.cat._dichotomy(res, cdf)
+        distributions.cat._dichotomy(I, cdf)
     elseif options.type == 'stratified' then
-        return distributions.cat._stratified(res, cdf)
+        distributions.cat._stratified(I, cdf)
     else
         error('Unknow categorical sampling type ' .. options.type)
+    end
+
+    if options.categories then
+        -- TODO: once index() will accept resulting tensor, use it
+        return options.categories:index(1, I)
+    else
+        return I
     end
 end
 
@@ -76,7 +94,7 @@ function distributions.cat._iid(I, cdf)
     local udata = torch.data(U)
     local permdata = torch.data(permutation)
     local cdfdata = torch.data(cdf:contiguous())
-    local idata = torch.data(I)
+    local idata = torch.data(I:contiguous())
 
     local index = 0
     for k = 0, N-1 do
@@ -104,7 +122,7 @@ function distributions.cat._dichotomy(I, cdf)
     local udata = torch.data(U)
     local permdata = torch.data(permutation)
     local cdfdata = torch.data(cdf:contiguous())
-    local idata = torch.data(I)
+    local idata = torch.data(I:contiguous())
     local nBins = cdf:numel()
 
     local left = 0
@@ -138,7 +156,7 @@ function distributions.cat._stratified(I, cdf)
 
     local udata = torch.data(U)
     local cdfdata = torch.data(cdf:contiguous())
-    local idata = torch.data(I)
+    local idata = torch.data(I:contiguous())
 
     local index = 0
     for k = 0, N-1 do
