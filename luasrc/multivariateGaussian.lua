@@ -134,7 +134,7 @@ function distributions.mvn.rnd(...)
                 error('Result tensor must be a vector or a 2D matrix')
             end
         else
-            error("Unable to understand first argument for mvn.rnd - should be an integer number of samples to be returned, or a result tensor")
+            error("Unable to understand first argument for mvn.rnd - should be an integer number of samples to be returned, or a result tensor, not a " .. type(resultInfo))
         end
 
         -- Now check if mu is compatible with result
