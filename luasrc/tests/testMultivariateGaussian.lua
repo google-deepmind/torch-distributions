@@ -668,14 +668,27 @@ local function generateSystematicTests()
                     error("Missing expected result handler for " .. desc)
                 end
                 testTable["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
-                    testFunc(v1, v2, v3, desc)
-                end
+--[[                print('\nrunning', desc)
+                    print('i1', i1)
+                    print('v1', v1)
+                    print('i2', i2)
+                    print('v2', v2)
+                    print('i3', i3)
+                    print('v3', v3) ]]
+                    local x1
+                    if type(v1) == 'number' then
+                        x1 = v1
+                    else
+                        x1 = v1:clone()
+                    end
+                    testFunc(x1, v2:clone(), v3:clone(), desc)
+              end
             end
         end
     end
     return testTable
 end
 
-tester:add(myTests)
+--tester:add(myTests)
 tester:add(generateSystematicTests())
 tester:run()
