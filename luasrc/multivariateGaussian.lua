@@ -210,6 +210,7 @@ function distributions.mvn.rnd(...)
     if mu:dim() == 1 then
         mu:resize(1, mu:nElement())
     end
+    -- TODO: use the flag diagonalVariance rather than checking sigma's size once again
     if sigma:dim() == 1 then
         if mu:size(2) ~= sigma:size(1) then
             error("mvn.rnd: inconsistent sizes for mu and sigma")
