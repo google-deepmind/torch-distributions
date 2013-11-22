@@ -636,25 +636,25 @@ local function generateSystematicTests()
     expectations["NxD, D, DxD"] = shouldBeFromOneGaussian
     expectations["NxD, D, DxE"] = shouldError
     expectations["NxD, D, ExE"] = shouldError
-    expectations["NxD, D, MxDxD"] = shouldBeFromMGaussians
+    expectations["NxD, D, MxDxD"] = shouldError
 
     expectations["NxD, OnexD, D"] = shouldBeFromOneDiagonalGaussian
     expectations["NxD, OnexD, DxD"] = shouldBeFromOneGaussian
     expectations["NxD, OnexD, DxE"] = shouldError
     expectations["NxD, OnexD, ExE"] = shouldError
-    expectations["NxD, OnexD, MxDxD"] = shouldBeFromMGaussians
+    expectations["NxD, OnexD, MxDxD"] = shouldError
 
     expectations["NxD, E, D"] = shouldError
     expectations["NxD, E, DxD"] = shouldError
     expectations["NxD, E, DxE"] = shouldError
-    expectations["NxD, E, ExE"] = shouldBeFromOneGaussian
+    expectations["NxD, E, ExE"] = shouldError -- TODO: check with @d11 why it was not error
     expectations["NxD, E, MxDxD"] = shouldError
 
     expectations["NxD, MxD, D"] = null
-    expectations["NxD, MxD, DxD"] = shouldBeFromMGaussians
+    expectations["NxD, MxD, DxD"] = shouldError -- TODO: check with @d11 why it was not error
     expectations["NxD, MxD, DxE"] = shouldError
     expectations["NxD, MxD, ExE"] = shouldError
-    expectations["NxD, MxD, MxDxD"] = shouldBeFromMGaussians
+    expectations["NxD, MxD, MxDxD"] = shouldError -- tODO: check with @d11 why it was not error
 
     local testTable = {}
 
