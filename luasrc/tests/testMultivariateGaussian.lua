@@ -281,7 +281,9 @@ local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAcc
     local N = samples:size(1)
     local D = samples:size(2)
 
-    assert(mu:dim() == 1)
+    if mu:dim() > 1 then
+        mu = torch.Tensor(mu):resize(mu:numel())
+    end
     assert(mu:size(1) == D)
 
     assert(sigma:dim() == 2)
@@ -523,8 +525,8 @@ local function generateSystematicTests()
 
     local function checkResultsGaussian(result, mu, sigma)
         tester:assert(result, "got no result - expected samples from a gaussian!")
-        tester:asserteq(result:dim(), 2, "wrong dimensionality for result")
-        tester:asserteq(result:size(2), mu:size(1), "expected results of size " .. mu:size(1))
+        tester:assert(result:dim(), 2, "wrong dimensionality for result")
+        tester:asserteq(result:size(2), mu:numel(), "expected results with " .. mu:numel() .. "columns, got " .. result:size(2) .. " instead")
         statisticalTestMultivariateGaussian(result, mu, sigma, true)
     end
 
@@ -570,7 +572,7 @@ local function generateSystematicTests()
 
         for j = 1, M do
             local mu = v2
-            if v2:dim() == 2 then
+            if v2:dim() == 2 and v2:size(1) ~= 1 then
                 mu = v2[j]
             end
             local sigma = v3
@@ -689,6 +691,6 @@ local function generateSystematicTests()
     return testTable
 end
 
---tester:add(myTests)
+tester:add(myTests)
 tester:add(generateSystematicTests())
 tester:run()
