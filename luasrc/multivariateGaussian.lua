@@ -82,6 +82,9 @@ function distributions.mvn.rnd(...)
     local mu -- mean
     local sigma -- covariance matrix
 
+    local diagonalVariance = false -- do we face a diagonal covvariance matrix?
+    local vectorOutput = false -- shall we return a vector instead of a matrix?
+
     local function inferDimension(sigma)
         if sigma:dim() == 1 then
             -- diagonal, and only one covariance matrix
@@ -100,54 +103,114 @@ function distributions.mvn.rnd(...)
     end
 
     if nArgs == 2 then -- mu, sigma only: return one sample
+        -- TODO: Fix this. We should return as many samples as indicated by the NxD mu or the NxDxD sigma.
         n = 1
         mu = torch.Tensor(select(1, ...))
         sigma = torch.Tensor(select(2, ...))
         d = inferDimension(sigma)
         resultTensor = torch.Tensor(d)
+
     elseif nArgs == 3 then -- RESULT, mu, sigma - where result is either a number or an output tensor
         local resultInfo = select(1, ...)
         mu = torch.Tensor(select(2, ...))
         sigma = torch.Tensor(select(3, ...))
-        -- If we have non-constant parameters, get the number of results to return from there
-        local nParams
-        if mu:dim() ~= 1 then
-            nParams = mu:size(1)
-            if sigma:dim() == 3 and sigma:size(1) ~= nParams then
-                error("Incoherent parameter sizes for mvn.rnd")
-            end
-        end
-        if not nParams and sigma:dim() == 3 then
-            nParams = sigma:size(1)
-        end
-        d = inferDimension(sigma)
+
+        -- Number of parameters is dictated by result
         if type(resultInfo) == 'number' then
             n = resultInfo
-            resultTensor = torch.Tensor(n, d)
-            if nParams and nParams ~= n then
-                error("Parameter sizes do not match number of samples requested")
-            end
+            d = -1 -- we do not know the dimension yet
         elseif distributions._isTensor(resultInfo) then
             resultTensor = resultInfo
-            if nParams then
-                n = nParams
+            if resultTensor:dim() == 1 then
+                -- vector D: only one sample asked for
+                n = 1
+                d = resultTensor:size(1)
+                vectorOutput = true
+            elseif resultTensor:dim() == 2 then
+                -- 2D matrix: NxD
+                n = resultTensor:size(1)
+                d = resultTensor:size(2)
             else
-                n = resultTensor:nElement() / d
+                error('Result tensor must be a vector or a 2D matrix')
             end
-            resultTensor:resize(n, d)
         else
-            error("Unable to understand first argument for mvn.rnd - should be an integer number of samples to be returned, or a result tensor")
+            error("Unable to understand first argument for mvn.rnd - should be an integer number of samples to be returned, or a result tensor, not a " .. type(resultInfo))
         end
 
+        -- Now check if mu is compatible with result
+        local nParams
+        if mu:dim() == 1 then
+            -- vector: D
+            if d > 0 then
+                assert(mu:size(1) == d, 'Number of elements of vector mu (' .. mu:size(1) .. ') does not match dimension of result (' .. d ..')')
+            else
+                d = mu:size(1)
+            end
+            mu = torch.Tensor(mu):resize(1, d)
+        elseif mu:dim() == 2 then
+            assert(mu:size(1) == 1 or mu:size(1) == n, 'Number of rows of matrix mu (' .. mu:size(1) .. ') does not match that of result matrix (' .. n .. ')')
+            if d > 0 then
+                assert(mu:size(2) == d, 'Number of colums of matrix mu (' .. mu:size(2) .. ') does not match that of result matrix (' .. d ..')')
+            else
+                d = mu:size(2)
+            end
+        else
+            error('mu must be 1D or 2D, not ' .. mu:dim() .. 'D')
+        end
+
+        -- Check if sigma is compatible with result and mu
+        if sigma:dim() == 1 then
+            -- Diagonal matrix
+            assert(sigma:size(1) == d, 'Number of elements of vector sigma (' .. sigma:size(1) .. ') does not match dimension of result (' .. d .. ')')
+            diagonalVariance = true
+        elseif sigma:dim() == 2 then
+            -- TODO: deal with Dx1
+            if n == d then
+                -- N == D, the matrix sigma is ambiguous and need clarification in the options
+                if sigma:size(1) == n and  sigma:size(1) == d then
+                    if options.diagonal == nil then
+                        error('Ambiguous size for sigma: do you have N==D diagonal matrices of size D, or one DxD matrix? Please set options.diagonal to true or false to remove ambiguity')
+                    end
+                    diagonalVariance = options.diagonal
+                end
+            else
+                -- N != D, 2D sigma is either DxD or NxD diagonal matrix
+                if sigma:size(1) == d then
+                    -- One single DxD full covariance matrix
+                    diagonalVariance = false
+                elseif sigma:size(1) == 1 then
+                    -- 1 diagonal covariance
+                elseif sigma:size(1) == n then
+                    -- N diagonal covariances
+                    diagonalVariance = true
+                else
+                    error('Number of rows of matrix sigma (' .. sigma:size(1) .. ') does not match either number of results (' .. n .. ') or dimension (' .. d .. ')')
+                end
+                assert(sigma:size(2) == d, 'Number of columns of matrix sigma (' .. sigma:size(2) .. ') does not match dimension of result (' .. d .. ')')
+            end
+        elseif sigma:dim() == 3 then
+            -- NxDxD tensor
+            assert(sigma:size(1) == n, '1st dimension of 3D sigma (' .. sigma:size(1) ..') does not match number of results (' .. n .. ')')
+            assert(sigma:size(2) == d, '2nd dimension of 3D sigma (' .. sigma:size(2) ..') does not match dimension of results (' .. d .. ')')
+            assert(sigma:size(3) == d, '3rd dimension of 3D sigma (' .. sigma:size(3) ..') does not match dimension of results (' .. d .. ')')
+            diagonalVariance = false
+        else
+            error('sigma must be D, NxD, or NxDxD, not ' .. sigma:dim() .. 'D')
+        end
     else
         error("Invalid arguments for mvn.rnd().\
         Expecting [N|ResultTensor,] mu, sigma [, options].")
     end
 
     -- Now make our inputs all tensors, for simplicity
+    if not resultTensor then
+        resultTensor = torch.Tensor(n, d)
+    end
+
     if mu:dim() == 1 then
         mu:resize(1, mu:nElement())
     end
+    -- TODO: use the flag diagonalVariance rather than checking sigma's size once again
     if sigma:dim() == 1 then
         if mu:size(2) ~= sigma:size(1) then
             error("mvn.rnd: inconsistent sizes for mu and sigma")

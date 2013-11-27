@@ -160,7 +160,7 @@ function myTests.multivariateGaussianPDFMultiple1()
     tester:assertTensorEq(distributions.mvn.pdf(x, mu, sigma), expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
--- Try calling 1xD, D, DxD
+-- Try calling OnexD, D, DxD
 function myTests.multivariateGaussianPDFMultiple2()
     local x = torch.Tensor({{0, 0}})
     local mu = torch.Tensor({0.2, -0.2})
@@ -171,7 +171,7 @@ function myTests.multivariateGaussianPDFMultiple2()
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
--- Try calling D, 1xD, DxD
+-- Try calling D, OnexD, DxD
 function myTests.multivariateGaussianPDFMultiple3()
     local x = torch.Tensor({0, 0})
     local mu = torch.Tensor({{-0.2, 0.2}})
@@ -222,7 +222,7 @@ function myTests.multivariateGaussianPDFMultiple7()
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
 
--- Try calling 1xD, D, D
+-- Try calling OnexD, D, D
 function myTests.multivariateGaussianPDFMultiple8()
     local x = torch.Tensor({{0, 0}})
     local mu = torch.Tensor({-0.2, 0.2})
@@ -281,7 +281,9 @@ local function statisticalTestMultivariateGaussian(samples, mu, sigma, shouldAcc
     local N = samples:size(1)
     local D = samples:size(2)
 
-    assert(mu:dim() == 1)
+    if mu:dim() > 1 then
+        mu = torch.Tensor(mu):resize(mu:numel())
+    end
     assert(mu:size(1) == D)
 
     assert(sigma:dim() == 2)
@@ -492,6 +494,7 @@ local function generateSystematicTests()
     local firstArgOptions = { N = N, M = M, NxD = torch.Tensor(N, D) }
 
     local secondArgD = torch.Tensor { 10, 0 }
+    local secondArg1D = torch.Tensor {{ 11, 0 }}
     local secondArgMD = torch.Tensor(M, D):zero()
     local k = 0
     secondArgMD:apply(function()
@@ -500,7 +503,7 @@ local function generateSystematicTests()
     end)
     local secondArgE = torch.Tensor { 10, 0, 0 }
 
-    local secondArgOptions = { D = secondArgD, E = secondArgE, MxD = secondArgMD }
+    local secondArgOptions = { D = secondArgD, OnexD = secondArg1D, E = secondArgE, MxD = secondArgMD }
 
     local thirdArgD = torch.Tensor { 2, 1 }
     local thirdArgDD = torch.Tensor {{2, 1}, {1, 1}}
@@ -522,8 +525,8 @@ local function generateSystematicTests()
 
     local function checkResultsGaussian(result, mu, sigma)
         tester:assert(result, "got no result - expected samples from a gaussian!")
-        tester:asserteq(result:dim(), 2, "wrong dimensionality for result")
-        tester:asserteq(result:size(2), mu:size(1), "expected results of size " .. mu:size(1))
+        tester:assert(result:dim(), 2, "wrong dimensionality for result")
+        tester:asserteq(result:size(2), mu:numel(), "expected results with " .. mu:numel() .. "columns, got " .. result:size(2) .. " instead")
         statisticalTestMultivariateGaussian(result, mu, sigma, true)
     end
 
@@ -569,7 +572,7 @@ local function generateSystematicTests()
 
         for j = 1, M do
             local mu = v2
-            if v2:dim() == 2 then
+            if v2:dim() == 2 and v2:size(1) ~= 1 then
                 mu = v2[j]
             end
             local sigma = v3
@@ -589,6 +592,12 @@ local function generateSystematicTests()
     expectations["N, D, ExE"] = shouldError
     expectations["N, D, MxDxD"] = shouldError
 
+    expectations["N, OnexD, D"] = shouldBeFromOneDiagonalGaussian
+    expectations["N, OnexD, DxD"] = shouldBeFromOneGaussian
+    expectations["N, OnexD, DxE"] = shouldError
+    expectations["N, OnexD, ExE"] = shouldError
+    expectations["N, OnexD, MxDxD"] = shouldError
+
     expectations["N, E, D"] = shouldError
     expectations["N, E, DxD"] = shouldError
     expectations["N, E, DxE"] = shouldError
@@ -607,6 +616,12 @@ local function generateSystematicTests()
     expectations["M, D, ExE"] = shouldError
     expectations["M, D, MxDxD"] = shouldBeFromMGaussians
 
+    expectations["M, OnexD, D"] = null
+    expectations["M, OnexD, DxD"] = null
+    expectations["M, OnexD, DxE"] = shouldError
+    expectations["M, OnexD, ExE"] = shouldError
+    expectations["M, OnexD, MxDxD"] = shouldBeFromMGaussians
+
     expectations["M, E, D"] = null
     expectations["M, E, DxD"] = null
     expectations["M, E, DxE"] = shouldError
@@ -623,19 +638,25 @@ local function generateSystematicTests()
     expectations["NxD, D, DxD"] = shouldBeFromOneGaussian
     expectations["NxD, D, DxE"] = shouldError
     expectations["NxD, D, ExE"] = shouldError
-    expectations["NxD, D, MxDxD"] = shouldBeFromMGaussians
+    expectations["NxD, D, MxDxD"] = shouldError
+
+    expectations["NxD, OnexD, D"] = shouldBeFromOneDiagonalGaussian
+    expectations["NxD, OnexD, DxD"] = shouldBeFromOneGaussian
+    expectations["NxD, OnexD, DxE"] = shouldError
+    expectations["NxD, OnexD, ExE"] = shouldError
+    expectations["NxD, OnexD, MxDxD"] = shouldError
 
     expectations["NxD, E, D"] = shouldError
     expectations["NxD, E, DxD"] = shouldError
     expectations["NxD, E, DxE"] = shouldError
-    expectations["NxD, E, ExE"] = shouldBeFromOneGaussian
+    expectations["NxD, E, ExE"] = shouldError -- TODO: check with @d11 why it was not error
     expectations["NxD, E, MxDxD"] = shouldError
 
     expectations["NxD, MxD, D"] = null
-    expectations["NxD, MxD, DxD"] = shouldBeFromMGaussians
+    expectations["NxD, MxD, DxD"] = shouldError -- TODO: check with @d11 why it was not error
     expectations["NxD, MxD, DxE"] = shouldError
     expectations["NxD, MxD, ExE"] = shouldError
-    expectations["NxD, MxD, MxDxD"] = shouldBeFromMGaussians
+    expectations["NxD, MxD, MxDxD"] = shouldError -- tODO: check with @d11 why it was not error
 
     local testTable = {}
 
@@ -649,14 +670,26 @@ local function generateSystematicTests()
                     error("Missing expected result handler for " .. desc)
                 end
                 testTable["test_multivariateGaussianRand_" .. string.gsub(key, ", ", "_")] = function()
-                    testFunc(v1, v2, v3, desc)
-                end
+--[[                print('\nrunning', desc)
+                    print('i1', i1)
+                    print('v1', v1)
+                    print('i2', i2)
+                    print('v2', v2)
+                    print('i3', i3)
+                    print('v3', v3) ]]
+                    local x1
+                    if type(v1) == 'number' then
+                        x1 = v1
+                    else
+                        x1 = v1:clone()
+                    end
+                    testFunc(x1, v2:clone(), v3:clone(), desc)
+              end
             end
         end
     end
     return testTable
 end
-
 
 tester:add(myTests)
 tester:add(generateSystematicTests())
