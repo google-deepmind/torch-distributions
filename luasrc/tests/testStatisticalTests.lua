@@ -13,7 +13,7 @@ function mytest.testChiSquareGaussian()
     local p = distributions.chi2Gaussian(x, mu, sigma)
     tester:assert(p > 0.001, 'Chi-square test rejects a sample from a gaussian distribution')
     x = x + 10
-    p = distributions.chi2Gaussian(x, mu, sigma)
+    local p = distributions.chi2Gaussian(x, mu, sigma)
     tester:assert(p < 0.001, 'Chi-square test accepts a wrong sample from a gaussian distribution')
 end
 
@@ -39,7 +39,7 @@ function mytest.testChiSquareUniformRejectWithinSupport()
         x[i] = torch.uniform(0, up)
     end
     -- Chi-square test at 99.9%
-    p = distributions.chi2Uniform(x, low, up)
+    local p = distributions.chi2Uniform(x, low, up)
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a wrong uniform distribution within support')
 end
 
@@ -50,7 +50,7 @@ function mytest.testChiSquareUniformRejectOutOfSupport()
         x[i] = torch.uniform(100, 110)
     end
     -- Chi-square test at 99.9%
-    p = distributions.chi2Uniform(x, 0, 10)
+    local p, chi2 = distributions.chi2Uniform(x, 0, 10)
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a wrong uniform distribution out of support')
 end
 
@@ -85,7 +85,7 @@ function mytest.testChiSquareCDF()
         x[i] = torch.uniform(low, (low + up) / 2)
     end
     -- Chi-square test at 99.9%
-    p = distributions.chi2TestCDF(x, cdf, {})
+    local p = distributions.chi2TestCDF(x, cdf, {})
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a uniform distribution with a smaller support')
 
     for i=1,nPoints do
