@@ -10,10 +10,12 @@ function mytest.testChiSquareGaussian()
     local x = torch.randn(nPoints)
     x = x * sigma + mu
     -- Chi-square test at 99.9%
-    local p = distributions.chi2Gaussian(x, mu, sigma)
+    local p, chi2 = distributions.chi2Gaussian(x, mu, sigma)
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p > 0.001, 'Chi-square test rejects a sample from a gaussian distribution')
     x = x + 10
-    local p = distributions.chi2Gaussian(x, mu, sigma)
+    local p, chi2 = distributions.chi2Gaussian(x, mu, sigma)
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p < 0.001, 'Chi-square test accepts a wrong sample from a gaussian distribution')
 end
 
@@ -26,7 +28,8 @@ function mytest.testChiSquareUniformAccept()
         x[i] = torch.uniform(low, up)
     end
     -- Chi-square test at 99.9%
-    local p = distributions.chi2Uniform(x, low, up)
+    local p, chi2 = distributions.chi2Uniform(x, low, up)
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p > 0.001, 'Chi-square test rejects a sample from a uniform distribution')
 end
 
@@ -39,7 +42,8 @@ function mytest.testChiSquareUniformRejectWithinSupport()
         x[i] = torch.uniform(0, up)
     end
     -- Chi-square test at 99.9%
-    local p = distributions.chi2Uniform(x, low, up)
+    local p, chi2 = distributions.chi2Uniform(x, low, up)
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a wrong uniform distribution within support')
 end
 
@@ -51,6 +55,7 @@ function mytest.testChiSquareUniformRejectOutOfSupport()
     end
     -- Chi-square test at 99.9%
     local p, chi2 = distributions.chi2Uniform(x, 0, 10)
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a wrong uniform distribution out of support')
 end
 
@@ -78,28 +83,33 @@ function mytest.testChiSquareCDF()
         x[i] = torch.uniform(low, up)
     end
     -- Chi-square test at 99.9%
-    local p = distributions.chi2TestCDF(x, cdf, {})
+    local p, chi2 = distributions.chi2TestCDF(x, cdf, {})
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p > 0.001, 'Chi-square test rejects a sample from a uniform distribution')
 
     for i=1,nPoints do
         x[i] = torch.uniform(low, (low + up) / 2)
     end
     -- Chi-square test at 99.9%
-    local p = distributions.chi2TestCDF(x, cdf, {})
+    local p, chi2 = distributions.chi2TestCDF(x, cdf, {})
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a uniform distribution with a smaller support')
+    tester:assert(chi2, 'Test statistic should not be nil')
 
     for i=1,nPoints do
         x[i] = torch.uniform(low - 10, up + 10)
     end
     -- Chi-square test at 99.9%
-    p = distributions.chi2TestCDF(x, cdf, {})
+    p, chi2 = distributions.chi2TestCDF(x, cdf, {})
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a uniform distribution with a larger support')
 
     for i=1,nPoints do
         x[i] = torch.uniform(low - 10, up - 10)
     end
     -- Chi-square test at 99.9%
-    p = distributions.chi2TestCDF(x, cdf, {})
+    p, chi2 = distributions.chi2TestCDF(x, cdf, {})
+    tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a uniform distribution with non-intersecting support')
 
     -- Test invalid calls
