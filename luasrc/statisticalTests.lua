@@ -34,7 +34,7 @@ function distributions.chi2Uniform(x, low, up, nBins)
         local idx = 1+math.floor(nBins*(v-low)/(up-low))
         if idx < 1 or idx > nBins  or v < low or v > up then
             -- If out of support of the uniform, p-value is 0
-            return 0
+            return 0, math.huge
         end
         actualBins[idx] = actualBins[idx] + 1
     end
