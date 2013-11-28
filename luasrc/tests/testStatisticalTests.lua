@@ -57,6 +57,7 @@ function mytest.testChiSquareUniformRejectOutOfSupport()
     local p, chi2 = distributions.chi2Uniform(x, 0, 10)
     tester:assert(chi2, 'Test statistic should not be nil')
     tester:assert(p < 0.001, 'Chi-square test accepts a sample from a wrong uniform distribution out of support')
+    tester:assert(chi2 == math.huge, 'Chi-square with out of support does not return infinite test statistic')
 end
 
 function mytest.testChiSquareCDF()
