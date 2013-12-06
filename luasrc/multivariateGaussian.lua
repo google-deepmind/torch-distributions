@@ -217,17 +217,19 @@ function distributions.mvn.rnd(...)
         end
         sigma:resize(1, d)
     elseif sigma:dim() == 2 then
-        -- either DxD or NxD
-        if sigma:size(1) == sigma:size(2) then
-            if n == d then
-                error("mvn.rnd: ambiguous covariance input")
+        -- either 1xD or DxD or NxD
+        if sigma:size(1) ~= 1 then
+            if sigma:size(1) == sigma:size(2) then
+                if n == d then
+                    error("mvn.rnd: ambiguous covariance input")
+                end
             end
-        end
 
-        if mu:size(2) ~= sigma:size(1) or mu:size(2) ~= sigma:size(2) then
-            error("mvn.rnd: inconsistent sizes for mu and sigma")
+            if mu:size(2) ~= sigma:size(1) or mu:size(2) ~= sigma:size(2) then
+                error("mvn.rnd: inconsistent sizes for mu and sigma")
+            end
+            sigma:resize(1, d, d)
         end
-        sigma:resize(1, d, d)
     elseif sigma:dim() == 3 then
         if mu:size(2) ~= d or sigma:size(2) ~= d or sigma:size(3) ~= d then
             error("mvn.rnd: inconsistent sizes for mu and sigma")
