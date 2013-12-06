@@ -691,6 +691,11 @@ local function generateSystematicTests()
     return testTable
 end
 
+function myTests.test1D1D()
+    local D = 10
+    local x = distributions.mvn.rnd(torch.zeros(1,D), torch.ones(1,D), {cholesky = true})
+end
+
 tester:add(myTests)
 tester:add(generateSystematicTests())
 tester:run()
