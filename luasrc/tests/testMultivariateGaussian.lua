@@ -708,11 +708,15 @@ function myTests.testResize()
     for k,v in pairs(call) do
         ori[k] = v:clone()
     end
-    print('before, size mu:', call.mu:size())
+
     local l = distributions.mvn.logpdf(call.x, call.mu, call.cov)
-    print('after, size mu:', call.mu:size())
     for k,v in pairs(call) do
-        tester:assertTensorEq(call[k], ori[k], 1e-16,'Call changed parameter ' .. k)
+        tester:asserteq(call[k]:dim(), ori[k]:dim(),'Call changed dim of param ' .. k)
+        if call[k]:dim() == ori[k]:dim() then
+            for i=1, call[k]:dim() do
+                tester:asserteq(call[k]:size(i), ori[k]:size(i),'Call changed size of param ' .. k)
+            end
+        end
     end
 end
 

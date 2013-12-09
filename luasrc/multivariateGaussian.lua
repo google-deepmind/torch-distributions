@@ -4,6 +4,7 @@ function distributions.mvn.logpdf(x, mu, sigma, options)
     options = options or {}
     x = torch.Tensor(x)
     mu = torch.Tensor(mu)
+    sigma = torch.Tensor(sigma)
 
     -- If any input is vectorised, we return a vector. Otherwise remember that we should return scalar.
     local scalarResult = (x:dim() == 1) and (mu:dim() == 1)
