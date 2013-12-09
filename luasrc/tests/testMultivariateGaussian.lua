@@ -696,6 +696,26 @@ function myTests.test1D1D()
     local x = distributions.mvn.rnd(torch.zeros(1,D), torch.ones(1,D), {cholesky = true})
 end
 
+
+function myTests.testResize()
+    local N, D =  2, 10
+    local call = {
+        mu = torch.zeros(D),
+        x = torch.randn(N, D),
+        cov = torch.ones(D)
+    }
+    local ori = {}
+    for k,v in pairs(call) do
+        ori[k] = v:clone()
+    end
+    print('before, size mu:', call.mu:size())
+    local l = distributions.mvn.logpdf(call.x, call.mu, call.cov)
+    print('after, size mu:', call.mu:size())
+    for k,v in pairs(call) do
+        tester:assertTensorEq(call[k], ori[k], 1e-16,'Call changed parameter ' .. k)
+    end
+end
+
 tester:add(myTests)
-tester:add(generateSystematicTests())
+--tester:add(generateSystematicTests())
 tester:run()
