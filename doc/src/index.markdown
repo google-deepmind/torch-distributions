@@ -19,7 +19,7 @@ Distributions is transparently integrated with Torch's random stream: just use `
 From a terminal:
 
 ```bash
-torch-rocks install distributions
+luarocks install https://raw.github.com/jucor/torch-distributions/master/distributions-0-0.rockspec
 ```
 
 ##List of Distributions
