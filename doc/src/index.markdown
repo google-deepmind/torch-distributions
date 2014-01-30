@@ -224,3 +224,4 @@ find torch-distributions/luasrc/tests -name "test*lua" -exec torch {} \;
 ```
 
 Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.
+
