@@ -171,5 +171,34 @@ function testCategorical.testStratifiedWithOneSample()
     assert_unbiased('stratified')
 end
 
+function testCategorical.testMultivariate()
+--[[
+This would be a convenience method. If p is a NxM tensor, the result would be to generate N independent samples from N categorical distributions. The i-th sample would be obtained with probabilities given by the vector p[i].
+
+Use case: sampling from the output of a neural network having a softmax output layer. N in this case corresponds to the size of the minibatch. When used in conjunction with torch.nn, this would allow for the following:
+]]
+    --- Without result tensor nor number of samples
+    local p = torch.Tensor{{.1, .2, .7},{.9, 0, .1}}
+    local x = dist.mvcat.rnd(p)
+    tester:asserteq(x:dim(), 2, 'new result should be a matrix')
+    tester:asserteq(x:size(1), p:size(1), 'Wrong number of rows for new result')
+    tester:asserteq(x:size(2), 1, 'Wrong number of columns for new result')
+
+    --- With number of samples
+    local nSamples = 10000
+    local x = dist.mvcat.rnd(nSamples, p)
+    tester:asserteq(x:dim(), 2, 'new result should be a matrix')
+    tester:asserteq(x:size(1), p:size(1), 'Wrong number of rows for new result')
+    tester:asserteq(x:size(2), nSamples, 'Wrong number of columns for new result')
+
+
+    --- With result tensor
+    local result = torch.Tensor(2, nSamples)
+    dist.mvcat.rnd(result, p)
+    tester:asserteq(result:dim(), 2, 'result should be a matrix')
+    tester:asserteq(result:size(1), p:size(1), 'Wrong number of rows for tensor result')
+    tester:asserteq(result:size(2), nSamples, 'Wrong number of columns for tensor result')
+end
+
 tester:add(testCategorical)
 tester:run()
