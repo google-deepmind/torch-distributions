@@ -100,7 +100,7 @@ In the case of a diagonal covariance `cov`, you may also opt to pass a vector (n
 
 By defaut, the matrix `M` is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
-###Categorical: cat
+###Categorical/Multinomial: cat
 
 Categorical distributions on indices from 1 to K = p:numel()
 
@@ -110,11 +110,11 @@ Not vectorized in p.
 
 Not implemented
 
-####mvn.logpdf(x, p, [options])
+####cat.logpdf(x, p, [options])
 
 Not implemented
 
-####mvn.rnd([res|N,] p, [options])
+####cat.rnd([res|N,] p, [options])
 
 Sample `N = size(res,1)` amongst `K = 1 ... p:numel()`, where the probability of category k is given by p[k]/p:sum().
 
