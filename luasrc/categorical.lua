@@ -25,7 +25,7 @@ end
 
 -- Categorical sampling
 function distributions.cat.rnd(...)
-    local res, N, p, options
+    local I, N, p, options
     local nArgs = select('#', ...)
     if nArgs == 1 then
         -- only p
@@ -58,6 +58,7 @@ function distributions.cat.rnd(...)
         error('the number of categories does not match the length of the probability vector')
     end
 
+    -- TODO: avoid new tensor due to cumsum! See #25
     local cdf = p:cumsum(1)
     local totalmass = cdf[#cdf]
     if totalmass <= 0 then 
