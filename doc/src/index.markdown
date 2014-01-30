@@ -102,9 +102,9 @@ By defaut, the matrix `M` is the covariance matrix. However, it is possible to p
 
 ###Categorical/Multinomial: cat
 
-Categorical distributions on indices from 1 to K = p:numel()
+Categorical distributions on indices from 1 to K = p:numel().
 
-Not vectorized in p.
+Not vectorized in p. See mvcat for vectorized version.
 
 ####cat.pdf(x, p, [options])
 
@@ -133,6 +133,35 @@ Returns a LongTensor vector with N elements in the resulting tensor if no catego
 or a new tensor of N rows corresponding to the categories given.
 
 Note that it is not yet possible to use a result tensor *and* categories at the same time. This will be possible once [torch's index() accepts result tensor](https://github.com/torch/torch7-distro/issues/202).
+
+###Multiple Categorical: mvcat
+
+Vectorized version of `cat`, where `p` is now a matrix where each row represents a vector of probabilities. It samples independently for each row of `p`.
+
+####mvcat.pdf(x, p, [options])
+
+Not implemented
+
+####mvcat.logpdf(x, p, [options])
+
+Not implemented
+
+####mvcat.rnd([res|N,] p, [options])
+
+For each row `r = 1 ... R` of the matrix `p`, sample `N = size(res, 2)` amongst `K = 1 ... p:size(2)`, where the probability of category k is given by p[r][k]/p:sum(1).
+
+Options is a table containing:
+
+* options.type Type of sampler:
+    - `nil` or `'iid'`: default, i.i.d samples, use linear search in O(N log N + max(K, N)), best when K/N is close to 1.
+    - 'dichotomy': dichotomic search, same variance, faster when small K large N
+    - 'stratified': sorted stratified samples, sample has lower variance than i.i.d. but not independent, best when K/N is close to 1
+
+
+Returns a LongTensor vector with R-by-N elements in the resulting tensor.
+or a new tensor of R rows with N columns corresponding to the categories given.
+
+Note that `mvcat`, unlike `cat`, only returns tensor of integers: it does not allow for specifying a tensor of categories, to keep the handling of dimensions simple.
 
 ###Cauchy: cauchy
 
