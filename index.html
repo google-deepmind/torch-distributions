@@ -77,16 +77,16 @@
 </ul>
 </li>
 <li>
-<a href="#toc_17">Categorical: cat</a>
+<a href="#toc_17">Categorical/Multinomial: cat</a>
 <ul>
 <li>
 <a href="#toc_18">cat.pdf(x, p, [options])</a>
 </li>
 <li>
-<a href="#toc_19">mvn.logpdf(x, p, [options])</a>
+<a href="#toc_19">cat.logpdf(x, p, [options])</a>
 </li>
 <li>
-<a href="#toc_20">mvn.rnd([res|N,] p, [options])</a>
+<a href="#toc_20">cat.rnd([res|N,] p, [options])</a>
 </li>
 </ul>
 </li>
@@ -255,7 +255,7 @@
 
 <p>By defaut, the matrix <code>M</code> is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field <code>cholesky = true</code> in the optional table <code>options</code>.</p>
 
-<h3 id="toc_17">Categorical: cat</h3>
+<h3 id="toc_17">Categorical/Multinomial: cat</h3>
 
 <p>Categorical distributions on indices from 1 to K = p:numel()</p>
 
@@ -265,11 +265,11 @@
 
 <p>Not implemented</p>
 
-<h4 id="toc_19">mvn.logpdf(x, p, [options])</h4>
+<h4 id="toc_19">cat.logpdf(x, p, [options])</h4>
 
 <p>Not implemented</p>
 
-<h4 id="toc_20">mvn.rnd([res|N,] p, [options])</h4>
+<h4 id="toc_20">cat.rnd([res|N,] p, [options])</h4>
 
 <p>Sample <code>N = size(res,1)</code> amongst <code>K = 1 ... p:numel()</code>, where the probability of category k is given by p[k]/p:sum().</p>
 
