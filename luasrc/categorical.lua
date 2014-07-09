@@ -1,4 +1,4 @@
-require 'torchffi'
+require 'torch'
 
 distributions.cat = {}
 
