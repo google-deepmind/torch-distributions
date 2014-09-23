@@ -207,7 +207,7 @@ Cumulative distribution function of a Laplace distribution with location `loc` a
 
 ##Hypothesis Testing
 
-Besides the generators, there are some functions for checking whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
+Besides the generators, there are some functions for checking whether two samples come from the same unspecified distribution a,d whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
 
 ###kstwo(x1, x2)
 
