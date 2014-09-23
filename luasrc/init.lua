@@ -111,5 +111,6 @@ torch.include("distributions", "statisticalTests.lua")
 torch.include("distributions", "categorical.lua")
 torch.include("distributions", "mvcat.lua")
 torch.include("distributions", "chi2test.lua")
+torch.include("distributions", "kstest.lua")
 
 return distributions
