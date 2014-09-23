@@ -110,5 +110,6 @@ torch.include("distributions", "multivariateGaussian.lua")
 torch.include("distributions", "statisticalTests.lua")
 torch.include("distributions", "categorical.lua")
 torch.include("distributions", "mvcat.lua")
+torch.include("distributions", "chi2test.lua")
 
 return distributions
