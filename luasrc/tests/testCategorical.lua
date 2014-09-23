@@ -1,7 +1,8 @@
 require 'torch'
+require 'totem'
 local dist = require('distributions')
 
-local tester = torch.Tester()
+local tester = totem.Tester()
 local testCategorical = {}
 
 function testCategorical.testCallNoResult()
@@ -201,4 +202,4 @@ Use case: sampling from the output of a neural network having a softmax output l
 end
 
 tester:add(testCategorical)
-tester:run()
+return tester:run()

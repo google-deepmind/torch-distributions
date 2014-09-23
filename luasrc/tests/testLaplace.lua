@@ -1,6 +1,7 @@
+require 'totem'
 require 'distributions'
 local myTest = {}
-local tester = torch.Tester()
+local tester = totem.Tester()
 
 function myTest.laplacePDF()
     tester:assertalmosteq(distributions.laplace.pdf(-2, 0, 1), 0.06766764161830634, 1e-15)
@@ -36,4 +37,4 @@ function myTest.laplaceCDF()
 end
 
 tester:add(myTest)
-tester:run()
+return tester:run()

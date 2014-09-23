@@ -1,9 +1,10 @@
+require 'totem'
 require 'distributions'
 require 'pl.strict'
 
 local myTests = {}
 local notRun = {}
-local tester = torch.Tester()
+local tester = totem.Tester()
 torch.manualSeed(1234567890)
 
 local function sidakCorrection(alpha, n)
@@ -722,4 +723,4 @@ end
 
 tester:add(myTests)
 --tester:add(generateSystematicTests())
-tester:run()
+return tester:run()

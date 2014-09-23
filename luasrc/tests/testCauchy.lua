@@ -1,6 +1,7 @@
 require 'distributions'
+require 'totem'
 local myTest = {}
-local tester = torch.Tester()
+local tester = totem.Tester()
 
 function myTest.cauchyPDF()
     tester:assertalmosteq(distributions.cauchy.pdf(-0.5, 0, 1), 0.254648, 1e-5)
@@ -38,4 +39,4 @@ function myTest.cauchyCDF()
 end
 
 tester:add(myTest)
-tester:run()
+return tester:run()

@@ -1,7 +1,8 @@
+require 'totem'
 require 'distributions'
 
 local mytest = {}
-local tester = torch.Tester()
+local tester = totem.Tester()
 
 function mytest.testChiSquareGaussian()
     local nPoints = 1000
@@ -123,4 +124,4 @@ function mytest.testChiSquareCDF()
 end
 
 tester:add(mytest)
-tester:run()
+return tester:run()

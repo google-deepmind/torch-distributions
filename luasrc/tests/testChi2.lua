@@ -1,6 +1,7 @@
+require 'totem'
 require 'distributions'
 local myTest = {}
-local tester = torch.Tester()
+local tester = totem.Tester()
 
 function myTest.chi2PDF()
     tester:assert(cephes.isinf(distributions.chi2.pdf(0, 1)))
@@ -34,4 +35,4 @@ function myTest.chi2CDF()
 end
 
 tester:add(myTest)
-tester:run()
+return tester:run()

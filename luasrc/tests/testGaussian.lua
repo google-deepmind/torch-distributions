@@ -1,6 +1,7 @@
+require 'totem'
 require 'distributions'
 local myTest = {}
-local tester = torch.Tester()
+local tester = totem.Tester()
 
 function myTest.gaussianpdf()
     tester:assertalmosteq(distributions.norm.pdf(-0.5, 0, 1), 0.352065326764300, 1e-15)
@@ -36,4 +37,4 @@ function myTest.gaussiancdf()
 end
 
 tester:add(myTest)
-tester:run()
+return tester:run()

@@ -1,6 +1,7 @@
+require 'totem'
 require 'distributions'
 local myTest = {}
-local tester = torch.Tester()
+local tester = totem.Tester()
 
 function myTest.poissonPDF()
     tester:assertalmosteq(distributions.poisson.pdf(0, 2), 0.135335283236612, 1e-15)
@@ -60,4 +61,4 @@ function myTest.poissonCDF()
 end
 
 tester:add(myTest)
-tester:run()
+return tester:run()
