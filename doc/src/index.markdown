@@ -209,6 +209,15 @@ Cumulative distribution function of a Laplace distribution with location `loc` a
 
 Besides the generators, there are some functions for checking whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
 
+###kstwo(x1, x2)
+
+Perform a two-sample Kolmogorov-Smirnov test, with null hypothesis "sample x1 and sample x2 come from the same distribution".
+
+* `x1` should be a vector of sample values to test 
+* `x2` should be a vector of sample values to test 
+
+Returns: `p`, `d` - the p-value and the statistic the test, respectively.
+
 ###chi2Uniform(x, [low, up, nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a continuous uniform distribution on the interval `[low, up]`".
