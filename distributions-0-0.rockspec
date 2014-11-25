@@ -2,13 +2,13 @@ package = 'distributions'
 version = '0-0'
 
 source = {
-   url = 'git://github.com/jucor/torch-distributions.git',
+   url = 'git://github.com/deepmind/torch-distributions.git',
    branch = 'master'
 }
 
 description = {
   summary = "Probability distributions",
-  homepage = "http://jucor.github.io/torch-distributions",
+  homepage = "http://deepmind.github.io/torch-distributions",
   detailed = "Provides the PDF, CDF, random number generators, and more, for range of probability distributions. It is to torch-randomkit what scipy.stats is to numpy.random.",
   license = "BSD",
   maintainer = "Julien Cornebise <julien@cornebise.com>"
