@@ -43,7 +43,7 @@ end
 
 -- Categorical sampling for multiple laws at one
 function distributions.mvcat.rnd(...)
-    local res, N, p, options, K, D
+    local N, p, options, I
     local nArgs = select('#', ...)
     if nArgs == 1 then
         -- only p
