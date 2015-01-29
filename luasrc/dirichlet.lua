@@ -18,6 +18,22 @@ function distributions.dirichlet.rnd(alpha)
   return _normalize(randomkit.gamma(alpha, torch.Tensor(alpha:size()):fill(1)))
 end
 
+--[[ Probability density of a multinomial distribution
+    under a Dirichlet distribution
+
+Parameters:
+
+* `x` (Tensor) multinomial distribution
+    entries must be nonnegative and sum to one
+* `alpha` (Tensor) vector of pseudocounts
+
+Returns:
+
+1. Probability density
+]]
+function distributions.dirichlet.pdf(x, alpha)
+  return cephes.exp(distributions.dirichlet.logpdf(x, alpha))
+
 --[[ Log probability density of a multinomial distribution
     under a Dirichlet distribution
 

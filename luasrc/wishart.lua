@@ -94,13 +94,9 @@ function distributions.wishart.logpdf(X, ndof, scale)
     return result
   end
 
-  -- Cholesky decomposition trick for computing log determinant of a symmetric matrix
-  -- Should add this to mathx.logdet()! 
-  -- Note that the sum of the log diagonal of the 
-  -- Cholesky decompositionis *half* the log determinant.
-  return (ndof - ndim - 1) * torch.potrf(X):diag():log():sum()
+  return (ndof - ndim - 1) * mathx.logdet(X) / 2
       - (torch.inverse(scale) * X):trace()/2
       - (ndof * ndim) * torch.log(2) / 2
-      - ndof * torch.potrf(scale):diag():log():sum()
+      - ndof * mathx.logdet(scale) / 2
       - _lmvgam(ndof/2, ndim)
 end
