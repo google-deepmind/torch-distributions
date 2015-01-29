@@ -109,6 +109,8 @@ torch.include("distributions", "laplace.lua")
 torch.include("distributions", "multivariateGaussian.lua")
 torch.include("distributions", "categorical.lua")
 torch.include("distributions", "mvcat.lua")
+torch.include("distributions", "dirichlet.lua")
+torch.include("distributions", "wishart.lua")
 torch.include("distributions", "chi2test.lua")
 torch.include("distributions", "kstest.lua")
 
