@@ -1,3 +1,4 @@
+-- TODO: implement in-place version of functions
 require 'randomkit'
 require 'cephes'
 require 'torch'
@@ -10,7 +11,7 @@ Parameters:
 
 * `ndof` (number) Degrees of freedom
 * `ndim` (number) Dimension of output matrix
-* `scale` (optional Tensor) Scale matrix.
+* `scale` (optional 2D Tensor) Scale matrix.
     Must be positive definite.
     Defaults to the identity if not provided.
 
@@ -23,7 +24,7 @@ function distributions.wishart.rnd(ndof, ndim, scale)
   if scale then
     assert(scale:size(1) == scale:size(2))
     assert(scale:size(1) == ndim)
-    assert(mathx.isposdef(scale))
+    assert(distributions.util.isposdef(scale))
   end
 
   --[[ Sample from a Wishart distribution with identity scale matrix
@@ -64,38 +65,35 @@ Returns:
 function distributions.wishart.logpdf(X, ndof, scale)
   local ndim = scale:size(1)
   assert(scale:size(1) == scale:size(2))
-  assert(mathx.isposdef(scale))
+  assert(distributions.util.isposdef(scale))
 
   assert(ndof > ndim - 1)
 
   assert(X:size(1) == ndim)
   assert(X:size(2) == ndim)
-  assert(mathx.isposdef(X))
+  assert(distributions.util.isposdef(X))
 
-  --[[ Log Multivariate Gamma Function.
-      The multivariate Gamma function generalizes the gamma function:
-      $\Gamma_p(x) = \pi^{p(p-1)/4} \prod_{j=1}^p \Gamma[x + (1-j)/2]
-
-  Parameters:
-
-  * `x` value passed to multivariate gamma function
-  * `p` degree of multivariate gamma function. If 1, reduces to log gamma
-
-  Returns:
-   
-  1. log($\Gamma_p(x)$)
-  ]]
-  local function _lmvgam(x,p)
-    local result = p * (p-1) / 4 * math.log(math.pi)
-    for j = 1, p do
-      result = result + cephes.lgam(x + (1-j)/2)
-    end
-    return result
-  end
-
-  return (ndof - ndim - 1) * mathx.logdet(X) / 2
+  return (ndof - ndim - 1) * distributions.util.logdet(X) / 2
       - (torch.inverse(scale) * X):trace()/2
       - (ndof * ndim) * torch.log(2) / 2
-      - ndof * mathx.logdet(scale) / 2
-      - _lmvgam(ndof/2, ndim)
+      - ndof * distributions.util.logdet(scale) / 2
+      - cephes.lmvgam(ndof/2, ndim)
+end
+
+--[[ Probability density of a positive definite matrix
+    under a Wishart distribution
+
+Parameters:
+
+* `X` (Tensor) Data. Must be positive definite
+* `ndof` (number) Degrees of freedom of Wishart distribution
+* `scale` (Tensor) Scale matrix of Wishart distribution. 
+    Must be positive definite.
+
+Returns:
+
+1. Probability density p(X | dof, scale)
+]]
+function distributions.wishart.pdf(...)
+  return cephes.exp(distributions.wishart.logpdf(...))
 end

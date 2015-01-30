@@ -101,6 +101,7 @@ function distributions._check1DParams(K, defaultResultType, ...)
     return result, params
 end
 
+torch.include("distributions", "util.lua")
 torch.include("distributions", "poisson.lua")
 torch.include("distributions", "gaussian.lua")
 torch.include("distributions", "cauchy.lua")
@@ -111,6 +112,7 @@ torch.include("distributions", "categorical.lua")
 torch.include("distributions", "mvcat.lua")
 torch.include("distributions", "dirichlet.lua")
 torch.include("distributions", "wishart.lua")
+torch.include("distributions", "normalWishart.lua")
 torch.include("distributions", "chi2test.lua")
 torch.include("distributions", "kstest.lua")
 

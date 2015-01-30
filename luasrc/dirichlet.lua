@@ -1,7 +1,13 @@
+-- TODO: implement in-place version of functions
 require 'torch'
 require 'cephes'
 require 'randomkit'
-distributions.dirichlet = {}
+distributions.dir = {}
+
+-- Return a tensor normalized to sum to one
+local function _normalize(x)
+  return x / x:sum()
+end
 
 --[[ Generate a sample from a Dirichlet distribution
 
@@ -13,7 +19,7 @@ Returns:
 
 1. sample from a Dirichlet distribution (Tensor)
 ]]
-function distributions.dirichlet.rnd(alpha)
+function distributions.dir.rnd(alpha)
   if type(alpha) == 'table' then alpha = torch.Tensor(alpha) end
   return _normalize(randomkit.gamma(alpha, torch.Tensor(alpha:size()):fill(1)))
 end
@@ -31,8 +37,8 @@ Returns:
 
 1. Probability density
 ]]
-function distributions.dirichlet.pdf(x, alpha)
-  return cephes.exp(distributions.dirichlet.logpdf(x, alpha))
+function distributions.dir.pdf(...)
+  return cephes.exp(distributions.dirichlet.logpdf(...))
 end
 
 --[[ Log probability density of a multinomial distribution
@@ -48,7 +54,7 @@ Returns:
 
 1. log probability density
 ]]
-function distributions.dirichlet.logpdf(x, alpha)
+function distributions.dir.logpdf(x, alpha)
   assert(x:nElement() == alpha:nElement())
   return torch.log(x):cmul(alpha-1):sum() 
       - cephes.lgam(alpha):sum() 
