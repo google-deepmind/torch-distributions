@@ -1,7 +1,6 @@
 require 'randomkit'
 require 'cephes'
 require 'torch'
-require 'mathx'
 
 distributions.wishart = {}
 

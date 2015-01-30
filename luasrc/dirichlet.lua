@@ -33,6 +33,7 @@ Returns:
 ]]
 function distributions.dirichlet.pdf(x, alpha)
   return cephes.exp(distributions.dirichlet.logpdf(x, alpha))
+end
 
 --[[ Log probability density of a multinomial distribution
     under a Dirichlet distribution
