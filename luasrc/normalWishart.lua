@@ -26,7 +26,7 @@ function distributions.nw.logpdf(mean, precision, loc, lam, scale, ndof)
   assert(scale:size(1) == ndim)
   assert(scale:size(2) == ndim)
   assert(ndof > ndim - 1)
-  return distributions.mvn.logpdf(mean, loc, torch.inverse(lam * precision))
+  return distributions.mvn.logpdf(mean, loc, torch.inverse(precision * lam))
       + distributions.wishart.logpdf(precision, ndof, scale)
 end
 
@@ -67,6 +67,6 @@ Returns:
 ]]
 function distributions.nw.rnd(loc, lam, scale, ndof)
   local precision = distributions.wishart.rnd(ndof, scale:size(1), scale)
-  local mean = distributions.mvn.rnd(loc, torch.inverse(lam * precision))
+  local mean = distributions.mvn.rnd(loc, torch.inverse(precision * lam))
   return mean, precision
 end
