@@ -74,7 +74,7 @@ function distributions.wishart.logpdf(X, ndof, scale)
   assert(distributions.util.isposdef(X))
 
   return (ndof - ndim - 1) * distributions.util.logdet(X) / 2
-      - (torch.inverse(scale) * X):trace()/2
+      - torch.dot(torch.inverse(scale), X) / 2
       - (ndof * ndim) * torch.log(2) / 2
       - ndof * distributions.util.logdet(scale) / 2
       - cephes.lmvgam(ndof/2, ndim)
