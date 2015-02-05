@@ -19,5 +19,16 @@ function myTests.testDirichletPdf()
   tester:assert(distributions.dir.logpdf(pi, alpha))
 end
 
+function myTests.testDirichletEntropy()
+  local alpha = torch.Tensor({0.2,1.0,3.0})
+  tester:assert(distributions.dir.entropy(alpha) > 0)
+end
+
+function myTests.testDirichletKL()
+  local alpha_p = torch.Tensor({0.2,1.0,3.0})
+  local alpha_q = torch.Tensor({0.6,0.2,1.5})
+  tester:assert(distributions.dir.kl(alpha_p,alpha_q))
+end
+
 tester:add(myTests)
 return tester:run()
