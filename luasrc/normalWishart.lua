@@ -84,7 +84,6 @@ function distributions.nw.kl(params_p, params_q)
       }, 
       {
           mu = params_q.loc,
-          sigma = torch.inverse(params_q.scale * params_q.lam)
           lambda = params_q.scale * params_q.lam
       }) 
       + distributions.wishart.kl(params_p, params_q)

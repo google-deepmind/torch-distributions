@@ -308,33 +308,29 @@ function distributions.mvn.kl(params_p, params_q)
     assert(params_p.sigma)
 
     assert(params_q.mu)
-    assert(params_q.sigma)
+    assert(params_q.sigma or params_q.lambda)
 
     local ndim = params_p.mu:size(1)
-    local function checkMat(x)
-        assert(x:dim() == 2)
-        assert(x:size(1) == ndim)
-        assert(x:size(2) == ndim)
-        assert(distributions.util.isposdef(x))
-    end
     assert(params_p.mu:dim() == 1)
-    checkMat(params_p.sigma)
+    assert(distributions.util.isposdef(params_p.sigma))
 
     assert(params_q.mu:size(1) == ndim)
     assert(params_q.mu:dim() == 1)
-    checkMat(params_q.sigma)
 
     local lambda_q
-    if params_q.lambda and pcall(checkMat, params_q.lambda) then
+    if params_q.lambda and
+            pcall(distributions.util.isposdef, params_q.lambda) then
         lambda_q = params_q.lambda
-    else
+    elseif pcall(distributions.util.isposdef, params_q.sigma) then
         lambda_q = torch.inverse(params_q.sigma)
+    else
+        error("Second argument has neither covriance nor precision")
     end
 
     local function qf(A,x) return torch.dot(x, torch.mv(A,x)) end
     return (torch.dot(lambda_q, params_p.sigma)
         + qf(lambda_q, params_q.mu - params_p.mu)
         - ndim
-        + distributions.util.logdet(params_q.sigma)
+        - distributions.util.logdet(lambda_q)
         - distributions.util.logdet(params_p.sigma)) / 2
 end
