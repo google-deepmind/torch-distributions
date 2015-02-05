@@ -122,7 +122,8 @@ function distributions.wishart.entropy(ndof, scale)
   assert(distributions.util.isposdef(scale))
 
   return distributions.wishart._lognorm(ndof, ndim, scale)
-      - (ndof - ndim - 1) distributions.wishart._elogdet(ndof, ndim, scale) / 2
+      - (ndof - ndim - 1) * 
+          distributions.wishart._elogdet(ndof, ndim, scale) / 2
       + (ndim * ndof) / 2
 
   -- return cephes.lmvgam(ndof/2, ndim)
