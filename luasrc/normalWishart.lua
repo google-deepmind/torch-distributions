@@ -70,3 +70,22 @@ function distributions.nw.rnd(loc, lam, scale, ndof)
   local mean = distributions.mvn.rnd(loc, torch.inverse(precision * lam))
   return mean, precision
 end
+
+function distributions.nw.entropy(loc, lam, scale, ndof)
+  return distributions.mvn.entropy(torch.inverse(scale * lam))
+      + distributions.wishart.entropy(ndof, scale)
+end
+
+function distributions.nw.kl(params_p, params_q)
+  return 
+      distributions.mvn.kl({
+          mu = params_p.loc, 
+          sigma = torch.inverse(params_p.scale * params_p.lam)
+      }, 
+      {
+          mu = params_q.loc,
+          sigma = torch.inverse(params_q.scale * params_q.lam)
+          lambda = params_q.scale * params_q.lam
+      }) 
+      + distributions.wishart.kl(params_p, params_q)
+end
