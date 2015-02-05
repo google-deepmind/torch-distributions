@@ -116,11 +116,12 @@ end
 -- scale or inverse scale is provided with q.
 function distributions.wishart.kl(params_p, params_q)
   local ndim = params_q.scale:size(1)
-  ndof_p = params_p.ndof
-  ndof_q = params_q.ndof
+  local ndof_p = params_p.ndof
+  local ndof_q = params_q.ndof
 
-  scale_p = params_p.scale
-  if params_q.invScale
+  local scale_p = params_p.scale
+  local invScale_q
+  if params_q.invScale then
     invScale_q = params_q.invScale
   else
     invScale_q = torch.inverse(params_q.scale)

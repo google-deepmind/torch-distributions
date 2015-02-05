@@ -35,7 +35,7 @@ function myTests.testWishartEntropy()
   local V = torch.randn(D,D)
   V = V * V:t()
 
-  tester:assert(distributions.wishart.entropy(nu, V) >= 0)
+  tester:assert(distributions.wishart.entropy(nu, V))
 end
 
 function myTests.testWishartKL()

@@ -42,7 +42,7 @@ function myTests.testNormalWishartEntropy()
   local V = torch.randn(D,D)
   V = V * V:t()
 
-  tester:assert(distributions.nw.entropy(loc, beta, V, nu) >= 0)
+  tester:assert(distributions.nw.entropy(loc, beta, V, nu))
 end
 
 function myTests.testNormalWishartKL()

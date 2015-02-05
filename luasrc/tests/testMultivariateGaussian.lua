@@ -724,18 +724,18 @@ end
 function myTests.testMultivariateGaussianEntropy()
     local sigma = torch.randn(10,10)
     sigma = sigma * sigma:t()
-    tester:assert(distributions.mvn.entropy(sigma) >= 0)
+    tester:assert(distributions.mvn.entropy(sigma))
 end
 
 function myTests.testMultivariateGaussianKL()
     local p = {
-        mu = torch.randn(10)
+        mu = torch.randn(10),
         sigma = torch.randn(10,10)
     }
     p.sigma = p.sigma * p.sigma:t()
 
     local q = {
-        mu = torch.randn(10)
+        mu = torch.randn(10),
         sigma = torch.randn(10,10)
     }
     q.sigma = q.sigma * q.sigma:t()

@@ -38,7 +38,7 @@ Returns:
 1. Probability density
 ]]
 function distributions.dir.pdf(...)
-  return cephes.exp(distributions.dirichlet.logpdf(...))
+  return cephes.exp(distributions.dir.logpdf(...))
 end
 
 --[[ Log probability density of a multinomial distribution
