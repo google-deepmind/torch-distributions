@@ -35,7 +35,7 @@ function myTests.testWishartEntropy()
   local V = torch.randn(D,D)
   V = V * V:t()
 
-  tester:assert(distributions.wishart.entropy(nu, V) > 0)
+  tester:assert(distributions.wishart.entropy(nu, V) >= 0)
 end
 
 function myTests.testWishartKL()
@@ -53,11 +53,11 @@ function myTests.testWishartKL()
   q.scale = torch.randn(D,D)
   q.scale = torch.randn(D,D)
 
-  tester:assert(distributions.wishart.kl(p,q) > 0)
+  tester:assert(distributions.wishart.kl(p,q) >= 0)
 
   q.inverseScale = torch.inverse(q.scale)
   q.scale = nil
-  tester:assert(distributions.wishart.kl(p,q) > 0)
+  tester:assert(distributions.wishart.kl(p,q) >= 0)
 end
 
 tester:add(myTests)
