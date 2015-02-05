@@ -721,6 +721,28 @@ function myTests.testResize()
     end
 end
 
+function myTests.testMultivariateGaussianEntropy()
+    local sigma = torch.randn(10,10)
+    sigma = sigma * sigma:t()
+    tester:assert(distributions.mvn.entropy(sigma) > 0)
+end
+
+function myTests.testMultivariateGaussianKL()
+    local p = {
+        mu = torch.randn(10)
+        sigma = torch.randn(10,10)
+    }
+    p.sigma = p.sigma * p.sigma:t()
+
+    local q = {
+        mu = torch.randn(10)
+        sigma = torch.randn(10,10)
+    }
+    q.sigma = q.sigma * q.sigma:t()
+
+    tester:assert(distributions.mvn.kl(p,q) > 0)
+end
+
 tester:add(myTests)
 --tester:add(generateSystematicTests())
 return tester:run()
