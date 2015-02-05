@@ -34,5 +34,37 @@ function myTests.testNormalWishartPdf()
   tester:assert(distributions.nw.logpdf(mean, prec, loc, beta, V, nu))
 end
 
+function myTests.testNormalWishartEntropy()
+  local D = 5
+  local loc = torch.randn(D)
+  local beta = 10
+  local nu = D + 10
+  local V = torch.randn(D,D)
+  V = V * V:t()
+
+  tester:assert(distributions.nw.entropy(loc, beta, V, nu) >= 0)
+end
+
+function myTests.testNormalWishartKL()
+  local D = 5
+
+  local p = {}
+  local q = {}
+
+  p.loc = torch.randn(D)
+  p.ndof = D + 5
+  p.scale = torch.randn(D,D)
+  p.scale = p.scale * p.scale:t()
+  p.lam = 3
+
+  q.loc = torch.randn(D)
+  q.ndof = D + 10
+  q.scale = torch.randn(D,D)
+  q.scale = q.scale * q.scale:t()
+  q.lam = 5
+
+  tester:assert(distributions.nw.kl(p,q) >= 0)
+end
+
 tester:add(myTests)
 return tester:run()
