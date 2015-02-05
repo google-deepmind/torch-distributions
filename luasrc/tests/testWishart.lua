@@ -16,8 +16,8 @@ function myTests.testWishartPdf()
   local prec = torch.randn(D,D)
   prec = prec * prec:t()
 
-  tester:assert(distributions.wishart.pdf(prec, nu, D, V))
-  tester:assert(distributions.wishart.logpdf(prec, nu, D, V))
+  tester:assert(distributions.wishart.pdf(prec, nu, V))
+  tester:assert(distributions.wishart.logpdf(prec, nu, V))
 end
 
 function myTests.testWishartRnd()
@@ -48,7 +48,7 @@ function myTests.testWishartKL()
   q.ndof = D + 5
 
   p.scale = torch.randn(D,D)
-  p.scale = V * V:t()
+  p.scale = p.scale * p.scale:t()
 
   q.scale = torch.randn(D,D)
   q.scale = torch.randn(D,D)
