@@ -287,3 +287,54 @@ function distributions.mvn.rnd(...)
         return resultTensor
     end
 end
+
+-- Return the entropy of a multivariate normal.
+-- Just takes the covariance as a parameter, since it's independent of the mean
+function distributions.mvn.entropy(sigma)
+    local ndim = sigma:size(1)
+    assert(sigma:dim() == 2)
+    assert(sigma:size(2) == ndim)
+    assert(distributions.util.isposdef(sigma))
+
+    return ndim * (1 + torch.log(2*3.14159265)) / 2
+            + distributions.util.logdet(sigma) / 2
+end
+
+-- KL[p || q], p and q both multivariate normal
+-- Takes two tables, each with field mu and sigma
+-- and optional field lambda for the precision
+function distributions.mvn.kl(params_p, params_q)
+    assert(params_p.mu)
+    assert(params_p.sigma)
+
+    assert(params_q.mu)
+    assert(params_q.sigma)
+
+    local ndim = params_p.mu:size(1)
+    local function checkMat(x)
+        assert(x:dim() == 2)
+        assert(x:size(1) == ndim)
+        assert(x:size(2) == ndim)
+        assert(distributions.util.isposdef(x))
+    end
+    assert(params_p.mu:dim() == 1)
+    checkMat(params_p.sigma)
+
+    assert(params_q.mu:size(1) == ndim)
+    assert(params_q.mu:dim() == 1)
+    checkMat(params_q.sigma)
+
+    local lambda_q
+    if params_q.lambda and pcall(checkMat, params_q.lambda) then
+        lambda_q = params_q.lambda
+    else
+        lambda_q = torch.inverse(params_q.sigma)
+    end
+
+    local function qf(A,x) return torch.dot(x, torch.mv(A,x)) end
+    return (torch.dot(lambda_q, params_p.sigma)
+        + qf(lambda_q, params_q.mu - params_p.mu)
+        - ndim
+        + distributions.util.logdet(params_q.sigma)
+        - distributions.util.logdet(params_p.sigma)) / 2
+end
