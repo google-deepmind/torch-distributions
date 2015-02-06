@@ -21,7 +21,7 @@ end
 
 function myTests.testDirichletEntropy()
   local alpha = torch.Tensor({0.2,1.0,3.0})
-  tester:assert(distributions.dir.entropy(alpha) > 0)
+  tester:assert(distributions.dir.entropy(alpha))
 end
 
 function myTests.testDirichletKL()

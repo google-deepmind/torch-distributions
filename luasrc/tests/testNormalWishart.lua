@@ -42,7 +42,7 @@ function myTests.testNormalWishartEntropy()
   local V = torch.randn(D,D)
   V = V * V:t()
 
-  tester:assert(distributions.nw.entropy(loc, beta, V, nu) >= 0)
+  tester:assert(distributions.nw.entropy(loc, beta, V, nu))
 end
 
 function myTests.testNormalWishartKL()
@@ -55,13 +55,13 @@ function myTests.testNormalWishartKL()
   p.ndof = D + 5
   p.scale = torch.randn(D,D)
   p.scale = p.scale * p.scale:t()
-  p.lam = 3
+  p.beta = 3
 
   q.loc = torch.randn(D)
   q.ndof = D + 10
   q.scale = torch.randn(D,D)
   q.scale = q.scale * q.scale:t()
-  q.lam = 5
+  q.beta = 5
 
   tester:assert(distributions.nw.kl(p,q) >= 0)
 end

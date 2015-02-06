@@ -48,6 +48,27 @@ function distributions.wishart.rnd(ndof, ndim, scale)
   end
 end
 
+-- Log normalizer for the Wishart distribution
+function distributions.wishart._lognorm(ndof, ndim, scale)
+  return ndof * ndim * cephes.log(2) / 2
+      + ndof * distributions.util.logdet(scale) / 2
+      + cephes.lmvgam(ndof/2, ndim)
+end
+
+-- Log normalizer for the Wishart distribution, with inverse scale
+function distributions.wishart._lognorm2(ndof, ndim, invScale)
+  return ndof * ndim * cephes.log(2) / 2
+      - ndof * distributions.util.logdet(invScale) / 2
+      + cephes.lmvgam(ndof/2, ndim)
+end
+
+-- Expectation of the log determinant of an observation
+function distributions.wishart._elogdet(ndof, ndim, scale)
+  return ndim * cephes.log(2)
+      + distributions.util.logdet(scale)
+      + cephes.digamma((-torch.range(1,ndim) + ndof + 1)/2):sum()
+end
+
 --[[ Log probability density of a positive definite matrix
     under a Wishart distribution
 
@@ -75,9 +96,7 @@ function distributions.wishart.logpdf(X, ndof, scale)
 
   return (ndof - ndim - 1) * distributions.util.logdet(X) / 2
       - torch.dot(torch.inverse(scale), X) / 2
-      - (ndof * ndim) * torch.log(2) / 2
-      - ndof * distributions.util.logdet(scale) / 2
-      - cephes.lmvgam(ndof/2, ndim)
+      - distributions.wishart._lognorm(ndof, ndim, scale)
 end
 
 --[[ Probability density of a positive definite matrix
@@ -102,36 +121,49 @@ function distributions.wishart.entropy(ndof, scale)
   local ndim = scale:size(1)
   assert(distributions.util.isposdef(scale))
 
-  return cephes.lmvgam(ndof/2, ndim)
-      + (ndim + 1) * distributions.util.logdet(scale) / 2
-      + ndim * (ndim + 1) * cephes.log(2) / 2
-      - (ndof - ndim - 1) 
-      * cephes.digamma((-torch.range(1,ndim) + ndof + 1) / 2):sum() / 2
-      + ndim * ndof / 2
+  return distributions.wishart._lognorm(ndof, ndim, scale)
+      - (ndof - ndim - 1) * 
+          distributions.wishart._elogdet(ndof, ndim, scale) / 2
+      + (ndim * ndof) / 2
+
+  -- return cephes.lmvgam(ndof/2, ndim)
+  --     + (ndim + 1) * distributions.util.logdet(scale) / 2
+  --     + ndim * (ndim + 1) * cephes.log(2) / 2
+  --     - (ndof - ndim - 1) 
+  --     * cephes.digamma((-torch.range(1,ndim) + ndof + 1) / 2):sum() / 2
+  --     + ndim * ndof / 2
 end
 
 -- KL divergence between two Wishart distributions
 -- The computation is fastest if we use the scale for
 -- p and inverse scale for q, but works if either the
--- scale or inverse scale is provided with q.
+-- field 'scale' or 'inverseScale' is provided with q.
 function distributions.wishart.kl(params_p, params_q)
-  local ndim = params_q.scale:size(1)
-  ndof_p = params_p.ndof
-  ndof_q = params_q.ndof
+  local ndim = params_p.scale:size(1)
+  local ndof_p = params_p.ndof
+  local ndof_q = params_q.ndof
 
-  scale_p = params_p.scale
-  if params_q.invScale
-    invScale_q = params_q.invScale
+  local scale_p = params_p.scale
+  local invScale_q
+  if params_q.inverseScale then
+    invScale_q = params_q.inverseScale
   else
     invScale_q = torch.inverse(params_q.scale)
   end
 
-  return (ndof_p - ndof_q) 
-      * cephes.digamma((-torch.range(1, ndim) + ndof_p + 1)/2):sum() / 2
-      - ndof_q * distributions.util.logdet(scale_p) / 2
-      - ndof_q * distributions.util.logdet(invScale_q) / 2
+  return (ndof_p - ndof_q) * 
+      distributions.wishart._elogdet(ndof_p, ndim, scale_p)
       - ndof_p * ndim / 2
-      + ndof_p * torch.dot(invScale_q, scale_p) / 2
-      + cephes.lmvgam(ndof_q/2, ndim)
-      - cephes.lmvgam(ndof_p/2, ndim)
+      + ndof_p * torch.dot(invScale_q, scale_p)
+      + distributions.wishart._lognorm2(ndof_q, ndim, invScale_q)
+      - distributions.wishart._lognorm(ndof_p, ndim, scale_p)
+
+  -- return (ndof_p - ndof_q) 
+  --     * cephes.digamma((-torch.range(1, ndim) + ndof_p + 1)/2):sum() / 2
+  --     - ndof_q * distributions.util.logdet(scale_p) / 2
+  --     - ndof_q * distributions.util.logdet(invScale_q) / 2
+  --     - ndof_p * ndim / 2
+  --     + ndof_p * torch.dot(invScale_q, scale_p) / 2
+  --     + cephes.lmvgam(ndof_q/2, ndim)
+  --     - cephes.lmvgam(ndof_p/2, ndim)
 end
