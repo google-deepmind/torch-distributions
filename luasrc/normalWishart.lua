@@ -74,7 +74,7 @@ end
 function distributions.nw.entropy(loc, lam, scale, ndof)
   local ndim = loc:size(1)
   assert(scale:size(1) == ndim)
-  return ndim * (1 + torch.log(2*3.14159265)) / 2
+  return ndim * (1 + torch.log(2*math.pi)) / 2
       - ndim * torch.log(lam) / 2
       - distributions.wishart._elogdet(ndof, ndim, scale) / 2
       + distributions.wishart.entropy(ndof, scale)

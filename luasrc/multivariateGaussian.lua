@@ -296,7 +296,7 @@ function distributions.mvn.entropy(sigma)
     assert(sigma:size(2) == ndim)
     assert(distributions.util.isposdef(sigma))
 
-    return ndim * (1 + torch.log(2*3.14159265)) / 2
+    return ndim * (1 + torch.log(2*math.pi)) / 2
             + distributions.util.logdet(sigma) / 2
 end
 
