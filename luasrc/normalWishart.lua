@@ -84,7 +84,7 @@ function distributions.nw.kl(params_p, params_q)
   local ndim = params_p.loc:size(1)
   local function qf(A, x) return torch.dot(x, torch.mv(A,x)) end
   return distributions.wishart.kl(params_p, params_q)
-      + (ndim * (torch.log(params_p.lam) - torch.log(params_q.lam))
+      + (ndim * (math.log(params_p.lam) - math.log(params_q.lam))
       + ndim * params_q.lam / params_p.lam
       - ndim
       + params_q.lam * params_p.ndof 
