@@ -72,19 +72,21 @@ function distributions.nw.rnd(loc, lam, scale, ndof)
 end
 
 function distributions.nw.entropy(loc, lam, scale, ndof)
-  return distributions.mvn.entropy(torch.inverse(scale * lam))
+  local ndim = loc:size(1)
+  assert(scale:size(1) == ndim)
+  return ndim * (1 + torch.log(2*3.14159265)) / 2
+      - ndim * torch.log(lam) / 2
+      - distributions.wishart._elogdet(ndof, ndim, scale) / 2
       + distributions.wishart.entropy(ndof, scale)
 end
 
 function distributions.nw.kl(params_p, params_q)
-  return 
-      distributions.mvn.kl({
-          mu = params_p.loc, 
-          sigma = torch.inverse(params_p.scale * params_p.lam)
-      }, 
-      {
-          mu = params_q.loc,
-          lambda = params_q.scale * params_q.lam
-      }) 
-      + distributions.wishart.kl(params_p, params_q)
+  local ndim = params_p.loc:size(1)
+  local function qf(A, x) return torch.dot(x, torch.mv(A,x)) end
+  return distributions.wishart.kl(params_p, params_q)
+      + (ndim * (torch.log(params_p.lam) - torch.log(params_q.lam))
+      + ndim * params_q.lam / params_p.lam
+      - ndim
+      + params_q.lam * params_p.ndof 
+      * qf(params_p.scale, params_q.loc - params_p.loc)) / 2
 end
