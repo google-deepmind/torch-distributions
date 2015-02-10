@@ -741,6 +741,9 @@ function myTests.testMultivariateGaussianKL()
     q.sigma = q.sigma * q.sigma:t()
 
     tester:assert(distributions.mvn.kl(p,q) >= 0)
+    tester:assert(distributions.mvn.kl(q,p) >= 0)
+    tester:asserteq(distributions.mvn.kl(p,p), 0)
+    tester:asserteq(distributions.mvn.kl(q,q), 0)
 end
 
 tester:add(myTests)

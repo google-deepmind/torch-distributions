@@ -64,6 +64,9 @@ function myTests.testNormalWishartKL()
   q.beta = 5
 
   tester:assert(distributions.nw.kl(p,q) >= 0)
+  tester:assert(distributions.nw.kl(q,p) >= 0)
+  tester:asserteq(distributions.nw.kl(p,p), 0)
+  tester:asserteq(distributions.nw.kl(q,q), 0)
 end
 
 tester:add(myTests)

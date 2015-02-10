@@ -58,6 +58,9 @@ function myTests.testWishartKL()
   q.inverseScale = torch.inverse(q.scale)
   q.scale = nil
   tester:assert(distributions.wishart.kl(p,q) >= 0)
+  tester:assert(distributions.wishart.kl(q,p) >= 0)
+  tester:asserteq(distributions.wishart.kl(p,p), 0)
+  tester:asserteq(distributions.wishart.kl(q,q), 0)
 end
 
 tester:add(myTests)
