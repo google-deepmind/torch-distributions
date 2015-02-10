@@ -141,7 +141,7 @@ function distributions.wishart.kl(q, p)
   end
 
   return (q.ndof - p.ndof) * 
-      distributions.wishart._elogdet(q.ndof, ndim, q.scale)
+      distributions.wishart._elogdet(q.ndof, ndim, q.scale) / 2
       - q.ndof * ndim / 2
       + q.ndof * torch.dot(invScale_p, q.scale) / 2
       + distributions.wishart._lognorm2(p.ndof, ndim, invScale_p)
