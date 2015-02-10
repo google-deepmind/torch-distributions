@@ -115,5 +115,6 @@ torch.include("distributions", "wishart.lua")
 torch.include("distributions", "normalWishart.lua")
 torch.include("distributions", "chi2test.lua")
 torch.include("distributions", "kstest.lua")
+torch.include("distributions", "gamma.lua")
 
 return distributions
