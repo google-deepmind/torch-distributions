@@ -29,8 +29,8 @@ function myTests.testDirichletKL()
   local alpha_q = torch.Tensor({0.6,0.2,1.5})
   tester:assert(distributions.dir.kl(alpha_p,alpha_q) >= 0)
   tester:assert(distributions.dir.kl(alpha_q,alpha_p) >= 0)
-  tester:asserteq(distributions.dir.kl(alpha_p,alpha_p), 0)
-  tester:asserteq(distributions.dir.kl(alpha_q,alpha_q), 0)
+  tester:assertalmosteq(distributions.dir.kl(alpha_p,alpha_p), 0, 1e-12)
+  tester:assertalmosteq(distributions.dir.kl(alpha_q,alpha_q), 0, 1e-12)
 end
 
 tester:add(myTests)

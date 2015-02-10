@@ -51,16 +51,16 @@ function myTests.testWishartKL()
   p.scale = p.scale * p.scale:t()
 
   q.scale = torch.randn(D,D)
-  q.scale = torch.randn(D,D)
+  q.scale = q.scale * q.scale:t()
 
   tester:assert(distributions.wishart.kl(p,q) >= 0)
+  tester:assert(distributions.wishart.kl(q,p) >= 0)
+  tester:assertalmosteq(distributions.wishart.kl(p,p), 0, 1e-12)
+  tester:assertalmosteq(distributions.wishart.kl(q,q), 0, 1e-12)
 
   q.inverseScale = torch.inverse(q.scale)
   q.scale = nil
   tester:assert(distributions.wishart.kl(p,q) >= 0)
-  tester:assert(distributions.wishart.kl(q,p) >= 0)
-  tester:asserteq(distributions.wishart.kl(p,p), 0)
-  tester:asserteq(distributions.wishart.kl(q,q), 0)
 end
 
 tester:add(myTests)

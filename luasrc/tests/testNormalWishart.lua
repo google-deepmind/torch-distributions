@@ -65,8 +65,8 @@ function myTests.testNormalWishartKL()
 
   tester:assert(distributions.nw.kl(p,q) >= 0)
   tester:assert(distributions.nw.kl(q,p) >= 0)
-  tester:asserteq(distributions.nw.kl(p,p), 0)
-  tester:asserteq(distributions.nw.kl(q,q), 0)
+  tester:assertalmosteq(distributions.nw.kl(p,p), 0, 1e-12)
+  tester:assertalmosteq(distributions.nw.kl(q,q), 0, 1e-12)
 end
 
 tester:add(myTests)
