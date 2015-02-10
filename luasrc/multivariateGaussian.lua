@@ -328,7 +328,7 @@ function distributions.mvn.kl(q, p)
     end
 
     local function qf(A,x) return torch.dot(x, torch.mv(A,x)) end
-    return (torch.dot(lambda_q, params_p.sigma)
+    return (torch.dot(lambda_p, q.sigma)
         + qf(lambda_p, p.mu - q.mu)
         - ndim
         - distributions.util.logdet(lambda_p)
