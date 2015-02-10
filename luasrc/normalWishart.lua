@@ -80,13 +80,13 @@ function distributions.nw.entropy(loc, beta, scale, ndof)
       + distributions.wishart.entropy(ndof, scale)
 end
 
-function distributions.nw.kl(params_p, params_q)
-  local ndim = params_p.loc:size(1)
+function distributions.nw.kl(q, p)
+  local ndim = q.loc:size(1)
   local function qf(A, x) return torch.dot(x, torch.mv(A,x)) end
-  return distributions.wishart.kl(params_p, params_q)
-      + (ndim * (math.log(params_p.beta) - math.log(params_q.beta))
-      + ndim * params_q.beta / params_p.beta
+  return distributions.wishart.kl(q, p)
+      + (ndim * (math.log(q.beta) - math.log(p.beta))
+      + ndim * p.beta / q.beta
       - ndim
-      + params_q.beta * params_p.ndof 
-      * qf(params_p.scale, params_q.loc - params_p.loc)) / 2
+      + p.beta * q.ndof 
+      * qf(q.scale, p.loc - q.loc)) / 2
 end

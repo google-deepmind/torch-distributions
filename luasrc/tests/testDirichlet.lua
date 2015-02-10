@@ -25,9 +25,12 @@ function myTests.testDirichletEntropy()
 end
 
 function myTests.testDirichletKL()
-  local alpha_p = torch.Tensor({0.2,1.0,3.0})
-  local alpha_q = torch.Tensor({0.6,0.2,1.5})
-  tester:assert(distributions.dir.kl(alpha_p,alpha_q))
+  local p = {alpha = torch.Tensor({0.2,1.0,3.0})}
+  local q = {alpha = torch.Tensor({0.6,0.2,1.5})}
+  tester:assert(distributions.dir.kl(q,p) >= 0)
+  tester:assert(distributions.dir.kl(p,q) >= 0)
+  tester:assertalmosteq(distributions.dir.kl(p,p), 0, 1e-12)
+  tester:assertalmosteq(distributions.dir.kl(q,q), 0, 1e-12)
 end
 
 tester:add(myTests)
