@@ -21,6 +21,42 @@ local function qks(z)
     return 2 * (x - x^4 - x^9)
 end
 
+--[[! One-sample Kolmogorov Smirnov test
+
+One-samples Kolmogorov-Smirnov test [1]. Implements the pks and kqs functions from [2].
+
+[1] http://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test
+[2] Press, W. H. et al. (2007). Numerical recipes : the art of scientific computing. Cambridge, UK; New York: Cambridge University Press.
+
+
+@param x Tensor of samples
+@param cdf Function returning the value of CDF of interest at a point
+
+@return p-value of the test
+@return value of the test statistic
+]]
+function distributions.ksone(x, cdf)
+
+    local d = 0
+    local fo = 0
+    local n = x:nElement()
+    local en = n
+
+    x = x:sort()
+    for j = 1, n do
+        local fn = j / en
+        local ff = cdf(x[j])
+        local dt = math.max(math.abs(fo - ff), math.abs(fn - ff))
+        d = math.max(d, dt)
+        fo = fn
+    end
+
+    en = math.sqrt(en)
+    local p = qks( (en + 0.12 + 0.11/en) * d)
+
+    return p, d
+end
+
 --[[! Two-sample Kolmogorov Smirnov test
 
 Two-samples Kolmogorov-Smirnov test [1]. Implements the pks and kqs functions from [2].
