@@ -209,6 +209,16 @@ Cumulative distribution function of a Laplace distribution with location `loc` a
 
 Besides the generators, there are some functions for checking whether two samples come from the same unspecified distribution using [`Kolmogorov-Smirnov two-sample test`](http://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test#Two-sample_Kolmogorov.E2.80.93Smirnov_test), and whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
 
+###ksone(x1, cdf)
+
+Perform a one-sample Kolmogorov-Smirnov test, with null hypothesis "sample x comes from the distribution whose cumulative distribution function is given".
+
+* `x` should be a vector of sample values to test
+* `cdf` should be a function that takes a number and return the cumulative distribution function at this point
+
+Returns: `p`, `d` - the p-value and the statistic the test, respectively.
+
+
 ###kstwo(x1, x2)
 
 Perform a two-sample Kolmogorov-Smirnov test, with null hypothesis "sample x1 and sample x2 come from the same distribution".
