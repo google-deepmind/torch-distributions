@@ -152,21 +152,24 @@
 <a href="#toc_37">Hypothesis Testing</a>
 <ul>
 <li>
-<a href="#toc_38">kstwo(x1, x2)</a>
+<a href="#toc_38">ksone(x1, cdf)</a>
 </li>
 <li>
-<a href="#toc_39">chi2Uniform(x, [low, up, nBins])</a>
+<a href="#toc_39">kstwo(x1, x2)</a>
 </li>
 <li>
-<a href="#toc_40">chi2TestCDF(x, cdf, cdfParams, [nBins])</a>
+<a href="#toc_40">chi2Uniform(x, [low, up, nBins])</a>
 </li>
 <li>
-<a href="#toc_41">chi2Gaussian(x, mu, sigma, [nBins])</a>
+<a href="#toc_41">chi2TestCDF(x, cdf, cdfParams, [nBins])</a>
+</li>
+<li>
+<a href="#toc_42">chi2Gaussian(x, mu, sigma, [nBins])</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_42">Unit Tests</a>
+<a href="#toc_43">Unit Tests</a>
 </li>
 </ul>
 </li>
@@ -392,7 +395,18 @@ or a new tensor of R rows with N columns corresponding to the categories given.<
 
 <p>Besides the generators, there are some functions for checking whether two samples come from the same unspecified distribution using <a href="http://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test#Two-sample_Kolmogorov.E2.80.93Smirnov_test"><code>Kolmogorov-Smirnov two-sample test</code></a>, and whether a sample fits a particular distribution, using <a href="http://en.wikipedia.org/wiki/Pearson&#x27;s_chi-squared_test"><code>Pearson&#39;s chi-squared test</code></a>.</p>
 
-<h3 id="toc_38">kstwo(x1, x2)</h3>
+<h3 id="toc_38">ksone(x1, cdf)</h3>
+
+<p>Perform a one-sample Kolmogorov-Smirnov test, with null hypothesis &quot;sample x comes from the distribution whose cumulative distribution function is given&quot;.</p>
+
+<ul>
+<li><code>x</code> should be a vector of sample values to test</li>
+<li><code>cdf</code> should be a function that takes a number and return the cumulative distribution function at this point</li>
+</ul>
+
+<p>Returns: <code>p</code>, <code>d</code> - the p-value and the statistic the test, respectively.</p>
+
+<h3 id="toc_39">kstwo(x1, x2)</h3>
 
 <p>Perform a two-sample Kolmogorov-Smirnov test, with null hypothesis &quot;sample x1 and sample x2 come from the same distribution&quot;.</p>
 
@@ -403,7 +417,7 @@ or a new tensor of R rows with N columns corresponding to the categories given.<
 
 <p>Returns: <code>p</code>, <code>d</code> - the p-value and the statistic the test, respectively.</p>
 
-<h3 id="toc_39">chi2Uniform(x, [low, up, nBins])</h3>
+<h3 id="toc_40">chi2Uniform(x, [low, up, nBins])</h3>
 
 <p>Perform a chi-squared test, with null hypothesis &quot;sample x is from a continuous uniform distribution on the interval <code>[low, up]</code>&quot;.</p>
 
@@ -416,7 +430,7 @@ or a new tensor of R rows with N columns corresponding to the categories given.<
 
 <p>Returns: <code>p</code>, <code>chi2</code> - the p-value and the chi-squared score of the test, respectively.</p>
 
-<h3 id="toc_40">chi2TestCDF(x, cdf, cdfParams, [nBins])</h3>
+<h3 id="toc_41">chi2TestCDF(x, cdf, cdfParams, [nBins])</h3>
 
 <p>Perform a chi-squared test, with null hypothesis &quot;sample x is from a distribution with cdf <code>cdf</code>, parameterised by <code>cdfParams</code>&quot;.</p>
 
@@ -429,7 +443,7 @@ or a new tensor of R rows with N columns corresponding to the categories given.<
 
 <p>Returns: <code>p</code>, <code>chi2</code> - the p-value and the chi-squared score of the test, respectively.</p>
 
-<h3 id="toc_41">chi2Gaussian(x, mu, sigma, [nBins])</h3>
+<h3 id="toc_42">chi2Gaussian(x, mu, sigma, [nBins])</h3>
 
 <p>Perform a chi-squared test, with null hypothesis &quot;sample x is from a Normal distribution with mean <code>mu</code> and variance <code>sigma</code>&quot;.</p>
 
@@ -442,7 +456,7 @@ or a new tensor of R rows with N columns corresponding to the categories given.<
 
 <p>Returns: <code>p</code>, <code>chi2</code> - the p-value and the chi-squared score of the test, respectively.</p>
 
-<h2 id="toc_42">Unit Tests</h2>
+<h2 id="toc_43">Unit Tests</h2>
 
 <p>Last but not least, the unit tests are in the folder
 <a href="https://github.com/jucor/torch-distributions/tree/master/luasrc/tests"><code>luasrc/tests</code></a>. You can run them from your local clone of the repostiory with:</p>
