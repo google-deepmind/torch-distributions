@@ -264,11 +264,11 @@ Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respec
 ##Unit Tests
 
 Last but not least, the unit tests are in the folder
-[`luasrc/tests`](https://github.com/jucor/torch-distributions/tree/master/luasrc/tests). You can run them from your local clone of the repostiory with:
+[`distributions/tests`](https://github.com/jucor/torch-distributions/tree/master/distributions/tests). You can run them from your local clone of the repostiory with:
 
 ```bash
 git clone https://www.github.com/jucor/torch-distributions
-find torch-distributions/luasrc/tests -name "test*lua" -exec torch {} \;
+find torch-distributions/distributions/tests -name "test*lua" -exec torch {} \;
 ```
 
 Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.
