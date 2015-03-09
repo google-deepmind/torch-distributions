@@ -193,7 +193,7 @@ Cumulative distribution function of a Chi square distribution with `dof` degrees
 
 ###Laplace: laplace
 
-####laplage.pdf(x, loc, scale)
+####laplace.pdf(x, loc, scale)
 
 Probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
