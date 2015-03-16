@@ -125,45 +125,25 @@ function distributions.wishart.entropy(ndof, scale)
       - (ndof - ndim - 1) * 
           distributions.wishart._elogdet(ndof, ndim, scale) / 2
       + (ndim * ndof) / 2
-
-  -- return cephes.lmvgam(ndof/2, ndim)
-  --     + (ndim + 1) * distributions.util.logdet(scale) / 2
-  --     + ndim * (ndim + 1) * cephes.log(2) / 2
-  --     - (ndof - ndim - 1) 
-  --     * cephes.digamma((-torch.range(1,ndim) + ndof + 1) / 2):sum() / 2
-  --     + ndim * ndof / 2
 end
 
 -- KL divergence between two Wishart distributions
 -- The computation is fastest if we use the scale for
--- p and inverse scale for q, but works if either the
--- field 'scale' or 'inverseScale' is provided with q.
-function distributions.wishart.kl(params_p, params_q)
-  local ndim = params_p.scale:size(1)
-  local ndof_p = params_p.ndof
-  local ndof_q = params_q.ndof
-
-  local scale_p = params_p.scale
-  local invScale_q
-  if params_q.inverseScale then
-    invScale_q = params_q.inverseScale
+-- q and inverse scale for p, but works if either the
+-- field 'scale' or 'inverseScale' is provided with p.
+function distributions.wishart.kl(q, p)
+  local ndim = q.scale:size(1)
+  local invScale_p
+  if p.inverseScale then
+    invScale_p = p.inverseScale
   else
-    invScale_q = torch.inverse(params_q.scale)
+    invScale_p = torch.inverse(p.scale)
   end
 
-  return (ndof_p - ndof_q) * 
-      distributions.wishart._elogdet(ndof_p, ndim, scale_p)
-      - ndof_p * ndim / 2
-      + ndof_p * torch.dot(invScale_q, scale_p)
-      + distributions.wishart._lognorm2(ndof_q, ndim, invScale_q)
-      - distributions.wishart._lognorm(ndof_p, ndim, scale_p)
-
-  -- return (ndof_p - ndof_q) 
-  --     * cephes.digamma((-torch.range(1, ndim) + ndof_p + 1)/2):sum() / 2
-  --     - ndof_q * distributions.util.logdet(scale_p) / 2
-  --     - ndof_q * distributions.util.logdet(invScale_q) / 2
-  --     - ndof_p * ndim / 2
-  --     + ndof_p * torch.dot(invScale_q, scale_p) / 2
-  --     + cephes.lmvgam(ndof_q/2, ndim)
-  --     - cephes.lmvgam(ndof_p/2, ndim)
+  return (q.ndof - p.ndof) * 
+      distributions.wishart._elogdet(q.ndof, ndim, q.scale) / 2
+      - q.ndof * ndim / 2
+      + q.ndof * torch.dot(invScale_p, q.scale) / 2
+      + distributions.wishart._lognorm2(p.ndof, ndim, invScale_p)
+      - distributions.wishart._lognorm(q.ndof, ndim, q.scale)
 end

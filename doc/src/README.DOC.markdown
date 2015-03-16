@@ -12,6 +12,7 @@ cd doc/src
 bundle exec jekyll build --source ./ --destination ../html
 {%endhighlight}
 
+Go back to the root of the git repository.
 Then merge to the gh-pages branch:
 {%highlight bash}
 git subtree split --prefix doc/html --branch gh-pages

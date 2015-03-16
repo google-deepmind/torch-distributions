@@ -69,13 +69,13 @@ function distributions.dir.entropy(alpha)
       - cephes.digamma(alpha):cmul(alpha-1):sum()
 end
 
--- returns the KL divergence KL[p || q] betweeen a distribution p with
--- parameters alpha_p and a distribution q with parameters alpha_q
-function distributions.dir.kl(alpha_p, alpha_q)
-  local alpha0_p = alpha_p:sum()
-  local alpha0_q = alpha_q:sum()
-  return cephes.lgam(alpha0_p) - cephes.lgam(alpha0_q)
-      - cephes.lgam(alpha_p):sum() + cephes.lgam(alpha_q):sum()
-      + (alpha0_q - alpha0_p) * cephes.digamma(alpha0_p)
-      + cephes.digamma(alpha_p):cmul(alpha_p - alpha_q):sum()
+-- returns the KL divergence KL[q || p] 
+-- q and p are both tables with field 'alpha', a vector of pseudocounts
+function distributions.dir.kl(q, p)
+  local q0 = q.alpha:sum()
+  local p0 = p.alpha:sum()
+  return cephes.lgam(q0) - cephes.lgam(p0)
+      - cephes.lgam(q.alpha):sum() + cephes.lgam(p.alpha):sum()
+      + (p0 - q0) * cephes.digamma(q0)
+      + cephes.digamma(q.alpha):cmul(q.alpha - p.alpha):sum()
 end

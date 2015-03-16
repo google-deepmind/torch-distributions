@@ -303,34 +303,34 @@ end
 -- KL[p || q], p and q both multivariate normal
 -- Takes two tables, each with field mu and sigma
 -- and optional field lambda for the precision
-function distributions.mvn.kl(params_p, params_q)
-    assert(params_p.mu)
-    assert(params_p.sigma)
+function distributions.mvn.kl(q, p)
+    assert(q.mu)
+    assert(q.sigma)
 
-    assert(params_q.mu)
-    assert(params_q.sigma or params_q.lambda)
+    assert(p.mu)
+    assert(p.sigma or p.lambda)
 
-    local ndim = params_p.mu:size(1)
-    assert(params_p.mu:dim() == 1)
-    assert(distributions.util.isposdef(params_p.sigma))
+    local ndim = q.mu:size(1)
+    assert(q.mu:dim() == 1)
+    assert(distributions.util.isposdef(q.sigma))
 
-    assert(params_q.mu:size(1) == ndim)
-    assert(params_q.mu:dim() == 1)
+    assert(p.mu:size(1) == ndim)
+    assert(p.mu:dim() == 1)
 
-    local lambda_q
-    if params_q.lambda and
-            pcall(distributions.util.isposdef, params_q.lambda) then
-        lambda_q = params_q.lambda
-    elseif pcall(distributions.util.isposdef, params_q.sigma) then
-        lambda_q = torch.inverse(params_q.sigma)
+    local lambda_p
+    if p.lambda and
+            pcall(distributions.util.isposdef, p.lambda) then
+        lambda_p = p.lambda
+    elseif pcall(distributions.util.isposdef, p.sigma) then
+        lambda_p = torch.inverse(p.sigma)
     else
         error("Second argument has neither covriance nor precision")
     end
 
     local function qf(A,x) return torch.dot(x, torch.mv(A,x)) end
-    return (torch.dot(lambda_q, params_p.sigma)
-        + qf(lambda_q, params_q.mu - params_p.mu)
+    return (torch.dot(lambda_p, q.sigma)
+        + qf(lambda_p, p.mu - q.mu)
         - ndim
-        - distributions.util.logdet(lambda_q)
-        - distributions.util.logdet(params_p.sigma)) / 2
+        - distributions.util.logdet(lambda_p)
+        - distributions.util.logdet(q.sigma)) / 2
 end
