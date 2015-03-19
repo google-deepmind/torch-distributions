@@ -133,7 +133,7 @@ function testCategorical.testUnsortedIsNotSorted()
     tester:assert(isSamplerSorted('iid') == false, 'Indices should NOT be sorted')
 end
 
-function assert_unbiased(sampler)
+local function assert_unbiased(sampler)
     local p = torch.ones(10)
     local nrep = 10000
     local countOne = 0
@@ -149,14 +149,23 @@ function assert_unbiased(sampler)
 end
 
 function testCategorical.testSpeed()
-    nBins = 10000
-    nSamples = 10
-    p = torch.ones(nBins)
-    timer = torch.Timer()
-    x = dist.cat.rnd(nSamples, p)
-    elapsedDiscrete = timer:time().real
-    x = dist.cat.rnd(nSamples, p, {type = 'dichotomy'})
-    elapsedDichotomy = timer:time().real - elapsedDiscrete
+    local nBins = 10000
+    local nSamples = 10
+    local p = torch.ones(nBins)
+    local repeats = 100
+
+    local timerDiscrete = torch.Timer()
+    for i=1,repeats do
+        local x = dist.cat.rnd(nSamples, p)
+    end
+    local elapsedDiscrete = timerDiscrete:time().real
+
+    local timerDichotomy = torch.Timer()
+    for i=1,repeats do
+        local x = dist.cat.rnd(nSamples, p, {type = 'dichotomy'})
+    end
+    local elapsedDichotomy = timerDichotomy:time().real - elapsedDiscrete
+    
     tester:assert(elapsedDiscrete > elapsedDichotomy, 'Naive linear search is faster than dichotomic !')
 end
 
