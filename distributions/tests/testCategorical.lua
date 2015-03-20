@@ -148,27 +148,6 @@ local function assert_unbiased(sampler)
     tester:assert(countOne < 3*nrep/10, 'Sampled 1 way too often')
 end
 
-function testCategorical.testSpeed()
-    local nBins = 10000
-    local nSamples = 10
-    local p = torch.ones(nBins)
-    local repeats = 100
-
-    local timerDiscrete = torch.Timer()
-    for i=1,repeats do
-        local x = dist.cat.rnd(nSamples, p)
-    end
-    local elapsedDiscrete = timerDiscrete:time().real
-
-    local timerDichotomy = torch.Timer()
-    for i=1,repeats do
-        local x = dist.cat.rnd(nSamples, p, {type = 'dichotomy'})
-    end
-    local elapsedDichotomy = timerDichotomy:time().real - elapsedDiscrete
-    
-    tester:assert(elapsedDiscrete > elapsedDichotomy, 'Naive linear search is faster than dichotomic !')
-end
-
 function testCategorical.testUnsortedWithOneSample()
     assert_unbiased('iid')
 end
@@ -183,9 +162,13 @@ end
 
 function testCategorical.testMultivariate()
 --[[
-This would be a convenience method. If p is a NxM tensor, the result would be to generate N independent samples from N categorical distributions. The i-th sample would be obtained with probabilities given by the vector p[i].
+This would be a convenience method. If p is a NxM tensor, the result would be
+to generate N independent samples from N categorical distributions. The i-th
+sample would be obtained with probabilities given by the vector p[i].
 
-Use case: sampling from the output of a neural network having a softmax output layer. N in this case corresponds to the size of the minibatch. When used in conjunction with torch.nn, this would allow for the following:
+Use case: sampling from the output of a neural network having a softmax output
+layer. N in this case corresponds to the size of the minibatch. When used in
+conjunction with torch.nn, this would allow for the following:
 ]]
     --- Without result tensor nor number of samples
     local p = torch.Tensor{{.1, .2, .7},{.9, 0, .1}}
