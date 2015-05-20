@@ -30,7 +30,7 @@ for _, bins in ipairs(nBins) do
         elapsedDiscrete/elapsedDichotomy)
     else
       conclusion = string.format('Dichotomy faster than linear by x%0.3f',
-        elapsedDiscrete/elapsedDichotomy)
+        elapsedDichotomy/elapsedDiscrete)
     end
     print(string.format('%4d samples, %7d bins (x100): %0.4fs (linear) ' ..
       'vs %0.4fs (dichotomic). %s', samples, bins, elapsedDiscrete, elapsedDichotomy, conclusion))
