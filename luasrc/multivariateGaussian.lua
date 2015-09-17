@@ -41,9 +41,10 @@ function distributions.mvn.logpdf(x, mu, sigma, options)
     -- For a diagonal covariance matrix, we allow passing a vector of the diagonal entries
     if sigma:dim() == 1 then
         local D = sigma:size(1)
-        decomposed  = sigma
         if not options.cholesky then
-            decomposed:sqrt()
+            decomposed = sigma:clone():sqrt()
+        else
+            decomposed = sigma
         end
         logdet = decomposed:clone():log():sum()
         transformed = torch.cdiv(x, decomposed:resize(1, D):expand(nResults, D))
