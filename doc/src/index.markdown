@@ -58,7 +58,7 @@ The covariance matrix passed to multivariate gaussian functions needs only be po
 
 Those functions also accept the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
-####mnv.pdf(x, mu, M, [options])
+####mvn.pdf(x, mu, M, [options])
 
 Probability density function of a multivariate Normal distribution with mean `mu` and covariance or cholesky of the covariance specified in `M`, evaluated at `x`. 
 
