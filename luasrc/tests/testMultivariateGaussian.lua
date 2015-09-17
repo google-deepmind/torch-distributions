@@ -76,7 +76,7 @@ local nonStandardGaussianLogPDFWindow = torch.Tensor({
     -34.7757636135338, -24.3313191690894, -16.1090969468671, -10.1090969468671,
     -6.33131916908937, -4.77576361353381, -5.44243028020048, -8.33131916908936,
     -13.4424302802005}):resize(121,1)
-    
+
 function myTests.multivariateGaussianPDF()
 
     -- Standard 2-d gaussian, singleton samples, no result tensor
@@ -241,6 +241,174 @@ function myTests.multivariateGaussianPDFMultiple9()
     local expected = torch.Tensor({0.717583785682725, 0.457551622898630, 0.909950056726693})
     local got = distributions.mvn.pdf(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
+end
+
+-- Make sure that the inputs are not modified
+
+-- Try calling NxD, D, DxD
+function myTests.multivariateGaussianPDFSideEffects1()
+
+    -- Standard 2-d gaussian, multiple samples, no result tensor
+    local D = 2
+    local N = 11
+
+    -- Points at which to evaluate the PDF
+    local inputXs = torch.linspace(-1, 1, N)
+    local mu = torch.Tensor({0.2, -0.2})
+    local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
+
+    local x = torch.Tensor(N*N, D)
+    for i = 1, N do
+        for j = 1, N do
+            x[(i-1)*N+j][1] = inputXs[i]
+            x[(i-1)*N+j][2] = inputXs[j]
+        end
+    end
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
+end
+
+-- Try calling OnexD, D, DxD
+function myTests.multivariateGaussianPDFSideEffects2()
+    local x = torch.Tensor({{0, 0}})
+    local mu = torch.Tensor({0.2, -0.2})
+    local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
+end
+
+-- Try calling D, OnexD, DxD
+function myTests.multivariateGaussianPDFSideEffects3()
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({{-0.2, 0.2}})
+    local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
+end
+
+-- Try calling D, NxD, DxD
+function myTests.multivariateGaussianPDFSideEffects4()
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({{-0.2, 0.2}, {-0.4, 0.4}, {0.0, 0.0}})
+    local sigma = torch.Tensor({{0.05, 0.04}, {0.04, 0.05}})
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
+end
+
+-- Now with diagonal covariance only
+-- Try calling D, D, D
+function myTests.multivariateGaussianPDFSideEffects5()
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({-0.2, 0.2})
+    local sigma = torch.Tensor({0.05, 0.4})
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
+end
+
+-- Try calling D, 1-D, D
+function myTests.multivariateGaussianPDFSideEffects6()
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({{-0.2, 0.2}})
+    local sigma = torch.Tensor({0.05, 0.4})
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
+end
+
+-- Try calling D, NxD, D
+function myTests.multivariateGaussianPDFSideEffects7()
+    local x = torch.Tensor({0, 0})
+    local mu = torch.Tensor({{-0.2, 0.2}, {-0.4, 0.4}, {0.0, 0.0}})
+    local sigma = torch.Tensor({0.05, 0.4})
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
+end
+
+-- Try calling OnexD, D, D
+function myTests.multivariateGaussianPDFSideEffects8()
+    local x = torch.Tensor({{0, 0}})
+    local mu = torch.Tensor({-0.2, 0.2})
+    local sigma = torch.Tensor({0.05, 0.4})
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
+end
+
+-- Try calling NxD, D, D
+function myTests.multivariateGaussianPDFSideEffects9()
+    local x = torch.Tensor({{0, 0}, {0.1, 0.2}, {-0.3, -0.1}})
+    local mu = torch.Tensor({-0.2, 0.2})
+    local sigma = torch.Tensor({0.05, 0.4})
+
+    local x2 = x:clone()
+    local mu2 = mu:clone()
+    local sigma2 = sigma:clone()
+
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
+    tester:assertTensorEq(x, x2, 0, "x should not be modified")
+    tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
+    tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
 end
 
 -- Same with result as first element
