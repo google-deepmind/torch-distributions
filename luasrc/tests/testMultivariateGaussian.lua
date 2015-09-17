@@ -269,6 +269,8 @@ function myTests.multivariateGaussianPDFSideEffects1()
     local mu2 = mu:clone()
     local sigma2 = sigma:clone()
 
+    local got = distributions.mvn.pdf(x, mu, sigma)
+
     tester:assertTensorEq(x, x2, 0, "x should not be modified")
     tester:assertTensorEq(mu, mu2, 0, "mu should not be modified")
     tester:assertTensorEq(sigma, sigma2, 0, "sigma should not be modified")
