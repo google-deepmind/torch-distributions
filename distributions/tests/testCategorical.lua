@@ -42,6 +42,7 @@ function testCategorical.testCallResult()
     tester:asserteq(x, res, '2 params with did not use result DoubleTensor')
 
     -- call with 3 parameters
+    local options = {type = 'stratified'}
     x = dist.cat.rnd(res, p, options)
     tester:asserteq(x, res, '3 params did not use result tensor')
 end
