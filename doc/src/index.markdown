@@ -193,7 +193,7 @@ Cumulative distribution function of a Chi square distribution with `dof` degrees
 
 ###Laplace: laplace
 
-####laplage.pdf(x, loc, scale)
+####laplace.pdf(x, loc, scale)
 
 Probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
@@ -208,6 +208,16 @@ Cumulative distribution function of a Laplace distribution with location `loc` a
 ##Hypothesis Testing
 
 Besides the generators, there are some functions for checking whether two samples come from the same unspecified distribution using [`Kolmogorov-Smirnov two-sample test`](http://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test#Two-sample_Kolmogorov.E2.80.93Smirnov_test), and whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
+
+###ksone(x1, cdf)
+
+Perform a one-sample Kolmogorov-Smirnov test, with null hypothesis "sample x comes from the distribution whose cumulative distribution function is given".
+
+* `x` should be a vector of sample values to test
+* `cdf` should be a function that takes a number and return the cumulative distribution function at this point
+
+Returns: `p`, `d` - the p-value and the statistic the test, respectively.
+
 
 ###kstwo(x1, x2)
 
@@ -254,11 +264,11 @@ Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respec
 ##Unit Tests
 
 Last but not least, the unit tests are in the folder
-[`luasrc/tests`](https://github.com/jucor/torch-distributions/tree/master/luasrc/tests). You can run them from your local clone of the repostiory with:
+[`distributions/tests`](https://github.com/jucor/torch-distributions/tree/master/distributions/tests). You can run them from your local clone of the repostiory with:
 
 ```bash
 git clone https://www.github.com/jucor/torch-distributions
-find torch-distributions/luasrc/tests -name "test*lua" -exec torch {} \;
+find torch-distributions/distributions/tests -name "test*lua" -exec torch {} \;
 ```
 
 Those tests will soone be automatically installed with the package, once I sort out a bit of CMake resistance.

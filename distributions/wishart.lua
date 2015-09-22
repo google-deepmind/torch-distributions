@@ -42,9 +42,9 @@ function distributions.wishart.rnd(ndof, ndim, scale)
 
   if scale then
       local cholScale = torch.potrf(scale)
-      return cholScale:t() * T * T:t() * cholScale
+      return cholScale:t() * T:t() * T * cholScale
   else
-      return T * T:t()
+      return T:t() * T
   end
 end
 

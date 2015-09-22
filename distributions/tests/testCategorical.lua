@@ -42,6 +42,7 @@ function testCategorical.testCallResult()
     tester:asserteq(x, res, '2 params with did not use result DoubleTensor')
 
     -- call with 3 parameters
+    local options = {type = 'stratified'}
     x = dist.cat.rnd(res, p, options)
     tester:asserteq(x, res, '3 params did not use result tensor')
 end
@@ -133,7 +134,7 @@ function testCategorical.testUnsortedIsNotSorted()
     tester:assert(isSamplerSorted('iid') == false, 'Indices should NOT be sorted')
 end
 
-function assert_unbiased(sampler)
+local function assert_unbiased(sampler)
     local p = torch.ones(10)
     local nrep = 10000
     local countOne = 0
@@ -146,18 +147,6 @@ function assert_unbiased(sampler)
     -- TOOD: use Chisquare test instead
     -- Very crude hypothesis testing :p
     tester:assert(countOne < 3*nrep/10, 'Sampled 1 way too often')
-end
-
-function testCategorical.testSpeed()
-    nBins = 10000
-    nSamples = 10
-    p = torch.ones(nBins)
-    timer = torch.Timer()
-    x = dist.cat.rnd(nSamples, p)
-    elapsedDiscrete = timer:time().real
-    x = dist.cat.rnd(nSamples, p, {type = 'dichotomy'})
-    elapsedDichotomy = timer:time().real - elapsedDiscrete
-    tester:assert(elapsedDiscrete > elapsedDichotomy, 'Naive linear search is faster than dichotomic !')
 end
 
 function testCategorical.testUnsortedWithOneSample()
@@ -174,9 +163,13 @@ end
 
 function testCategorical.testMultivariate()
 --[[
-This would be a convenience method. If p is a NxM tensor, the result would be to generate N independent samples from N categorical distributions. The i-th sample would be obtained with probabilities given by the vector p[i].
+This would be a convenience method. If p is a NxM tensor, the result would be
+to generate N independent samples from N categorical distributions. The i-th
+sample would be obtained with probabilities given by the vector p[i].
 
-Use case: sampling from the output of a neural network having a softmax output layer. N in this case corresponds to the size of the minibatch. When used in conjunction with torch.nn, this would allow for the following:
+Use case: sampling from the output of a neural network having a softmax output
+layer. N in this case corresponds to the size of the minibatch. When used in
+conjunction with torch.nn, this would allow for the following:
 ]]
     --- Without result tensor nor number of samples
     local p = torch.Tensor{{.1, .2, .7},{.9, 0, .1}}
