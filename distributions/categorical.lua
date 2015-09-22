@@ -129,7 +129,7 @@ function distributions.cat._dichotomy(I, cdf)
     local right = 0
     local middle = 0
     for k = 0, N-1 do
-        d = 1
+        local d = 1
         while udata[k] > cdfdata[right] do
             left = right
             right = math.min(right + 2^d, nBins-1)

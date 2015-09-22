@@ -75,8 +75,8 @@ local nonStandardGaussianLogPDFWindow = torch.Tensor({
     -9.44243028020047, -16.3313191690894, -62.3313191690893, -47.4424302802005,
     -34.7757636135338, -24.3313191690894, -16.1090969468671, -10.1090969468671,
     -6.33131916908937, -4.77576361353381, -5.44243028020048, -8.33131916908936,
-    -13.4424302802005}):resize(121,1)
-
+    -13.4424302802005}):resize(11, 11)
+    
 function myTests.multivariateGaussianPDF()
 
     -- Standard 2-d gaussian, singleton samples, no result tensor
@@ -208,7 +208,7 @@ function myTests.multivariateGaussianPDFMultiple6()
     local x = torch.Tensor({0, 0})
     local mu = torch.Tensor({{-0.2, 0.2}})
     local sigma = torch.Tensor({0.05, 0.4})
-    local expected = torch.Tensor({0.717583785682725})
+    local expected = torch.Tensor({{0.717583785682725}})
     local got = distributions.mvn.pdf(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
@@ -218,7 +218,7 @@ function myTests.multivariateGaussianPDFMultiple7()
     local x = torch.Tensor({0, 0})
     local mu = torch.Tensor({{-0.2, 0.2}, {-0.4, 0.4}, {0.0, 0.0}})
     local sigma = torch.Tensor({0.05, 0.4})
-    local expected = torch.Tensor({0.717583785682725, 0.186026607635655, 1.125395395196383})
+    local expected = torch.Tensor({{0.717583785682725}, {0.186026607635655}, {1.125395395196383}})
     local got = distributions.mvn.pdf(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
@@ -228,7 +228,7 @@ function myTests.multivariateGaussianPDFMultiple8()
     local x = torch.Tensor({{0, 0}})
     local mu = torch.Tensor({-0.2, 0.2})
     local sigma = torch.Tensor({0.05, 0.4})
-    local expected = torch.Tensor({0.717583785682725})
+    local expected = torch.Tensor({{0.717583785682725}})
     local got = distributions.mvn.pdf(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
@@ -238,7 +238,7 @@ function myTests.multivariateGaussianPDFMultiple9()
     local x = torch.Tensor({{0, 0}, {0.1, 0.2}, {-0.3, -0.1}})
     local mu = torch.Tensor({-0.2, 0.2})
     local sigma = torch.Tensor({0.05, 0.4})
-    local expected = torch.Tensor({0.717583785682725, 0.457551622898630, 0.909950056726693})
+    local expected = torch.Tensor({{0.717583785682725}, {0.457551622898630}, {0.909950056726693}})
     local got = distributions.mvn.pdf(x, mu, sigma)
     tester:assertTensorEq(got, expected, 1e-14, "non-standard 2D gaussian pdf should match expected value")
 end
