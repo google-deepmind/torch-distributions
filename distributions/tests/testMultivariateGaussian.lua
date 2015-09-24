@@ -619,7 +619,6 @@ function myTests.testMultivariateDegenerateWithGP()
     -- The sums should be distributed iid N(0, cov:sum()).
     -- If we mess up the transpose in the SVD, we will see a much smaller variance.
     local sums = y:sum(2)
-    print('sums:size()', sums:size())
     local p, chi2 = distributions.chi2Gaussian(sums, mean:sum(), math.sqrt(cov:sum()))
     tester:assert(p >= alpha,
                   'sums of GP trajectories with a close-to-singular matrix do not'
