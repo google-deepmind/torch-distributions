@@ -257,7 +257,7 @@ function distributions.mvn.rnd(...)
                     -- Rank-deficient matrix: fall back on SVD
                     local u, s, v = torch.svd(sigma)
                     local tmp = torch.cmul(x, s:sqrt():resize(1, d):expand(n, d))
-                    y = torch.mm(tmp, v)
+                    y = torch.mm(tmp, v:t())
                 end
             end
 
