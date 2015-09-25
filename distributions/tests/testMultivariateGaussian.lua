@@ -12,7 +12,7 @@ local function sidakCorrection(alpha, n)
     return 1 - math.pow((1-alpha), 1/n)
 end
 -- This is the significance threshold for the statistical tests, i.e. close to 0
-local statisticalTests = 56
+local statisticalTests = 57
 local alpha = sidakCorrection(.05, statisticalTests)
 
 local standardGaussianPDFWindow = torch.Tensor({
@@ -593,6 +593,39 @@ function myTests.multivariateGaussianRand_Result_D_DD_Standard()
     statisticalTestMultivariateGaussian(result, mu, sigma, true)
 end
 
+function myTests.testMultivariateDegenerateWithGP()
+    -- One of the most useful use cases for a near-singular covariance
+    -- matrix is a Gaussian process evaluated at very close points.
+    -- In particular, the high dimension is very gooda at spotting
+    -- errors in the use of the SVD.
+
+    -- Number of points in the process
+    local D = 500
+    local x = torch.linspace(-10, 10, D)
+    local mean = torch.zeros(D)
+    local cov = torch.zeros(D, D)
+    local sigma = 1.6
+    for i = 1, D do
+        for j = 1, D do
+            local d = x[i] - x[j]
+            cov[i][j] = math.exp(- math.pow(d, 2) / (2*sigma*sigma))
+        end
+    end
+
+    local N = 10000
+    local y = distributions.mvn.rnd(N, mean, cov)
+
+    -- Statistical test on the sum of each trajectory sampled from the GP
+    -- The sums should be distributed iid N(0, cov:sum()).
+    -- If we mess up the transpose in the SVD, we will see a much smaller variance.
+    local sums = y:sum(2)
+    local p, chi2 = distributions.chi2Gaussian(sums, mean:sum(), math.sqrt(cov:sum()))
+    tester:assert(p >= alpha,
+                  'sums of GP trajectories with a close-to-singular matrix do not'
+                  .. ' have the right distribution. Did you forget a transpose'
+                  .. ' when using the SVD?')
+
+end
 -- NxD, D
 -- D, NxD
 -- NxD, NxD
