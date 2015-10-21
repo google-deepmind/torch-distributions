@@ -13,7 +13,7 @@ function distributions.norm.cdf(x, mu, sigma)
 end
 
 function distributions.norm.qtl(p, mu, sigma)
-    error("Not implemented")
+    return cephes.ndtri(p) * sigma + mu
 end
 
 function distributions.norm.rnd(...)
