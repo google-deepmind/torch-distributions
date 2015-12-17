@@ -8,17 +8,23 @@ function distributions._isTensor(v)
     end
 end
 
---[[! Argument checking for vectorized calls
+--[[ Argument checking for vectorized calls
 
-Process the optional return storage, the sizes of the parameter functions, etc
+Process the optional return storage, the sizes of the parameter functions, etc.
 
-@param K number of actual parameters for the sampler
-@param defaultResultType Tensor class corresponding to the expected result type (e.g. torch.DoubleTensor, torch.IntegerTensor, etc)
-@param ... List of all parameters passed to the original caller
+Arguments:
 
-@return T vector or 1-d tensor to store the result into, N rows (or nil, if we should return a single value)
-@return p1 ... pk Tensor of parameters, all N rows
---]]
+* `K` (number > 0) number of actual parameters for the sampler
+* `defaultResultType` (class) Tensor class corresponding to the expected result
+    type (e.g. torch.DoubleTensor, torch.IntegerTensor, etc)
+* `...` List of all parameters passed to the original caller
+
+Returns:
+
+1. T vector or 1-d tensor to store the result into, N rows (or nil, if we should
+   return a single value)
+2. p1 ... pk Tensor of parameters, all N rows
+]]
 function distributions._check1DParams(K, defaultResultType, ...)
     local argCount = select("#", ...)
     for index = 1,argCount do

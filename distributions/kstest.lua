@@ -21,19 +21,23 @@ local function qks(z)
     return 2 * (x - x^4 - x^9)
 end
 
---[[! One-sample Kolmogorov Smirnov test
+--[[ One-sample Kolmogorov Smirnov test
 
-One-samples Kolmogorov-Smirnov test [1]. Implements the pks and kqs functions from [2].
-
+One-samples Kolmogorov-Smirnov test [1]. Implements the pks and kqs functions
+from [2].
 [1] http://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test
-[2] Press, W. H. et al. (2007). Numerical recipes : the art of scientific computing. Cambridge, UK; New York: Cambridge University Press.
+[2] Press, W. H. et al. (2007). Numerical recipes : the art of scientific
+    computing. Cambridge, UK; New York: Cambridge University Press.
 
+Arguments:
 
-@param x Tensor of samples
-@param cdf Function returning the value of CDF of interest at a point
+* `x` (1D Tensor) tensor of samples
+* `cdf` (function) function returning the value of CDF of interest at a point
 
-@return p-value of the test
-@return value of the test statistic
+Returns:
+
+1. p-value of the test
+2. value of the test statistic
 ]]
 function distributions.ksone(x, cdf)
 
@@ -57,19 +61,23 @@ function distributions.ksone(x, cdf)
     return p, d
 end
 
---[[! Two-sample Kolmogorov Smirnov test
+--[[ Two-sample Kolmogorov Smirnov test
 
-Two-samples Kolmogorov-Smirnov test [1]. Implements the pks and kqs functions from [2].
-
+Two-samples Kolmogorov-Smirnov test [1]. Implements the pks and kqs functions
+from [2].
 [1] http://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test#Two-sample_Kolmogorov.E2.80.93Smirnov_test
-[2] Press, W. H. et al. (2007). Numerical recipes : the art of scientific computing. Cambridge, UK; New York: Cambridge University Press.
+[2] Press, W. H. et al. (2007). Numerical recipes : the art of scientific
+    computing. Cambridge, UK; New York: Cambridge University Press.
 
+Arguments:
 
-@param x Tensor of samples
-@param y Tensor of samples
+* `x1` (1D Tensor) tensor of samples
+* `x2` (1D Tensor) tensor of samples
 
-@return p-value of the test
-@return value of the test statistic
+Returns:
+
+1. p-value of the test
+2. value of the test statistic
 ]]
 function distributions.kstwo(x1, x2)
 
