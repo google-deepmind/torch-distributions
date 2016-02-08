@@ -15,7 +15,9 @@ function myTests.testNormalWishartRnd()
   local V = torch.randn(D,D)
   V = V * V:t()
 
-  tester:assert(distributions.nw.rnd(loc, beta, V, nu))
+  local mean, precision = distributions.nw.rnd(loc, beta, V, nu)
+  tester:assert(mean ~= nil)
+  tester:assert(precision ~= nil)
 end
 
 function myTests.testNormalWishartPdf()
@@ -30,8 +32,8 @@ function myTests.testNormalWishartPdf()
   local prec = torch.randn(D,D)
   prec = prec * prec:t()
 
-  tester:assert(distributions.nw.pdf(mean, prec, loc, beta, V, nu))
-  tester:assert(distributions.nw.logpdf(mean, prec, loc, beta, V, nu))
+  tester:assert(distributions.nw.pdf(mean, prec, loc, beta, V, nu) ~= nil)
+  tester:assert(distributions.nw.logpdf(mean, prec, loc, beta, V, nu) ~= nil)
 end
 
 function myTests.testNormalWishartEntropy()
@@ -42,7 +44,7 @@ function myTests.testNormalWishartEntropy()
   local V = torch.randn(D,D)
   V = V * V:t()
 
-  tester:assert(distributions.nw.entropy(loc, beta, V, nu))
+  tester:assert(distributions.nw.entropy(loc, beta, V, nu) ~= nil)
 end
 
 function myTests.testNormalWishartKL()
