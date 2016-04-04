@@ -11,10 +11,10 @@ function distributions.mvn.logpdf(x, mu, sigma, options)
 
     -- Now make our inputs all vectors, for simplicity
     if x:dim() == 1 then
-        x:resize(1, x:nElement())
+        x = x:view(1, x:nElement())
     end
     if mu:dim() == 1 then
-        mu:resize(1, mu:nElement())
+        mu = mu:view(1, mu:nElement())
     end
 
     -- Expand any 1-row inputs so that we have matching sizes
@@ -147,7 +147,7 @@ function distributions.mvn.rnd(...)
             else
                 d = mu:size(1)
             end
-            mu = torch.Tensor(mu):resize(1, d)
+            mu = mu:view(1, d)
         elseif mu:dim() == 2 then
             assert(mu:size(1) == 1 or mu:size(1) == n, 'Number of rows of matrix mu (' .. mu:size(1) .. ') does not match that of result matrix (' .. n .. ')')
             if d > 0 then
@@ -209,14 +209,14 @@ function distributions.mvn.rnd(...)
     end
 
     if mu:dim() == 1 then
-        mu:resize(1, mu:nElement())
+        mu = mu:view(1, mu:nElement())
     end
     -- TODO: use the flag diagonalVariance rather than checking sigma's size once again
     if sigma:dim() == 1 then
         if mu:size(2) ~= sigma:size(1) then
             error("mvn.rnd: inconsistent sizes for mu and sigma")
         end
-        sigma:resize(1, d)
+        sigma = sigma:view(1, d)
     elseif sigma:dim() == 2 then
         -- either 1xD or DxD or NxD
         if sigma:size(1) ~= 1 then
@@ -229,7 +229,7 @@ function distributions.mvn.rnd(...)
             if mu:size(2) ~= sigma:size(1) or mu:size(2) ~= sigma:size(2) then
                 error("mvn.rnd: inconsistent sizes for mu and sigma")
             end
-            sigma:resize(1, d, d)
+            sigma = sigma:view(1, d, d)
         end
     elseif sigma:dim() == 3 then
         if mu:size(2) ~= d or sigma:size(2) ~= d or sigma:size(3) ~= d then
@@ -256,7 +256,7 @@ function distributions.mvn.rnd(...)
                 else
                     -- Rank-deficient matrix: fall back on SVD
                     local u, s, v = torch.svd(sigma)
-                    local tmp = torch.cmul(x, s:sqrt():resize(1, d):expand(n, d))
+                    local tmp = torch.cmul(x, s:sqrt():view(1, d):expand(n, d))
                     y = torch.mm(tmp, v:t())
                 end
             end
@@ -268,21 +268,22 @@ function distributions.mvn.rnd(...)
             if not options.cholesky then
                 decomposed:sqrt()
             end
-            y = torch.cmul(decomposed:resize(1,d):expand(n,d), x)
+            y = torch.cmul(decomposed:view(1,d):expand(n,d), x)
         end
 
-        torch.add(resultTensor, y, mu):resize(resultSize)
-
+        resultTensor = resultTensor:add(y, mu):view(resultSize)
+        return resultTensor
     end
 
     local x = torch.Tensor(n,d)
     randomkit.gauss(x)
     if sigma:size(1) == 1 then
-        sampleFromDistribution(resultTensor, x, mu, sigma[1])
+        resultTensor = sampleFromDistribution(resultTensor, x, mu, sigma[1])
         return resultTensor
     else
         for k = 1, n do
-            sampleFromDistribution(resultTensor[k], x[k]:resize(1, d), mu[k], sigma[k])
+            resultTensor[k] = sampleFromDistribution(resultTensor[k],
+                                             x:narrow(1, k, 1), mu[k], sigma[k])
         end
         return resultTensor
     end

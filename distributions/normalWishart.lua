@@ -67,7 +67,8 @@ Returns:
 ]]
 function distributions.nw.rnd(loc, beta, scale, ndof)
   local precision = distributions.wishart.rnd(ndof, scale:size(1), scale)
-  local mean = distributions.mvn.rnd(loc, torch.inverse(precision * beta))
+  local mean = distributions.mvn.rnd(loc, torch.inverse(
+                                                 precision * beta):contiguous())
   return mean, precision
 end
 
@@ -87,6 +88,6 @@ function distributions.nw.kl(q, p)
       + (ndim * (math.log(q.beta) - math.log(p.beta))
       + ndim * p.beta / q.beta
       - ndim
-      + p.beta * q.ndof 
+      + p.beta * q.ndof
       * qf(q.scale, p.loc - q.loc)) / 2
 end
