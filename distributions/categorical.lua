@@ -10,46 +10,45 @@ function distributions.cat.logpdf(...)
     error('Not implemented')
 end
 
-local function _idxResultAndN(x, categories)
-    -- return res, N
+local function _idxResult(x, categories)
     if type(x) == 'number' then
-        return torch.LongTensor(x), x
+        return torch.LongTensor(x)
     elseif distributions._isTensor(x) then
         if categories then
             print('WARNING: cannot use result tensors and categories at the same time. Ignoring result tensor.')
             -- TODO: once index() will accept resulting tensor, use it
         end
-        return x, x:numel()
+        return x
     end
 end
 
 -- Categorical sampling
 function distributions.cat.rnd(...)
-    local I, N, p, options
+    local I, p, options
     local nArgs = select('#', ...)
     if nArgs == 1 then
         -- only p
-        I, N = _idxResultAndN(1)
         p = select(1, ...)
         options = {}
+        I = _idxResult(1)
     elseif nArgs == 2 then
         -- (N,  p) or (p, options)
         if type(select(2, ...)) == 'table' then
             -- (p, options)
             p, options = ...
             options = options or {}
-            I, N = _idxResultAndN(1, options.categories)
+            I = _idxResult(1)
         else
             -- (N, p)
-            I, N = _idxResultAndN(select(1, ...), nil)
             p = select(2, ...)
             options = {}
+            I = _idxResult(select(1, ...))
         end
     elseif nArgs == 3 then
         -- (N, p, options)
         p, options = select(2, ...)
         options = options or {}
-        I, N = _idxResultAndN(select(1, ...), options.categories)
+        I = _idxResult(select(1, ...), options.categories)
     else
         error('Expected cat.rnd([N], p, [options])')
     end
@@ -97,11 +96,11 @@ function distributions.cat._iid(I, cdf)
     local idata = torch.data(I:contiguous())
 
     local index = 0
-    for k = 0, N-1 do
+    for k = 0, N - 1 do
         while udata[k] > cdfdata[index] do
             index = index + 1
         end
-        idata[permdata[k]-1] = index + 1
+        idata[permdata[k] - 1] = index + 1
     end
 
     return I
@@ -128,22 +127,22 @@ function distributions.cat._dichotomy(I, cdf)
     local left = 0
     local right = 0
     local middle = 0
-    for k = 0, N-1 do
+    for k = 0, N - 1 do
         local d = 1
         while udata[k] > cdfdata[right] do
             left = right
-            right = math.min(right + 2^d, nBins-1)
+            right = math.min(right + 2^d, nBins - 1)
             d = d + 1
         end
         while right - left > 1 do
-            middle = math.floor(left + right)/2
+            middle = math.floor(left + right) / 2
             if udata[k] > cdfdata[middle] then
                 left = middle
             else
                 right = middle
             end
         end
-        idata[permdata[k]-1] = right+1
+        idata[permdata[k] - 1] = right + 1
     end
 
     return I
@@ -160,7 +159,7 @@ function distributions.cat._stratified(I, cdf)
 
     local index = 0
     for k = 0, N-1 do
-        while (udata[k] + k)/N > cdfdata[index] do
+        while (udata[k] + k) / N > cdfdata[index] do
             index = index + 1
         end
         idata[k] = index + 1
