@@ -3,18 +3,18 @@ title: Probability distributions for Torch
 layout: doc
 ---
 
-#Probability distributions for Torch
+# Probability distributions for Torch
 
-##Example
+## Example
 
 TODO
 
-###Getting/setting the seed and the state
+### Getting/setting the seed and the state
 
 Distributions is transparently integrated with Torch's random stream: just use `torch.manualSeed(seed)`, `torch.getRNGState()`, and `torch.setRNGState(state)` as usual.
 
 
-##Installation
+## Installation
 
 From a terminal:
 
@@ -22,43 +22,43 @@ From a terminal:
 luarocks install https://raw.github.com/jucor/torch-distributions/master/distributions-0-0.rockspec
 ```
 
-##List of Distributions
+## List of Distributions
 
-###Poisson: poisson
+### Poisson: poisson
 
-####poisson.pdf(x, lambda)
+#### poisson.pdf(x, lambda)
 
 Probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-####poisson.logpdf(x, lambda)
+#### poisson.logpdf(x, lambda)
 
 Log of probability density function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-####poisson.cdf(x, lambda)
+#### poisson.cdf(x, lambda)
 
 Cumulative distribution function of a Poisson distribution with mean `lambda`, evaluated at `x`.
 
-###Normal/Gaussian: norm
+### Normal/Gaussian: norm
 
-####norm.pdf(x, mu, sigma)
+#### norm.pdf(x, mu, sigma)
 
 Probability density function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####norm.logpdf(x, mu, sigma)
+#### norm.logpdf(x, mu, sigma)
 
 Log probability density function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-####norm.cdf(x, mu, sigma)
+#### norm.cdf(x, mu, sigma)
 
 Cumulative distribution function of a Normal distribution with mean `mu` and standard deviation `sigma`, evaluated at `x`.
 
-###Multivariate Normal: mvn
+### Multivariate Normal: mvn
 
 The covariance matrix passed to multivariate gaussian functions needs only be positive **semi**-definite: we deal gracefully with the degenerate case of rank-deficient covariance. 
 
 Those functions also accept the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
-####mvn.pdf(x, mu, M, [options])
+#### mvn.pdf(x, mu, M, [options])
 
 Probability density function of a multivariate Normal distribution with mean `mu` and covariance or cholesky of the covariance specified in `M`, evaluated at `x`. 
 
@@ -78,14 +78,14 @@ In the case of a diagonal covariance `cov`, you may also opt to pass a vector co
 * `mvn.pdf([D], [N, D], [D])` - returns a Tensor.
 * `mvn.pdf([N, D], [N, D], [D])` - returns a Tensor.
 
-####mvn.logpdf(x, mu, M, [options])
+#### mvn.logpdf(x, mu, M, [options])
 
 Probability density function of a multivariate Normal distribution with mean `mu` and covariance matrix `M`, evaluated at `x`.
 
 
 See `mvn.pdf()` for description of valid forms for x, mu and cov and options.
 
-####mvn.rnd([res,] mu, M, [options])
+#### mvn.rnd([res,] mu, M, [options])
 
 Sample from a multivariate Normal distribution with mean `mu` and covariance matrix `M`.
 
@@ -100,21 +100,21 @@ In the case of a diagonal covariance `cov`, you may also opt to pass a vector (n
 
 By defaut, the matrix `M` is the covariance matrix. However, it is possible to pass the upper-triangular Cholesky decomposition instead, by setting the field `cholesky = true` in the optional table `options`.
 
-###Categorical/Multinomial: cat
+### Categorical/Multinomial: cat
 
 Categorical distributions on indices from 1 to K = p:numel().
 
 Not vectorized in p. See mvcat for vectorized version.
 
-####cat.pdf(x, p, [options])
+#### cat.pdf(x, p, [options])
 
 Not implemented
 
-####cat.logpdf(x, p, [options])
+#### cat.logpdf(x, p, [options])
 
 Not implemented
 
-####cat.rnd([res|N,] p, [options])
+#### cat.rnd([res|N,] p, [options])
 
 Sample `N = size(res,1)` amongst `K = 1 ... p:numel()`, where the probability of category k is given by p[k]/p:sum().
 
@@ -134,19 +134,19 @@ or a new tensor of N rows corresponding to the categories given.
 
 Note that it is not yet possible to use a result tensor *and* categories at the same time. This will be possible once [torch's index() accepts result tensor](https://github.com/torch/torch7-distro/issues/202).
 
-###Multiple Categorical: mvcat
+### Multiple Categorical: mvcat
 
 Vectorized version of `cat`, where `p` is now a matrix where each row represents a vector of probabilities. It samples independently for each row of `p`.
 
-####mvcat.pdf(x, p, [options])
+#### mvcat.pdf(x, p, [options])
 
 Not implemented
 
-####mvcat.logpdf(x, p, [options])
+#### mvcat.logpdf(x, p, [options])
 
 Not implemented
 
-####mvcat.rnd([res|N,] p, [options])
+#### mvcat.rnd([res|N,] p, [options])
 
 For each row `r = 1 ... R` of the matrix `p`, sample `N = size(res, 2)` amongst `K = 1 ... p:size(2)`, where the probability of category k is given by p[r][k]/p:sum(1).
 
@@ -163,53 +163,53 @@ or a new tensor of R rows with N columns corresponding to the categories given.
 
 Note that `mvcat`, unlike `cat`, only returns tensor of integers: it does not allow for specifying a tensor of categories, to keep the handling of dimensions simple.
 
-###Cauchy: cauchy
+### Cauchy: cauchy
 
-####cauch.pdf(x, a, b)
+#### cauch.pdf(x, a, b)
 
 Probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-####cauchy.logpdf(x, a, b)
+#### cauchy.logpdf(x, a, b)
 
 Log of probability density function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-####cauchy.cdf(x, a, b)
+#### cauchy.cdf(x, a, b)
 
 Cumulative distribution function of a Cauchy distribution with location `a` and scale `b`, evaluated at `x`.
 
-###Chi square: chi2
+### Chi square: chi2
 
-####chi2.pdf(x, dof)
+#### chi2.pdf(x, dof)
 
 Probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-####chi2.logpdf(x, dof)
+#### chi2.logpdf(x, dof)
 
 Log of probability density function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-####chi2.cdf(x, dof)
+#### chi2.cdf(x, dof)
 
 Cumulative distribution function of a Chi square distribution with `dof` degrees of freedom, evaluated at `x`.
 
-###Laplace: laplace
+### Laplace: laplace
 
-####laplace.pdf(x, loc, scale)
+#### laplace.pdf(x, loc, scale)
 
 Probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-####laplace.logpdf(x, loc, scale)
+#### laplace.logpdf(x, loc, scale)
 
 Log of probability density function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-####laplace.cdf(x, loc, scale)
+#### laplace.cdf(x, loc, scale)
 
 Cumulative distribution function of a Laplace distribution with location `loc` and scale `scale`, evaluated at `x`.
 
-##Hypothesis Testing
+## Hypothesis Testing
 
 Besides the generators, there are some functions for checking whether two samples come from the same unspecified distribution using [`Kolmogorov-Smirnov two-sample test`](http://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test#Two-sample_Kolmogorov.E2.80.93Smirnov_test), and whether a sample fits a particular distribution, using [`Pearson's chi-squared test`](http://en.wikipedia.org/wiki/Pearson's_chi-squared_test).
 
-###ksone(x1, cdf)
+### ksone(x1, cdf)
 
 Perform a one-sample Kolmogorov-Smirnov test, with null hypothesis "sample x comes from the distribution whose cumulative distribution function is given".
 
@@ -219,7 +219,7 @@ Perform a one-sample Kolmogorov-Smirnov test, with null hypothesis "sample x com
 Returns: `p`, `d` - the p-value and the statistic the test, respectively.
 
 
-###kstwo(x1, x2)
+### kstwo(x1, x2)
 
 Perform a two-sample Kolmogorov-Smirnov test, with null hypothesis "sample x1 and sample x2 come from the same distribution".
 
@@ -228,7 +228,7 @@ Perform a two-sample Kolmogorov-Smirnov test, with null hypothesis "sample x1 an
 
 Returns: `p`, `d` - the p-value and the statistic the test, respectively.
 
-###chi2Uniform(x, [low, up, nBins])
+### chi2Uniform(x, [low, up, nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a continuous uniform distribution on the interval `[low, up]`".
 
@@ -239,7 +239,7 @@ Perform a chi-squared test, with null hypothesis "sample x is from a continuous 
 
 Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
 
-###chi2TestCDF(x, cdf, cdfParams, [nBins])
+### chi2TestCDF(x, cdf, cdfParams, [nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a distribution with cdf `cdf`, parameterised by `cdfParams`".
 
@@ -250,7 +250,7 @@ Perform a chi-squared test, with null hypothesis "sample x is from a distributio
 
 Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
 
-###chi2Gaussian(x, mu, sigma, [nBins])
+### chi2Gaussian(x, mu, sigma, [nBins])
 
 Perform a chi-squared test, with null hypothesis "sample x is from a Normal distribution with mean `mu` and variance `sigma`".
 
@@ -261,7 +261,7 @@ Perform a chi-squared test, with null hypothesis "sample x is from a Normal dist
 
 Returns: `p`, `chi2` - the p-value and the chi-squared score of the test, respectively.
 
-##Unit Tests
+## Unit Tests
 
 Last but not least, the unit tests are in the folder
 [`distributions/tests`](https://github.com/jucor/torch-distributions/tree/master/distributions/tests). You can run them from your local clone of the repostiory with:
